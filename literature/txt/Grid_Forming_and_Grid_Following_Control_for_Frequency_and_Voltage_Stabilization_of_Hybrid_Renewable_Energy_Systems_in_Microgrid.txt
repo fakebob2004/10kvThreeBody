@@ -1,0 +1,742 @@
+SOURCE PDF: Grid_Forming_and_Grid_Following_Control_for_Frequency_and_Voltage_Stabilization_of_Hybrid_Renewable_Energy_Systems_in_Microgrid.pdf
+TOTAL PAGES: 6
+
+
+===== PAGE 1 / 6 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+           Grid  Forming      and  Grid   Following      Control    for           
+                                                                                  
+          Frequency      and   Voltage   Stabilization     of  Hybrid             
+                                                                                  
+              Renewable      Energy     Systems    in  Microgrid                  
+                                                                                  
+                                                                                  
+          Mahmoud F. Elmorshedy1,2, Abdelrahman Farghly3, Seshagirirao Vemparala1, Mahajan Sagar Bhaskar1, Dhafer Almakhles1
+                 1Renewable Energy Lab., College of Engineering, Prince Sultan University, Riyadh, Saudi Arabia
+           2Electrical Power and Machines Engineering Department, Faculty of Engineering, Tanta University, Tanta 31733, Egypt
+          3Electrical Power and Machines Engineering Department, Faculty of Engineering, Alexandria University, Alexandria, Egypt
+       melmorshedy@psu.edu.sa, Abdelrahman.farghly@alexu.edu.eg, svemparala@psu.edu.sa, smahajan@psu.edu.sa, dalmakhles@psu.edu.sa
+        Abstract—This study presents a grid-forming (GFM) within only microseconds. This swift reaction is crucial for
+      inverter designed for a battery energy storage system (BESS) to preserving system stability, guaranteeing effective power
+      maintain voltage and frequency stability within an AC distribution, and averting disruptions inside the microgrid.
+      microgrid. The proposed GFM inverter plays a critical role in Further, efficient control systems for these power electronics
+      autonomously regulating voltage and frequency when the utility converters have to include system restrictions, including
+      grid experiences failures or disruptions. Unlike grid-following             
+                                          voltage and current limits as well as safety margins, to
+      (GFL) inverters, which rely on an external grid reference, the              
+                                          guarantee safe and reliable operation. Neglecting these limits
+      GFM inverter takes control during grid outages, forming a                   
+                                          may result in operational problems, including possible
+      stable local grid by dynamically adjusting its output. This                 
+                                          damage to the converters and other microgrid components,
+      ensures uninterrupted microgrid operation, enabling seamless                
+                                          hence reducing the system's reliability and durability.
+      transition between grid-connected and islanded modes. The                   
+                                            Hence, GFL control is a widely adopted approach for
+      battery storage system, managed through the GFM inverter,                   
+                                          integrating inverter-based renewable energy sources, such as
+      supports frequency stabilization by balancing power                         
+                                          PVS and WGS, into the power grid. This approach simplifies
+      fluctuations, thereby enhancing microgrid reliability and                   
+                                          inverter design and enables effective power transfer to the grid
+      resilience. The AC microgrid network consists of a wind-                    
+                                          by using the grid voltage and frequency as a reference for
+      generating system (WGS), photovoltaic system (PVS), BESS,                   
+                                          operation. GFL inverters provide active and reactive power by
+      three-phase utility grid, AC loads, AC/DC converters, and                   
+      DC/DC converters. Maximizing power extraction synchronizing with the grid's phase angle through the use of
+      methodologies augment energy production from both WGS and phase-locked loop (PLL) technology. Although this control
+      PVS. A GFL inverter employing active and reactive power method works well in synchronous generator-dominated
+      regulation is executed with a Phase Lock Loop (PLL) and vector stable grids, it has trouble maintaining stability and resilience
+      control methodology to achieve synchronization with the utility in weak or low-inertia systems [7]. In addition, in modern
+      grid. The GFM inverter utilizes droop control to maintain grids with high renewable energy penetration, their
+      steady voltage and frequency for effective grid integration. The dependency on a stable grid limits their ability to operate
+      system is validated using simulations under different scenarios,            
+                                          during disturbances or in standalone applications, such as
+      including the sudden implementation of WGS and grid failures.               
+                                          microgrids. Moreover, they do not contribute to grid stability
+      The rapid frequency response illustrates the efficacy of the                
+                                          through inertia or frequency regulation, making them less
+      proposed control approach. Simulation results provide a swift               
+                                          suitable for grids with reduced synchronous generation [8].
+      frequency response and maintain grid stability, validating its              
+                                          Despite these limitations, GFL control remains a cost-
+      appropriateness for AC microgrids.                                          
+                                          effective and straightforward solution for renewable energy
+                                          integration in traditional power systems.
+        Keywords—Grid forming; Grid following; GFM; GFL;                          
+                                            Consequently, grid-forming (GFM) control, which can
+      renewable energy resources; droop control; grid-connected.                  
+                                          stabilize and smoothly incorporate RESs into electrical grids,
+                  I. INTRODUCTION         has been developed to address the shortcomings of the GFL
+                                          [9]. The GFM inverters function as a virtual synchronous
+        Renewable energy systems (RESs), including solar                          
+                                          generator by establishing voltage and frequency. Because of
+      photovoltaic (PV) and wind generating systems (WGS), are                    
+                                          this ability, GFM control is crucial for preserving grid
+      progressively included in microgrids to improve energy                      
+                                          stability, particularly in systems where synchronous
+      sustainability and reliability [1][2][3]. These systems                     
+                                          generators' traditional function is reduced due to a large
+      generally depend on power electronics converters to regulate                
+                                          penetration of renewable energy sources like wind and
+      the conversion and distribution of electrical energy inside the             
+                                          photovoltaics [10]. To guarantee steady operation under a
+      microgrid, as elaborated in [4]-[6]. The use of these converters            
+                                          range of grid situations, the main goal of GFM control is to
+      presents considerable issues in control and administration                  
+                                          emulate the dynamic behavior of traditional generators,
+      owing to the intrinsically variable characteristics of renewable            
+                                          including inertia and droop characteristics. GFM inverters can
+      energy sources and the swift swings in load power demands                   
+                                          operate in both grid-connected and islanded modes, making
+      within the microgrid. A principal problem is the necessity for              
+                                          them highly versatile for applications in microgrids, hybrid
+      control methods that can react promptly and precisely to these              
+                                          energy systems, and weak grid environments. As the transition
+      variations. The utility grid and load demand can fluctuate                  
+                                          toward renewable energy accelerates, GFM control is
+      rapidly, often within milliseconds, necessitating that the                  
+                                          increasingly being recognized as a cornerstone technology for
+      control systems for these converters be highly dynamic and                  
+                                          enabling the transformation of traditional grids into
+      capable of functioning at fast sampling rates, sometimes                    
+  17272011.5202.41336GNEREWOP-EPC/9011.01                                         
+  :IOD                                                                            
+  |                                                                               
+  EEEI                                                                            
+  5202©                                                                           
+  00.13$/52/1-7151-5133-8-979                                                     
+  |                                                                               
+  )GNEREWOP-EPC(                                                                  
+  gnireenignE                                                                     
+  rewoP                                                                           
+  dna                                                                             
+  scinortcelE                                                                     
+  rewoP                                                                           
+  ,ytilibitapmoC                                                                  
+  no                                                                              
+  ecnerefnoC                                                                      
+  lanoitanretnI                                                                   
+  ht91                                                                            
+  EEEI                                                                            
+  5202                                                                            
+         Authorized licensed use limited to: Zhejiang University. Downloaded on September 17,2026 at 06:26:04 UTC from IEEE Xplore. Restrictions apply.
+
+
+===== PAGE 2 / 6 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+      decentralized, flexible, and sustainable energy systems.                    
+      Although GFM control has many benefits for integrating                      
+      RESs and stabilizing contemporary power networks, it also                   
+      has drawbacks and difficulties because it depends on ESS to                 
+      supply the power required to regulate frequency and voltage.                
+      This reliance may raise system expenses and create new                      
+      battery management difficulties. Furthermore, grid-forming                  
+      inverter control methods are more intricate and                             
+      computationally intensive.                                                  
+        Therefore, this paper presents a coordinated control                      
+      approach between GFL and grid-forming inverters for a                       
+      hybrid photovoltaic/wind generation, BESS in a microgrid to                 
+      attract the advantages of the two methods. The proposed                     
+      integration aims to continue supplying power to the main load               
+      even though the utility grid is disconnected. In addition, Fig. 1. Suggested microgrid system with GFM and GFL control.
+      maintaining the system stable under different conditions.                   
+                                          C. Battery energy storage system (BESS) 
+                                            The battery model employs a regulated voltage source
+            II. PROPOSED SYSTEM WITH MODELING                                     
+                                          alongside a fixed resistance, as illustrated in (5) and (6) [15].
+        The microgrid system used in this investigation is shown                  
+                                                      t     t               
+      in Fig. 1. A WGS, PVS, BESS, three-phase utility grid, AC E = E −PC C −idt+Aexp−Bi dt (5)
+                                              0  v BSS BSS      BSS             
+      loads, AC/DC converters, and DC/DC converters make up the             
+                                                        0        0                
+      microgrid system. Every part is outfitted with a unique control             
+                                           V  = E −R .I                  (6)      
+      unit designed to govern how it operates. Among the tasks BSS i BSS          
+                                          where E denotes the no-load voltage, (cid:1) signifies the battery's
+      assigned to these control units are maximizing power     (cid:2)            
+                                          constant voltage, P represents the polarization voltage, C
+      generation, maintaining system stability, and adjusting to v        BSS     
+                                          indicates the battery capacity, ∫ (cid:4) dt reflects the actual
+      changes in load demands, grid outages, or environmental (cid:5)(cid:6)(cid:6)
+                                          battery charge. Meanwhile, the battery capacity is calculated
+      circumstances. In the following sections, the mathematical                  
+                                          using (7) [16].                         
+      model of each component will be discussed.                                  
+      A. PV mathematical model.                                                   
+                                           C                                      
+                                            BSS                                   
+                                              = E                                 
+                                                d/hr                              
+                                                   (V                             
+                                                    BSS                           
+                                                      × DoD)              (7)     
+                                          where (cid:1) represents the energy supplied to the load over
+        One important RES in the suggested microgrid system is (cid:7)/(cid:9)(cid:10)
+      the photovoltaic array. The two main elements that affect the one hour. DoD denotes the battery's depth of discharge.
+      PV output power and efficiency are solar radiation and                      
+                                         III. CONTROL METHODOLOGY FOR THE SYSTEM COMPONENTS
+      operating temperature [11], [12] as described in                            
+       P = f P ( 1+β(T −T ) ) ×(G G ) (1) A. Maximum power control for PVS        
+        PV PV PVn r PV PV,STC T T,STC                                             
+                                            The maximum power point tracking (MPPT) is used to
+      where T denotes the actual temperature of the photovoltaic                  
+           PV                                                                     
+      cell, while T represents the temperature of the PV cell boost the overall PVS efficiency. The PVS employs the
+             PV-STC                                                               
+      under standard test conditions. In addition, P represents the incremental conductance (IC) approach to extract the
+                               PVn                                                
+      nominal power, while γ signifies the intensity coefficient for maximum power. The IC method's guiding concepts are
+      solar cell efficiency.              explained in [17] and shown in Fig. 2. The mathematical
+                                          representations are described by the following relations.
+      B. WG mathematical model.                                                   
+        In the adopted WGS, the permanent magnet synchronous dP dV =d(I V ) dV =I +V (dI dV )=0 (8)
+                                            PV PV  PV PV PV PV PV PV PV           
+      generator (PMSG) is used because of its efficiency and                      
+                                           (dI dV )=−(I V )              (9)      
+      reliability in wind energy applications [13]. A controlled PV PV PV PV      
+      rectifier is utilized to maximize the electrical output from the ≥          
+      wind turbine (WT). This rectifier converts the alternating                  
+                                               Triangle                           
+      current generated by the PMSG into direct current (DC) wave C               
+      power. The WT output power is affected by numerous critical -               
+      parameters such as wind velocity, turbine blade radius, PMSG i pv v pv      
+      efficiency, and rectifier performance. The correlation between +            
+      these variables and the power output is formally articulated in             
+                                                          +                       
+      the following equations [14].                                               
+       P = 0.5ρC AV 3η η              (2)                                         
+        WT    p ω WT G                                                            
+                    21                                                            
+             116                                                                  
+       C =0.5176( −5−0.4β)eλ i +0.0068λ (3)                                       
+        p    λ                                                                    
+              i                                                                   
+         ωR       1   0.035                                                       
+       λ= r , λ−1 =  −               (4)                                          
+         V    i 0.08β+λ β3+1                                                      
+          ω                                                                       
+      where λ, R, and V are the tip speed ratio, blade radius, and                
+                ω                                                                 
+      wind speed.                                                                 
+                                                     sub-cd                       
+                                                           Boost Converter        
+                                                     +  D    L       +            
+                                                           Q                      
+                                                       C                          
+                                                                     -            
+                                                                /                 
+                                                      PI                          
+                                                               d/dt               
+                                                   Limiter                        
+                                                           /                      
+                                                               d/dt               
+                                          Fig. 2. MPPT of the PV system.          
+                                          B. Maximum power control for WGS        
+                                            To maximize the power generated from the WGS, the
+                                          MPPT technique is used. In this system, a controlled rectifier
+                                          is used instead of a switch-mode rectifier hence, dq-axis
+                                          currents are utilized to achieve this goal. The maximum power
+                                          is obtained for the analyzed wind turbine characteristics at a
+                                          tip-speed ratio of 8.1, which corresponds to a wind power
+                                          coefficient of 0.48 [18]. Hence, the maximum power
+                                          extraction is accomplished with the reference current value on
+         Authorized licensed use limited to: Zhejiang University. Downloaded on September 17,2026 at 06:26:04 UTC from IEEE Xplore. Restrictions apply.
+
+
+===== PAGE 3 / 6 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+      the q-axis and to minimize losses, the d-axis current is rest to            
+      zero [19]. Using the ideal wind power, P the reference q-                   
+                             opt.                                                 
+      axis reference current, i * is provided by                                  
+                   qs                                                             
+       P  = 0.5×C  ×ρ× A×V 3         (10)                                         
+        opt.    p−otp.   w                                                        
+       i* = ( 4P ) (3pωλ )                                                        
+                                     (11)                                         
+        qs   opt.   m                                                             
+        Two Proportional-Integral (PI) controllers are employed                   
+      to verify that the actual values accurately follow their                    
+      reference points. Moreover, the compensation is utilized to                 
+      achieve a total decoupling. Figure 3 illustrates the adopted                
+      MPPT control for the WGS.                                                   
+      C. Grid-following inverter control                                          
+        As previously discussed, the GFL approach streamlines                     
+      inverter design while enabling efficient power transfer to the              
+      grid by leveraging the grid's voltage and frequency as                      
+                                          Fig. 3. MPPT control for the WGS.       
+      operational references. By synchronizing with the grid's phase              
+      angle through the PLL technology, the GFL approach                          
+      effectively facilitates the delivery of both active and reactive            
+      power. Hence, the control is composed of three key                          
+      components: PLL control, DC-bus voltage regulation, and                     
+      grid current control. Each of these components plays a vital                
+      role in ensuring consistent, reliable, and grid-compliant                   
+      operation. The detailed functionality and design of these                   
+      controllers will be explored in the following subsections.                  
+        • Phase-locked loop                                                       
+        The primary goal of the PLL is to extract the grid voltage                
+      angle to properly align the d-axis voltage with the voltage                 
+      vector in the voltage-oriented control (VOC) [20]. Also, the                
+      grid voltage on the q-axis is set to zero by the VOC principles.            
+      Because the PLL function maintains the grid voltage's d-axis                
+                                          Fig. 4. Grid following inverter controller with the DC-link voltage control.
+      with the voltage vector, the q-axis voltage is calculated by                
+       v  = vˆ sin                                                                
+                (                                                                 
+                ωt o -ωt                                                          
+                     )                                                            
+                                     (12)                                         
+        qg  ph1                            v = v + R i + L pi + R i + L pi −ωLi (16)
+                                            di dg  i di i di g dg g dg qi         
+      where ω and ω stand for the voltage vector and the d-axis's                 
+           to  t                                                                  
+                                           v = v + R i + L pi + R i + L pi +ωLi (17)
+      respective angles.                    qi qg  i qi i qi g qg g qg di         
+        • DC-bus voltage control          where R, R , L, and L are the filter resistances and
+                                               i  g i    g                        
+                                          inductances, and ω represents the grid angular frequency.
+        By regulating the grid d-axis current, the DC-bus voltage is              
+                                            Equations (16) and (17) can be updated as in (18) and (19),
+      controlled. The input-output power equilibrium is used to                   
+                                          and hence, two PI controllers can be used to generate the
+      illustrate this, presuming the system is lossless, as given by              
+                                          inverter's dq-axis output voltages.     
+       3             dv                                                           
+        (       )                                                                 
+         v                                                                        
+         qg                                                                       
+          i                                                                       
+           qg                                                                     
+            +v                                                                    
+              dg                                                                  
+               i                                                                  
+               dg                                                                 
+                 =C.v                                                             
+                    dc                                                            
+                     . dc            (13)  v*                                     
+                                             = ∆v + v −ωLi               (18)     
+       2              dt                    di  di dg  qi                         
+        Using the VOC concept, Eq. (13) is updated as follows v*                  
+                                             = ∆v + v +ωLi               (19)     
+                                            qi  qi qg  di                         
+       3       dv                                                                 
+        v i = C.v . dc               (14)   Figure 4 illustrates the grid following inverter controller
+       2 dg dg dc dt                                                              
+                                          with the DC-link voltage control block diagram.
+        By using linearization at the equilibrium point and removing              
+                                          D. Grid forming inverter control        
+      the steady-state and higher-order terms, Eq. (14) is given by               
+                                            GFM  inverter, specifically designed for islanded
+       3    3       dv                                                            
+        vˆ I + V i ˆ =C.V . dc       (15) operation, plays a crucial role in regulating voltage amplitude
+       2 dg dg 2 dg dg dc dt                                                      
+                                          and frequency to establish a stable local AC grid. As a result,
+      where vˆ and i ˆ denote the perturbations in the d-axis                     
+                                          it can be configured as an ideal AC voltage source with low
+           dg   dg                                                                
+      voltage and current, respectively. Therefore, the value of the d-           
+                                          output impedance. While synchronization is a standard
+      axis output current determines the DC-bus voltage. Hence, a PI              
+                                          requirement for grid-connected inverters, GFM inverters
+      controller is used to control the DC-bus voltage. demand a highly precise synchronization mechanism to
+        • Current-control loop            operate effectively alongside other inverters. Typically, the
+                                          phase reference is determined by integrating the defined
+        The reference value of the q-axis current is chosen to achieve            
+                                          angular frequency. The control strategy implemented in GFM
+      unity, leading, or lagging power factor after the reference d-              
+                                          inverters is developed to ensure both stable and efficient
+      axis current is generated from the DC-bus voltage control loop.             
+                                          operation of the system. This approach facilitates the
+      The inverter dq-axis output voltages can be expressed by [21]               
+         Authorized licensed use limited to: Zhejiang University. Downloaded on September 17,2026 at 06:26:04 UTC from IEEE Xplore. Restrictions apply.
+
+
+===== PAGE 4 / 6 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+      maintenance of nominal voltage and frequency levels, in Similarly, the frequency droop coefficient can be
+      addition to regulating the active and reactive power obtained, where the system frequency fluctuates between
+      distribution within the microgrid. When operating in grid- defined maximum and minimum values. Because the virtual
+      connected mode, the voltage and frequency are dictated by oscillator control is tuned to a resonant frequency of 50 Hz,
+      the main grid. However, in islanded mode, a dedicated the maximum frequency aligns with the nominal value.
+      control mechanism takes over to manage these parameters Consequently, the resulting frequency deviation and the
+      effectively [22]. The suggested control operates at multiple droop coefficient are given by
+      levels: the primary level is responsible for continuous real-  ω          
+                                             max                                  
+                                               =ω                                 
+                                                n                                 
+      time monitoring of the system’s nominal voltage and               (24)     
+                                           ω                                    
+                                             min                                  
+                                               =(1−∆ω)(cid:1)ω                    
+                                                    n                             
+      addressing power quality issues [23]. The secondary level                   
+      incorporates key control mechanisms that focus on system K = ∆ω (cid:1)(ω P ) (25)
+                                            p     max rated                       
+      stability, voltage regulation, and frequency control [24].                  
+      Finally, the tertiary level consists of an outer voltage control            
+      loop and an inner current control loop.                                     
+        Droop control is widely utilized in distributed generation                
+      networks to enable effective load sharing among parallel-                   
+      connected inverters. This approach is particularly                          
+      advantageous as it operates independently of communication                  
+                                          Fig. 5. Droop control strategies. (a) (P–ω) droop characteristics (b) (Q–V)
+      links between inverters, ensuring decentralized control.                    
+                                              droop characteristics.              
+      Droop control serves as the predominant external control                    
+      strategy implemented in nearly all experimentally validated                 
+      microgrids [25]. The primary mechanism for droop control                    
+      involves the regulation of both active and reactive power                   
+      [26]. The standard droop characteristics are illustrated in                 
+      Figs. 5, where the droop gains (K and K ) are determined                    
+                          p   q                                                   
+      based on the specific characteristics of the system [27]. In the            
+      case of a predominantly inductive grid, such as a high-voltage              
+                                          Fig. 6. Block diagram of voltage-frequency-droop controller.
+      network, the conventional droop control equations can be                    
+      formulated as follows [28].                                                 
+               (     )                                                            
+       ω=ω  − K P out −P ref         (20)                                         
+          ref p                                                                   
+               (     )                                                            
+       V =V − K Q out −Q ref         (21)                                         
+          ref q                                                                   
+      where V and ω represent the amplitude and angular frequency                 
+      of the inverter's output voltage, respectively, while V and                 
+                                     ref                                          
+      ω  denote the rated output voltage and frequency of the                     
+       ref                                                                        
+      inverter under no-load conditions. P and P correspond to                    
+                          out  ref                                                
+      the feedback and reference values for the active power,                     
+      whereas Q and Q represent the feedback and the reference                    
+            out  ref                                                              
+      values for reactive power (refer to Fig.7), respectively.                   
+        Furthermore, in addition to noise suppression, the active                 
+      power droop mechanism is intended to emulate the inertia                    
+                                          Fig. 7. Grid forming inverter controller for BESS based on droop control.
+      effect observed in synchronous machines [29]. The grid-                     
+      forming inverter controller for BESS based on droop control IV. SIMULATION RESULTS
+      is shown in Fig. 7. The selection process of the droop                      
+                                            This section presents the assessment of the proposed
+      controller coefficients involves defining the permissible                   
+                                          HMGES. The elements of the system were simulated in
+      deviations in voltage and frequency corresponding to the                    
+                                          MATLAB/Simulink 2023 with a 20-kW wind generation
+      inverter's output power range [30]. Beginning with the                      
+                                          system, a 30 kW photovoltaic system, and a 30 kW battery
+      voltage droop coefficient, the maximum and minimum                          
+                                          energy storage system. The technical study seeks to: (i)
+      voltage levels are defined by                                               
+                                          optimize power extraction from renewable sources, (ii)
+        V                                                                       
+        max                                                                       
+           =(1+∆v)(cid:1)V                                                        
+                n                                                                 
+                                          supply the generated power to the load, and (iii) keep the
+                                    (22)                                         
+                                          system stable even when there is an outage of the grid while
+        V min =(1−∆v)(cid:1)V n                                                 
+                                          ensuring a unity power factor and steady DC-bus voltage,
+      where V is the nominal voltage. Since the inverters are                     
+           n                              irrespective of loading circumstances. This scenario aims to
+      positioned at a distance from the load, a voltage drop occurs               
+                                          demonstrate that the grid-forming inverter provides swift
+      along the transmission line, resulting in a lower voltage at the            
+                                          frequency response and maintains grid stability, validating its
+      load. Hence, the droop coefficient is adjusted for the                      
+                                          appropriateness for contemporary AC microgrids. The
+      compensation.                                                               
+                                          overall performance of the GFM and the GFL inverter control
+       K = ∆v (cid:1)(V Q )          (23) and the system is tested under varying constant solar
+        q    max rated                                                            
+                                          radiation, sudden application of constant wind speed, and
+         Authorized licensed use limited to: Zhejiang University. Downloaded on September 17,2026 at 06:26:04 UTC from IEEE Xplore. Restrictions apply.
+
+
+===== PAGE 5 / 6 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+      outage of AC grid. A steady wind speed of 8 m/s is sustained ensuring optimal performance. Fig. 9(b) highlights the
+      and the solar radiation of 1000 W/m2 is adopted. stability of the DC-link voltage, which remains consistently
+        Figure 8 illustrates the power generation and consumption regulated across all scenarios. Further, Fig. 9(c) shows the
+      dynamics within the system, showcasing contributions from grid current during connection and outage. It can be seen that
+      the photovoltaic system (PVS), wind generation system the load is continuously supplied with its requirements, as
+      (WGS), battery energy storage system (BESS), utility grid, confirmed from Figs. 9(d) and (e), where Fig. 9(e) presents
+      and load. It is evident that the maximum power is generated the load voltage and current waveforms, further validating the
+      by the PVS and WGS. Initially, the PVS begins supplying system’s reliability and effective power management. Lastly,
+      power from the start, while the WGS is integrated into the the actual values of both GFM and GFL inverters align with
+      system at t = 2s. During the first 2 seconds, the total load their respective reference values, confirming the accuracy of
+      demand of 30 kW is met by contributions from the PVS (9.1 the implemented control strategies, as confirmed from Figs.
+      kW), BESS (12 kW), and the utility grid (10 kW). Any 9 (f)-(i).             
+      discrepancies between generated and consumed power are                      
+      accounted for as system losses. Upon t = 2s, the WGS is                     
+      introduced, injecting 11.8 kW into the system. Consequently,                
+      the grid transitions from supplying power to absorbing 1 kW,                
+      effectively becoming a sinking power source. At t = 3.5s, the               
+      grid is fully disconnected, reducing its power contribution to              
+      zero. Despite this, the load power remains relatively constant,             
+      and the GFM inverter dynamically adjusts the battery power                  
+      output to maintain system stability.                                        
+        Figure 9 further demonstrates the effectiveness of the                    
+      proposed GFM and GFL inverter control strategies under                      
+      various operating conditions. As depicted in Fig. 9(a), the                 
+                                          Fig. 8. All generated and sinking powers.
+      actual power coefficient closely follows its reference value,               
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                 (a)                    (b)                     (c)               
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                 (d)                                            (f)               
+                                        (e)                                       
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                 (g)                                                              
+                                        (h)                     (i)               
+       Fig. 9. Effectiveness of the GFM and GFL inverter control for the overall system performance under different circumstances. (a) Wind power coefficient,
+           (b) Response of DC-link voltage, (c) Grid phase-a current, (d) Peak load voltage, (e) D-axis GFL inverter current, (f) Q-axis GFL inverter current,
+           (g) single phase load voltage and current, (h) Q-axis GFM inverter current, and (i) D-axis GFM inverter current.
+                                                )W(                               
+                                                srewoP                            
+         0.45                                                                     
+         0.4                                                                      
+         0.35                                                                     
+         0.3                                                                      
+         0.25                                                                     
+         0.2                                                                      
+         0.15                                                                     
+                        C optimum                                                 
+                        p                                                         
+         0.1            C actual                                                  
+                        p                                                         
+         0.05                                                                     
+          0.5 1 1.5 2 2.5 3 3.5 4 4.5 5                                           
+                  Time (s)                                                        
+        )V(                                                                       
+        egatlov                                                                   
+        daol                                                                      
+        kaeP                                                                      
+                               )V(                                                
+                               egatlov                                            
+                               knil-CD                                            
+                                                      )A(                         
+                                                      tnerruc                     
+                                                      a-esahp                     
+                                                      dirG                        
+                                                        15                        
+                                                                      I reference 
+                                                                      q,FL        
+                                                        10            I actual    
+                                                                      q,FL        
+                                                        5                         
+                                                        0                         
+                                                        -5                        
+                                                       -10                        
+                                                          10                      
+                                                       -15 0                      
+                                                          -10                     
+                                                       -20                        
+                                                          1.5 1.5005 1.501 1.5015 1.502
+                                                       -25                        
+                                                        0.5 1 1.5 2 2.5 3 3.5 4 4.5 5
+                                                                Time (s)          
+         50                     35                     50                         
+                                              I reference             I reference 
+                                              q,FM                    d,FM        
+                                30            I actual                I actual    
+                                              q,FM                    d,FM        
+         40                                            40                         
+                       I reference 25                                             
+                       d,FL                                                       
+                       I actual                                                   
+         30            d,FL                            30                         
+                                20                                                
+         20                     15                                                
+                40                                     20                         
+                                                         50                       
+                                10                                                
+                20                20                                              
+         10                                                                       
+                                                       10                         
+                 0              5                                                 
+                 1.5 1.5005 1.501 1.5015 1.502 0         0                        
+         0                        1.5 1.502 1.504 1.506 1.508 1.51 1.5 1.505 1.51 
+          0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 0              0                          
+                                 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5 0.5 1 1.5 2 2.5 3 3.5 4 4.5 5
+                 Time (s)                                                         
+                                        Time (s)                Time (s)          
+         Authorized licensed use limited to: Zhejiang University. Downloaded on September 17,2026 at 06:26:04 UTC from IEEE Xplore. Restrictions apply.
+
+
+===== PAGE 6 / 6 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                 V. CONCLUSION            [11] M. F. Elmorshedy et al., “Energy management of hybrid dc microgrid
+                                             with different levels of DC bus voltage for various load types,”
+        This study presented a comprehensive analysis of a GFM                    
+                                             Energies, vol. 16, no. 14. 2023. doi: 10.3390/en16145438.
+      inverter for a BESS to enhance voltage and frequency [12] M. F. Elmorshedy et al., “Improved performance of hybrid pv and wind
+      stability in an AC microgrid. The proposed system effectively generating system connected to the grid using finite-set model
+                                             predictive control,” IEEE Access, vol. 10, pp. 110344–110361, 2022.
+      integrated RESs, including a WGS and a PVS, ensuring                        
+                                          [13] M. Elmorshedy, M. M. Amin, F. F. M. El-Sousy, and O. A.
+      stable operation under varying conditions. By employing                     
+                                             Mohammed, “DC-Bus voltage control of MPPT-based wind
+      droop control, the GFM inverter maintained system stability, generation system using hybrid BESS-SMES system for pulse loads in
+      particularly during grid outages, while the GFL inverter ship power applications,” IEEE App. Power Electron Con. and Exp.
+                                             (APEC), 2021, pp. 76–82. doi: 10.1109/APEC42165.2021.9487114.
+      ensured proper synchronization with the utility grid through                
+                                          [14] W. Zhang, A. Maleki, and M. A. Rosen, “A heuristic-based approach
+      vector control and a PLL. Simulation results demonstrated                   
+                                             for optimizing a small independent solar and wind hybrid power
+      the effectiveness of the proposed control strategy in scheme incorporating load forecasting,” J. Clean. Prod., vol. 241, p.
+      maintaining steady voltage and frequency, ensuring rapid 117920, Dec. 2019, doi: 10.1016/J.JCLEPRO.2019.117920.
+                                          [15] O. Tremblay, L. A. Dessaint, and A. I. Dekkiche, “A generic battery
+      response to grid disturbances, and enabling seamless                        
+                                             model for the dynamic simulation of hybrid electric vehicles,” Proc.
+      transitions between grid-connected and islanded modes. The                  
+                                             2007 IEEE Veh. Power Propuls. Conf. (VPPC), pp. 284–289, 2007.
+      system's ability to adapt to sudden changes in power [16] S. M. Allam, M. F. Elmorshedy, and E. M. Rashad, “Load power and
+      generation and load demand, while preserving a stable DC- state-of-charge management strategy with MPPT of wind-driven
+                                             isolated PMSG,” Proc. 22nd Int. Con. on Elec. Machin, ICEM 2016,
+      link voltage, validates its robustness for contemporary AC                  
+                                             2016. doi: 10.1109/ICELMACH.2016.7732662.
+      microgrids. The findings highlight the significance of                      
+                                          [17] M. F. Elmorshedy, B. S. Algadair, and D. Almakhles, “Model
+      incorporating advanced inverter control strategies in predictive control of two-tier converter for maximum power extraction
+                                             from photovoltaic system,” Proc. 48th Ann. Con. IEEE Ind. Electron
+      microgrid applications, particularly in scenarios involving                 
+                                             Soc., IECON 2022, 2022, pp. 1–6.     
+      high penetration of RESs. Future research will focus on                     
+                                          [18] M. F. Elmorshedy, S. M. Allam, and E. M. Rashad, “Load voltage
+      further optimizing control methodologies, exploring real-                   
+                                             control and maximum power extraction of a stand-alone wind-driven
+      time hardware implementations, and investigating additional PMSG including unbalanced operating conditions,” 2016 18th Int.
+      scenarios to enhance system reliability and resilience. Middle-East Power Syst. Conf., pp. 552–559, 2017.
+                                          [19] P. Das, M. Abdelrahem, A. Farhan, M. A. Ismeil, and R. Kennel,
+                                             “Predictive direct torque control of permanent magnet synchronous
+                 ACKNOWLEDGMENT                                                   
+                                             generators (PMSGs) without weighting factors,” IEEE Conf. Power
+      This article is derived from research funded by the Research, Electron. Renew. Energy, CPERE 2019, no. Oct., pp. 296–301, 2019.
+                                          [20] Z. Zhang and R. Kennel, ‘‘Direct model predictive control of threelevel
+      Development, and Innovation Authority (RDIA) of Saudi                       
+                                             NPC back-to-back power converter PMSG wind turbine systems under
+      Arabia under grant number (13354-psu-2023-PSNU-R-3-1-                       
+                                             unbalanced grid,’’ in Proc. IEEE Int. Symp. Predictive Control Electr.
+      EI-). The authors express their appreciation for the technical              
+                                             Drives Power Electron. (PRECEDE), Oct. 2015, pp. 97–102.
+      support from the Renewable Energy Lab and recognize that [21] S. Jayalath and M. Hanif, “Generalized LCL-filter design algorithm for
+                                             grid-connected voltage-source inverter,” IEEE Trans. Ind. Electron.,
+      Prince Sultan University has graciously funded the conference               
+                                             vol. 64, no. 3, pp. 1905–1915, 2017, doi: 10.1109/TIE.2016.2619660.
+      registration expenses.                                                      
+                                          [22] M. A. Hossain, H. R. Pota, W. Issa, and M. J. Hossain, “Overview of
+                                             AC microgrid controls with inverter-interfaced generations,” Energies,
+                   REFERENCES                                                     
+                                             vol. 10, no. 9, pp. 1–27, 2017, doi: 10.3390/en10091300.
+                                          [23] S. Ullah, L. Khan, I. Sami, and N. Ullah, “Consensus-based delay-
+      [1] Sunddararaj Suvetha Poyyamani et al., “Design of novel HG-SIQBC-        
+                                             tolerant distributed secondary control strategy for droop controlled ac
+         fed multilevel inverter for standalone microgrid applications,” Applied  
+                                             microgrids,” IEEE Access, vol. 9, pp. 6033–6049, 2021.
+         Sciences, 12, no. 18: 9347, 2022. https://doi.org/10.3390/app12189347    
+                                          [24] R. Majumder et al., “Improvement of stability and load sharing in an
+      [2] M. F. Elmorshedy et al., “Performance investigation and control design  
+                                             autonomous microgrid using supplementary droop control loop,” IEEE
+         of SSI grid-connected system for PV applications with maximum            
+                                             Trans. Power Syst., vol. 25, no. 2, pp. 796–808, 2010.
+         power extraction,” Alexandria Eng. J., vol. 78, pp. 354–366, 2023.       
+                                          [25] N. W. A. Lidula and A. D. Rajapakse, “Microgrids research: A review
+      [3] Durgam, Rajababu et al., “Investigations on the modulation strategies   
+                                             of experimental microgrids and test systems,” Renew. Sustain. Energy
+         for performance improvement of a controlled wind energy system,”         
+                                             Rev., vol. 15, no. 1, pp. 186–202, 2011.
+         Electronics, 11, no. 23: 3931, 2022.                                     
+                                          [26] N. Pogaku, M. Prodanović, and T. C. Green, “Modeling, analysis and
+      [4] Um Subramaniam et al., “A MIMO–ANFIS-controlled solar-fuel-cell-        
+                                             testing of autonomous operation of an inverter-based microgrid,” IEEE
+         based switched capacitor z-source converter for an off-board ev          
+                                             Trans. Power Electron., vol. 22, no. 2, pp. 613–625, 2007.
+         charger,” Energies, 16, no. 4: 1693, 2023.                               
+                                          [27] S. K. Khadem, M. Basu, and M. F. Conlon, “Parallel operation of
+      [5] A. Parisio, E. Rikos, and L. Glielmo, “A model predictive control       
+                                             inverters and active power filters in distributed generation system-A
+         approach to microgrid operation optimization,” IEEE Trans. Control       
+                                             review,” Renew. Sustain. Energy Rev., vol. 15, no. 9, pp. 5155–5168,
+         Syst. Technol., vol. 22, no. 5, pp. 1813–1827, 2014.                     
+                                             2011, doi: https://doi.org/10.1016/j.rser.2011.06.011.
+      [6] J. Schiffer, T. Seel, J. Raisch, and T. Sezi, “Voltage stability and    
+                                          [28] J. C. Vasquez et al., “Hierarchical control of intelligent microgrids,”
+         reactive power sharing in inverter-based microgrids with consensus-      
+                                             IEEE Ind. Electron. Mag., vol. 4, no. 4, pp. 23–29, 2010, doi:
+         based distributed voltage control,” IEEE Trans. Control Syst. Technol.,  
+                                             10.1109/MIE.2010.938720.             
+         vol. 24, no. 1, pp. 96–109, 2016, doi: 10.1109/TCST.2015.2420622.        
+                                          [29] U. B. Tayab, M. A. Bin Roslan, L. J. Hwai, and M. Kashif, “A review
+      [7] R. Aljarrah et al., “Issues and challenges of grid-following converters 
+                                             of droop control techniques for microgrid,” Renew. Sustain. Energy
+         interfacing renewable energy sources in low inertia systems: a review,”  
+                                             Rev., vol. 76, pp. 717–727, 2017.    
+         IEEE Access, vol. 12, Dec. 2023, pp. 5534–5561, 202.                     
+                                          [30] M. Melby, “Comparison of virtual oscillator control and droop control
+      [8] D. F. Xianxian Zhao, “Stability enhancement strategies for a 100 grid‐  
+                                             in an inverter-based stand-alone microgrid,” June. Master’s thesis in
+         forming and grid‐following,” IET Renew. Power Gener., 2021.              
+                                             Energy and Environmental Engineering, Norwegian University of
+      [9] H. Pishbahar, F. Blaabjerg, and H. Saboori, “Emerging grid-forming      
+                                             Science and Technology, Faculty of Information Technology and
+         power converters for renewable energy and storage resources              
+                                             Electrical Engineering Department of Electric Power Engineering,
+         integration–A review,” Sustain. Energy Technol. Assessments, vol. 60,    
+                                             2019.                                
+         Nov., 2023, doi: 10.1016/j.seta.2023.103538.                             
+      [10] S. A. Khan et al.,“Grid-forming converters for stability issues in future
+         power grids,” Energies, vol. 15, no. 14, 2022.                           
+         Authorized licensed use limited to: Zhejiang University. Downloaded on September 17,2026 at 06:26:04 UTC from IEEE Xplore. Restrictions apply.

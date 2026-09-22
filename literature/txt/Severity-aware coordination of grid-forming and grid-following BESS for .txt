@@ -1,0 +1,900 @@
+SOURCE PDF: Severity-aware coordination of grid-forming and grid-following BESS for .pdf
+TOTAL PAGES: 10
+
+
+===== PAGE 1 / 10 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+                             Electric Power Systems Research 254 (2026) 112658    
+                                                                                  
+                                Contents lists available at ScienceDirect         
+                                                                                  
+                           Electric Power Systems Research                        
+                                                                                  
+                             journal homepage: www.elsevier.com/locate/epsr       
+                                                                                  
+                                                                                  
+     Severity-aware coordination of grid-forming and grid-following BESS for      
+                                                                                  
+     stability enhancement in weak transmission networks                          
+                                                                                  
+     Sadnan Sakib ∗, M. J. Hossain                                                
+     SchoolofElectricalandDataEngineering,UniversityofTechnologySydney,Ultimo,2007,NSW,Australia
+                                                                                  
+     a r t i c l e i n f o  a b s t r a c t                                       
+                                                                                  
+     Keywords:              The displacement of synchronous machines with inverter-based renewable sources has intensified concerns over
+     Battery energy storage systems frequency instability, voltage dips, and weak fault resilience in transmission networks. While Battery Energy Stor-
+     Frequency stability                                                          
+                            age Systems (BESS) are increasingly deployed for stability support, limited research has addressed coordinated
+     Grid-forming inverters                                                       
+                            operation of grid-following (GFL) and grid-forming (GFM) inverters under renewable-dominated conditions. This
+     Grid-following inverters                                                     
+                            paper proposes a severity-aware BESS control framework that blends GFL and GFM contributions through a tran-
+     Renewable integration                                                        
+                            sition mechanism governed by a severity index, ensuring efficient current-following under mild disturbances and
+     Weak transmission networks                                                   
+                            robust voltage-forming support during severe faults. A systematic parametric analysis of GFM:GFL penetration
+                            ratios is conducted, where frequency and voltage stability metrics are consolidated into a composite index and
+                            optimised to quantify system performance. Results demonstrate monotonic improvements in frequency nadir,
+                            rate-of-change-of-frequency (RoCoF) suppression, and voltage resilience with increasing GFM share. Further-
+                            more, a comparative evaluation of Droop and Virtual Synchronous Machine (VSM) strategies at intermediate
+                            GFM shares highlights Droop’s faster transients against VSM’s superior damping and black start capability. Col-
+                            lectively, the findings confirm that severity-aware GFM-GFL coordination offers a practical pathway to resilient
+                            operation of renewable-rich weak grids, directly advancing the objectives of Sustainable Development Goal (SDG)
+                            7 on Affordable and Clean Energy.                     
+     1. Introduction                      grid environments and incapable of black start operations [5–7]. GFM
+                                          inverters, in contrast, regulate voltage and frequency independently,
+       The rapid transition toward renewable-dominated power systems emulating synchronous machine behavior and offering advantages such
+     is transforming conventional grid dynamics [1]. The displacement of as inertia provision, frequency support, and fault ride-through (FRT)
+     synchronous generators (SGs) with inverter-based renewable energy [8–10]. Various GFM control strategies have been developed, including
+     sources (RESs), such as solar photovoltaics and wind turbines, has re- droop control [10], virtual synchronous generator (VSG), compensated
+     sulted in declining system inertia and increased vulnerability to fre- generalized VSG (CGVSG), adaptive VSG (AVSG) [11], virtual oscilla-
+     quency and voltage instability, especially in weak transmission networks tor control (VOC) [12], and most recently, frequency-following voltage-
+     characterized by low short-circuit ratios (SCR), poor damping, and high forming (FFL-VFM) schemes [13].
+     rates of change of frequency (RoCoF) [2,3]. In this context, Battery En- While these strategies have shown promise individually, the liter-
+     ergy Storage Systems (BESS) have emerged as key stabilizing assets due ature still lacks a cohesive framework for integrating and coordinating
+     to their rapid response capabilities and controllability [3,4]. However, GFM and GFL inverters within a unified BESS control architecture. Previ-
+     the effectiveness of BESS depends heavily on the control strategy em- ous studies have shown that significant performance gaps exist between
+     ployed at the inverter interface, particularly under low-inertia, fault- GFM and GFL modes, particularly under fault and islanding scenarios
+     prone grid conditions [1,2].         [10,14]. Advanced control techniques, such as fictive dq control, have
+       Two dominant control approaches are employed for grid-interfaced been proposed to manage unbalanced load conditions in mini-grid envi-
+     inverters: Grid-Following (GFL) and Grid-Forming (GFM). GFL inverters ronments using GFM-based BESS, but these approaches remain limited
+     synchronize to the grid using a phase-locked loop (PLL) and inject cur- in scope [6]. Dynamic modelling efforts have successfully integrated
+     rent based on a reference, making them susceptible to instability in weak GFM inverter behaviour into industry-standard tools like Power System
+      ∗ Corresponding author.                                                     
+       E-mail addresses: sadnan.sakib@student.uts.edu.au (S. Sakib), jahangir.hossain@uts.edu.au (M.J. Hossain).
+     https://doi.org/10.1016/j.epsr.2025.112658                                   
+     Received 3 September 2025; Received in revised form 2 December 2025; Accepted 17 December 2025
+     Available online 23 December 2025                                            
+     0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+
+
+===== PAGE 2 / 10 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     S.SakibandM.J.Hossain                               Electric Power Systems Research 254 (2026) 112658
+     Simulation for Engineering (PSS®E) and MODES, yet coordination with and weak-grid validation within a unified analytical framework. The
+     GFL counterparts has not been systematically addressed [8]. Several present work is the first to provide such a comprehensive integration.
+     works have carried out comparative analyses of GFM strategies, such The workflow is summarized in the overall methodology framework
+     as droop control, VSG, CGVSG, and AVSG based on time-domain and shown in Fig. 1. The main contributions of this work are as follows:
+     impedance-domain metrics; however, these studies typically examine           
+                                           • Severity-Aware BESS Control Framework: A novel severity-aware
+     each strategy in isolation rather than within mixed GFM-GFL deploy-          
+                                            BESS coordination framework is proposed in which GFL and GFM
+     ments [11]. Moreover, while the influence of inverter penetration levels     
+                                            modes operate cooperatively, guided by a severity index and val-
+     on frequency response and damping has been analytically explored [10],       
+                                            idated against grid-code fault-clearing times. Unlike conventional
+     and the impact of BESS control on frequency containment under high           
+                                            approaches that treat the two modes as independent or mutually
+     renewable penetration has been evaluated using large-scale simulation        
+                                            exclusive, the framework enables GFL to deliver efficient current-
+     frameworks [9], coordinated control between inverter types and the ef-       
+                                            following during mild disturbances while GFM progressively as-
+     fect of varying GFM:GFL ratios have remained largely unexamined. Ad-         
+                                            sumes voltage-forming dominance under prolonged or severe faults.
+     ditional work has replicated real-world blackout events to validate the      
+                                            This adaptive interaction improves resilience in weak grids while
+     FRT benefits of GFM inverters, yet still did not consider multi-inverter     
+                                            preserving efficient operation under normal conditions.
+     coordination strategies [15].                                                
+                                           • Parametric Analysis of GFM and GFL Shares: Building on the co-
+       Recent research has increasingly focused on addressing the remain-         
+                                            ordination framework in Contribution 1, a systematic parametric
+     ing gaps in coordinated inverter control. Comparative benchmarks of          
+                                            analysis of GFM-GFL shares is conducted using normalised frequency
+     GFM and GFL BESS under real-world load-shedding events have re-              
+                                            metrics and voltage stability margins within a unified composite sta-
+     vealed notable differences in RoCoF and frequency nadir across mul-          
+                                            bility measure. Unlike prior studies that assess inverter penetration
+     tiple operational modes [16,17]. Comprehensive taxonomies have also          
+                                            only qualitatively or under isolated scenarios, this analysis provides
+     been developed to classify existing GFM control strategies while outlin-     
+                                            a structured, quantitative evaluation of how varying GFM:GFL ratios
+     ing future research directions, including hybrid angle-control schemes       
+                                            affect weak-grid dynamics. Results show consistent monotonic gains
+     and Multiple-Input Multiple-Output (MIMO)-based architectures [12].          
+                                            in frequency and voltage resilience as GFM share increases, offer-
+     To improve frequency stability assessments under realistic system con-       
+                                            ing evidence-based insight into the stabilising role of GFM in weak
+     ditions, new stability indices have been proposed that incorporate           
+                                            transmission networks.                
+     stochastic variations in renewable generation and load demand [18].          
+                                           • Comparative Evaluation of Droop and VSM Control: Extending
+     Advances in short-circuit modeling of inverter-interfaced generation         
+                                            the previous parametric analysis, a unified comparison of two GFM
+     stations (IIGS) under low short-circuit ratio (SCR) conditions have          
+                                            control strategies, Droop and VSM, is performed at representative
+     further introduced decoupled sequence-control approaches, improving          
+                                            GFM penetration levels of 50% and 75%. Unlike earlier studies
+     both convergence and modeling accuracy [19]. Control-design develop-         
+                                            conducted under inconsistent network assumptions, this evaluation
+     ments have explored the decoupling of frequency-following and voltage-       
+                                            is carried out within a coordinated GFM-GFL framework, ensuring
+     forming behaviors in inverters, leading to hybrid architectures particu-     
+                                            fair and meaningful benchmarking. The results highlight clear be-
+     larly well suited for constant-power renewable sources [13,20]. More-        
+                                            havioural differences: Droop provides faster primary response, while
+     over, coordinated control frameworks based on leader-follower consen-        
+                                            VSM offers stronger damping and black-start capability, giving prac-
+     sus mechanisms have demonstrated enhanced multi-inverter operation,          
+                                            tical guidance on their suitability for future high-IBR grids.
+     enabling improved frequency regulation, reactive-power sharing, and          
+     resilience to communication disturbances in microgrids [21].                 
+                                            Collectively, these contributions advance robust BESS control strate-
+       Despite these advances, several important research challenges re-          
+                                          gies for inverter-dominated renewable-rich systems, providing a founda-
+     main unaddressed. A key limitation is the absence of a unified con-          
+                                          tion for resilient operation in weak grids. The paper is organised as fol-
+     trol framework that dynamically coordinates GFM and GFL inverter             
+                                          lows: Section 2 outlines the proposed methodology, Section 3 describes
+     modes within BESS, particularly during fault and disturbance scenar-         
+                                          the network and cases, Section 4 discusses results, and Section 5 con-
+     ios in weak grids, where most existing studies continue to treat these       
+                                          cludes with key findings and future work.
+     control strategies in isolation [5,11,21,22]. Additionally, there is a no-   
+                                          2. Proposed methodology                 
+     ticeable lack of systematic investigations into how varying the shar-        
+     ing of GFM and GFL inverters, affects critical stability indicators like     
+                                            This section outlines the proposed BESS control methodology, com-
+     RoCoF, frequency nadir, and FRT performance in low-inertia systems           
+                                          prising: (i) a severity-aware GFL-GFM blending scheme, (ii) multi-
+     [15,16,23,24]. Furthermore, although a range of GFM strategies have          
+                                          objective optimisation of GFM:GFL penetration, and (iii) comparative
+     been proposed in the literature, comparative evaluations under consis-       
+                                          assessment of Droop and VSM at mid-level penetration. The overall
+     tent test conditions remain scarce. In particular, the relative strengths    
+                                          framework appears in Fig. 1.            
+     and weaknesses of droop control and VSG approaches are rarely assessed       
+     side by side within standardised weak grid environments, making it dif-      
+                                          2.1. Severity-aware coordination framework
+     ficult to draw meaningful conclusions about their suitability for next-      
+     generation inverter-based systems [11].                                      
+                                            The first contribution introduces a severity-aware BESS control
+       Building on these observations, this work addresses three major gaps.      
+                                          framework in which GFM and GFL operate in coordination during grid
+     First, existing studies lack a coordinated GFM-GFL architecture capable      
+                                          disturbances, rather than in an exclusive switching manner. The aim is
+     of adapting contributions based on real-time disturbance severity. Sec-      
+                                          to exploit the current-following efficiency of GFL under mild conditions
+     ond, no prior work offers an optimisation-based analysis of GFM:GFL          
+                                          while simultaneously enabling voltage-forming robustness of GFM dur-
+     penetration using unified frequency and voltage metrics. Third, fair         
+                                          ing severe faults.                      
+     comparisons of GFM controls, such as Droop and VSM, under identi-            
+     cal weak-grid conditions remain absent. This study fills these gaps by       
+                                          2.1.1. Severity index                   
+     proposing a severity-aware blended GFM-GFL coordination scheme, an A dimensionless severity index 𝑆(𝑡) is defined to quantify the dis-
+     optimisation-driven penetration analysis, and a unified evaluation of turbance level, normalised against grid code thresholds for frequency
+     Droop and VSM controls, including black-start capability. deviation, RoCoF, and voltage deviation:
+       Table 1 further highlights these gaps, indicating that prior studies       
+                                                        |𝑑𝑓|                      
+     rarely integrate GFM-GFL coordination, penetration-level assessment, 𝑆(𝑡) = 𝛼 | 𝑓(𝑡)−𝑓 ref| + 𝛽 | | 𝑑𝑡 | | + 𝛾 | 𝑉 ref −𝑉(𝑡) | (1)
+                                                Δ𝑓     RoCoF   Δ𝑉                 
+                                                 max      max    max              
+                                         2
+
+
+===== PAGE 3 / 10 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     S.SakibandM.J.Hossain                               Electric Power Systems Research 254 (2026) 112658
+         Table 1                                                                  
+         Comparison of studies on GFM-GFL coordination and weak-grid, renewable-dominated system performance.
+          Ref Severity-Aware GFM–GFL Co- Comparative Evalu- Parametric Analysis of Assessment under Weak Grid Renewable- Dominated Sys-
+              ordination   ation of GFM Con- GFM:GFL Ratios Conditions tem Context
+                           trol Strategies                                        
+          [5] (cid:55)     (cid:55) (cid:55)    (cid:51)     (cid:51)             
+          [6] (cid:55)     (cid:55) (cid:55)    (cid:51)     (cid:51)             
+          [9] (cid:55)     (cid:55) (cid:51)    (cid:51)     (cid:51)             
+          [11] (cid:55)    (cid:51) (cid:55)    (cid:51)     (cid:51)             
+          [13] (cid:55)    (cid:55) (cid:51)    (cid:51)     (cid:51)             
+          [16] (cid:55)    (cid:55) (cid:55)    (cid:51)     (cid:51)             
+          [21] (cid:55)    (cid:55) (cid:55)    (cid:51)     (cid:51)             
+          This Work (cid:51) (cid:51) (cid:51)  (cid:51)     (cid:51)             
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                              Fig. 1. Overall proposed methodology framework.     
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                        Fig. 2. Sensitivity of S to variations in the weighting coefficients 𝛼, 𝛽, and 𝛾.
+                                                                                  
+     where Δ𝑓 , RoCoF , and Δ𝑉 denote the allowable limits for fre- cleared within the fast-protection time frame, while the second repre-
+          max  max   max                                                          
+     quency deviation, RoCoF, and voltage deviation. The severity index ap- sents an extended disturbance within the backup protection range. This
+     plies grid-code normalisation to keep all metrics dimensionless and com- setup aligns with NER practices while enabling validation of the pro-
+     parable, enabling equal weights (𝛼 = 𝛽 = 𝛾 = 1) as a neutral baseline. posed control.
+     Sensitivity tests (±50%) show only minor variation (≈3.4–3.6; Fig. 2),       
+     indicating that the GFM–GFL coordination remains robust to weighting         
+                                          2.1.3. Coordinated mode transition logic
+     choices.                                                                     
+                                            Instead of exclusive mode switching, a blended control law governs
+                                          inverter operation during disturbances. The coordinated reference is ex-
+                                          pressed as:                             
+     2.1.2. Fault duration and grid-code validation                               
+       To validate the coordination mechanism, disturbances are modelled ( )      
+     at distribution-level buses (20 kV). According to the National Electric- 𝑢∗(𝑡) = (1−𝜆)𝑢∗ (𝑡)+𝜆𝑢∗ (𝑡);𝜆(𝑡) = min 1, 𝑆(𝑡) ⋅ 𝑡 fault (2)
+                                                  GFL  GFM                        
+                                                                 𝑆   𝑡            
+     ity Rules (NER) [25], systems at 100 kV and below follow “as neces- th,high clear,max
+     sary” clearing guidelines. In this study, two representative cases are ap-   
+                                            where 𝜆(𝑡) is the hybrid blending factor in [0,1] that sets the rela-
+     plied, namely a fault duration of 𝑡 ( fa 50 u 1 lt ) = 60 ms at bus 501 (20 kV) and tive GFL-GFM contribution. It increases with the severity index 𝑆(𝑡) and
+     𝑡 (502) = 100 ms at bus 502 (20 kV). The first represents a disturbance the ratio 𝑡 ∕𝑡 . Thus, 𝜆 = 0 gives pure GFL, 𝜆 = 1 gives pure
+      fault                                    fault clear,max                    
+                                         3
+
+
+===== PAGE 4 / 10 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     S.SakibandM.J.Hossain                               Electric Power Systems Research 254 (2026) 112658
+     GFM, and intermediate values yield a smooth hybrid response. For short 2.2.2. Composite stability index
+     disturbances (≈60 ms), 𝜆 ≈ 0.5 indicates balanced coordination, while The optimization problem is formulated to determine the optimal
+     more severe faults (≈100 ms) drive 𝜆 → 1, shifting toward dominant GFM share 𝑥 ∈ [0,1] that maximises overall stability performance. The
+     GFM support.                         composite stability index consolidates frequency and voltage domain
+                                          metrics as follows:                     
+     2.1.4. Control laws                              (                      )    
+       The coordinated framework employs complementary GFL and GFM Maximise 𝐽(𝑥) = 𝑤 𝑓 ⋅ 𝛼 1 𝑚 𝑓nadir +𝛼 2 𝑚 𝑓peak +𝛼 3 𝑚 IAE +𝛼 4 𝑚 ITAE +𝛼 5 𝑚 𝑇
+                                                                             𝑠    
+     control laws that operate simultaneously and transition smoothly based       
+                                                       (            )             
+     on disturbance severity. In GFL mode, the inverter behaves as a current- + 𝑤 ⋅ 𝛽 𝑚 +𝛽 𝑚 +𝛽 𝑚 , (7)
+                                                      𝑣 1 𝑉                       
+                                                          min                     
+                                                             2 𝑉over 3 Δ𝑉         
+     controlled device, tracking 𝑑𝑞-axis current references derived from the      
+     active and reactive power setpoints:                                         
+                                                    Margin Value                  
+     𝑖∗ (𝑡) =                                                                     
+          𝑃∗                                                                      
+            +𝑗                                                                    
+               𝑄∗                                                                 
+                 ,                    (3)                                         
+                                                 𝑚                                
+                                                  ⋅                               
+                                                  =                               
+                                                     Threshold                    
+                                                          ,  𝑚                    
+                                                              ⋅                   
+                                                              ∈ [0,1].      (8)   
+      𝑑𝑞 𝑉 (𝑡) 𝑉 (𝑡)                                                              
+          𝑑𝑞   𝑑𝑞                           where 𝑚 is the normalised stability margin for each metric relative to
+     where 𝑃∗,𝑄∗ are the commanded active and reactive powers and 𝑉 𝑑𝑞 (𝑡) its limit. The weights 𝑤 𝑓 and 𝑤 𝑣 set the relative importance of frequency
+     is the measured 𝑑𝑞-frame voltage. This mode provides fast current- and voltage objectives in the optimisation.
+     limited response and effective damping during mild disturbances where        
+     PLL synchronisation remains reliable.                                        
+                                          Subject to:.                            
+       In contrast, the GFM mode regulates voltage and frequency directly         
+     through droop control:               𝑓  ≤ 𝑓(𝑡) ≤ 𝑓 , |𝑑𝑓| ≤ RoCoF ,𝑉 ≤ 𝑉(𝑡) ≤ 𝑉 , 0 ≤ 𝑥 ≤ 1,
+                                           min   max | | 𝑑𝑡 | | max min max       
+      𝛿̇ (𝑡) = 𝜔(𝑡) = 𝜔 −𝐾 ( 𝑃(𝑡)−𝑃∗ ) ,                                    (9)   
+             ref 𝑓                                                                
+              (    )                                                              
+     𝑉 𝑑 ∗ 𝑞 (𝑡) = 𝑉 ref −𝐾 𝑣 𝑄(𝑡)−𝑄∗ , (4) where 𝑓 min and 𝑓 max denote allowable frequency bounds, RoCoF max is
+     where 𝑃(𝑡) and 𝑄(𝑡) are instantaneous powers, 𝛿(𝑡) is the phase angle the maximum permissible rate-of-change of frequency, and 𝑉 min ,𝑉 max
+     with angular frequency 𝜔(𝑡), 𝜔 and 𝑉 are nominal settings, and 𝐾 , are the voltage limits as per grid code requirements.
+                    ref ref            𝑓                                          
+     𝐾 are the active- and reactive-power droop gains. This mode provides         
+      𝑣                                                                           
+     voltage formation, inertia-like support, and improved robustness under 2.2.3. Optimization algorithm
+     severe faults.                                                               
+                                            The GFM:GFL penetration ratio is optimised using Particle Swarm
+       Blending this behaviour through the severity-dependent factor 𝜆(𝑡)         
+                                          Optimisation (PSO), where each particle represents a candidate share
+     allows fast GFL response during mild events and a smooth shift to GFM 𝑥 ∈ [0,1] and the objective is to maximise the composite stability index
+     dominance as severity increases, ensuring stable and adaptive perfor-        
+                                          𝐽(𝑥). The particle update rule is:      
+     mance across varying disturbances.                                           
+                                          Δ𝑥𝑘+1 = 𝜔Δ𝑥𝑘 +𝑐 𝑟                       
+                                                     (                            
+                                                     𝑥  −𝑥𝑘                       
+                                                          )                       
+                                                           +𝑐 𝑟                   
+                                                              (                   
+                                                              𝑥  −𝑥𝑘              
+                                                                   )              
+                                                                    ;             
+                                            𝑖    𝑖 1 1 𝑖,best 𝑖 2 2 global 𝑖      
+     2.2. Multi-objective optimization of GFM:GFL penetration ratios 𝑥𝑘+1 = 𝑥𝑘 +Δ𝑥𝑘+1 (10)
+                                               𝑖  𝑖   𝑖                           
+                                          where Δ𝑥 is the GFM-share update, 𝜔 the inertia weight, 𝑐 ,𝑐 the ac-
+                                               𝑖                       1 2        
+       Building upon the coordination framework, the second contribution          
+                                          celeration gains, and 𝑟 ,𝑟 random terms. Here, 𝑥 and 𝑥 are the
+                                                     1 2          𝑖,best global   
+     evaluates the dynamic impact of varying GFM:GFL shares. A total gen-         
+                                          particle and global best values. Iterations continue until the GFM share
+     eration of 330 MW is maintained, with penetration ratios ranging from        
+                                          that maximises 𝐽(𝑥) is found.           
+     fully GFL (𝑥 = 0) to fully GFM (𝑥 = 1) across bus 502, as shown in           
+     Table 2.                                                                     
+                                          2.3. Comparative evaluation of Droop and VSM control
+             Table 2                                                              
+                                            Following the parametric analysis in contribution 2, this contribution
+             Allocation of GFM and GFL power across sce-                          
+             narios.                      compares Droop and VSM controls at 50% and 75% GFM shares, evalu-
+                                          ating frequency-voltage performance and black-start capability. Droop
+              GFM Share (𝑥) GFM (MW) GFL (MW)                                     
+                                          and VSM serve as alternative GFM outer loops: for each GFM share 𝑥,
+              0.00   0     330            BESS units operate either Droop or VSM, with the remainder in GFL
+              0.25   82.5  247.5                                                  
+                                          mode; no inverter uses both controls simultaneously.
+              0.50   165   165                                                    
+              0.75   247.5 82.5                                                   
+              1.00   330   0              2.3.1. Droop control                    
+                                            Droop control applies proportional 𝑃–𝑓 and 𝑄–𝑉 laws:
+                                               (   )       (   )                  
+                                          Δ𝑓 = −𝑘 𝑃 −𝑃∗ , Δ𝑉 = −𝑘 𝑄−𝑄∗ ,   (11)   
+                                               𝑝          𝑞                       
+     2.2.1. Stability metrics                                                     
+                                          where 𝑘 and 𝑘 are droop coefficients. It enables simple power sharing
+       To assess dynamic performance under different GFM:GFL ratios, both 𝑝 𝑞     
+                                          but lacks inertia emulation, making weak grids more sensitive to fre-
+     frequency- and voltage-domain indicators are used. Frequency devia-          
+                                          quency disturbances. This algebraic structure enables a rapid response
+     tions are measured using the integral of absolute error (IAE) and the        
+                                          to disturbances, a behaviour also reported in prior studies, such as Tozak
+     integral of time-weighted absolute error (ITAE), defined as:                 
+                                          et al.[12] and the experimental results of Nassif et al.[15], where droop-
+          𝑇            𝑇                                                          
+     IAE = |𝑓(𝑡)−𝑓 |𝑑𝑡,ITAE = 𝑡⋅|𝑓(𝑡)−𝑓 |𝑑𝑡; (5)                                  
+                                          based GFM inverters consistently exhibited the quickest frequency ar-
+        ∫ |   ref|   ∫  |    ref|                                                 
+         0 |    |     0 |     |           rest.                                   
+       In the voltage domain, performance is assessed through the mini-           
+     mum and maximum values of the voltage trajectory, together with their 2.3.2. VSM control
+     deviation, expressed as:               VSM incorporates swing dynamics to emulate synchronous machine
+                                          behaviour:                              
+     𝑉  = min 𝑉(𝑡), 𝑉 = max 𝑉(𝑡), Δ𝑉 = 𝑉 −𝑉 . (6)                                 
+      min      over         over min                                              
+         𝑡∈[0,𝑇]   𝑡∈[0,𝑇]                  𝑑𝜔 (   )                              
+                                          𝑀   +𝐷 𝜔−𝜔∗ = 𝑃∗ −𝑃,             (12)   
+       where 𝑉 and 𝑉 are the minimum and maximum voltages, with 𝑑𝑡                
+           min over                                                               
+     Δ𝑉 their deviation, capturing dips, overshoot, and recovery for the com- where 𝑀 is virtual inertia and 𝐷 is damping. This provides an inertia-
+     posite stability index.              like response and enhanced damping, improving transient stability.
+                                         4
+
+
+===== PAGE 5 / 10 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     S.SakibandM.J.Hossain                               Electric Power Systems Research 254 (2026) 112658
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                           Fig. 3. Simplified Australian power system test network (Area 5).
+                                                                                  
+     These additional dynamic elements slow the initial response but sig- 3.2. Cases considered
+     nificantly enhance oscillation attenuation and settling behaviour. This      
+     inertia damping effect is discussed in the VSM literature [12], where The simulation cases correspond directly to the three methodologi-
+     VSM implementations demonstrate smoother trajectories and superior cal contributions. Contribution 1 considers four benchmarks: a baseline
+     transient damping compared with droop control. without IBRs, GFL-only, GFM-only, and coordinated GFM–GFL control
+                                          governed by the severity index, thereby illustrating the incremental ben-
+                                          efits of adaptive coordination. Contribution 2 extends this through a
+     2.3.3. Black start capability                                                
+                                          systematic parametric sweep of GFM shares 𝑥 ∈ {0,0.25,0.5,0.75,1.0},
+       In weak-grid conditions, droop control can cause frequency drift           
+                                          assessed using a composite frequency–voltage stability index that con-
+     while VSM offers smoother recovery, though their effectiveness depends       
+                                          solidates nadir, overshoot, settling behavior, and voltage margins into a
+     on system conditions [26]. Here, 𝑃 and 𝑄 denote active and reactive          
+                                          unified measure of dynamic resilience. Contribution 3 compares Droop
+     power, respectively, and 𝜎 (𝑡) represents the generator state. This can      
+                  𝐺                       and VSM control at representative shares of 50% and 75%, focusing
+     be expressed by droop-style balance:                                         
+                                          not only on transient stability but also on black start capability, which
+     ∑(     ) (    ) (    )                                                       
+       𝑃 +𝑗𝑄 = 𝑃 +𝑗𝑄 − 𝑃 +𝑗𝑄 ,        (13) provides insight into post-disturbance recovery. All simulations are con-
+        𝑖𝑗 𝑖𝑗  𝐿  𝐿   𝐺  𝐺                                                        
+      𝑗                                   ducted in Power System Simulation for Engineering (PSS®E 36.2) with
+     and VSM-like cranking dynamics:                                              
+                                          Python 3.12 on a 12th Generation Intel® Core™ i7-1265U Central Pro-
+                                          cessing Unit (CPU) with a base clock speed of 1.80 gigahertz (GHz) and
+               (    )                                                             
+     𝑃                                                                            
+      𝐺                                                                           
+       (𝑡) = 𝜎                                                                    
+          𝐺                                                                       
+          (𝑡)𝑃                                                                    
+            avail                                                                 
+              − 1−𝜎                                                               
+                  𝐺                                                               
+                   (𝑡) 𝑃                                                          
+                     crank                                                        
+                       ,                  32 gigabytes (GB) of Random Access Memory (RAM); which is appropri-
+          𝑄 (𝑡) = 𝜎 (𝑡)𝑄 − ( 1−𝜎 (𝑡) ) 𝑄 , (14) ate for system-level assessment of transmission networks; experimental
+           𝐺  𝐺  avail 𝐺   crank                                                  
+                                          and HIL validation are left for future work. The next section discusses
+     which capture system balancing and generator startup in restoration.         
+                                          the corresponding results in detail.    
+     The next section introduces the network and cases for evaluating the         
+     proposed methodology.                4. Results and discussion               
+                                            This section validates the methodology through dynamic simula-
+     3. Network and cases considered                                              
+                                          tions, presenting results from coordination analysis to parametric eval-
+                                          uation and strategy comparison.         
+       This section outlines the network setup and case studies used to           
+     demonstrate the validity of the proposed methodology.                        
+                                          4.1. Severity-aware GFM–GFL coordination
+     3.1. Network considered                The proposed severity-aware GFM–GFL coordination strategy is
+                                          benchmarked against three baselines: (i) no IBRs, (ii) GFL-only opera-
+       The test system is based on Area 5 of the simplified Australian 14- tion, and (iii) GFM-only operation. Quantitative results are summarised
+     bus generator network (Fig. 3), which has been widely used in stabil- in Table 3, with the corresponding dynamic responses shown in Figs. 4
+     ity studies of inverter-dominated grids. Detailed specifications are pro- and 5.
+     vided in Gibbard and Vowles[27], Al-Masood[28]. Area 5 represents a Without IBRs, the system exhibits the most critical instability, with
+     weak-grid environment with synchronous machines, inverter-based re- a frequency nadir of 47.5 Hz, 14.2% overshoot, RoCoF of 2.95 Hz/s,
+     newables, and interconnected loads, making it well-suited for evaluating and the highest severity index (𝑆 = 4.77). Under GFL-only operation, the
+     the proposed coordinated BESS control framework. In this work, the bus nadir improves to 48.1 Hz and RoCoF falls to 1.25 Hz/s, but overshoot
+     hosting both GFM and GFL units represents the medium-voltage collec- increases to 16%, highlighting the limited ability of PLL-driven current
+     tor bus of a multi-inverter BESS plant, where several inverter blocks op- control to stabilise post-fault voltage. In contrast, GFM-only operation
+     erate in parallel [29,30]. In line with modern practice, some blocks are reduces overshoot to 4.4% and raises the nadir to 48.95 Hz, yet voltage
+     configured in GFM mode to establish local voltage and frequency, while recovery is slower (minimum 0.197 p.u. at 5.1 s), indicating degraded
+     others remain GFL for power dispatch and charging control [16,21]. performance under prolonged low-voltage conditions.
+                                         5
+
+
+===== PAGE 6 / 10 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     S.SakibandM.J.Hossain                               Electric Power Systems Research 254 (2026) 112658
+     Table 3                                                                      
+     Voltage and frequency performance across four cases.                         
+      Case       Peak vol- tage Peak vol- tage Over- shoot Lowest vol- Lowest vol- Ave- rage Ro- Frequ- ency Severity Index
+                 (p.u.)  time (s) (%)   tage (p.u.) tage time (s) CoF (Hz/s) Nadir (Hz) (S)
+      Without IBRs 1.159 5.75    14.2   0.166   5.10   2.9544  47.5071 4.77       
+      With GFL   1.177   5.23    16.0   0.183   5.09   1.2470  48.1359 4.10       
+      With GFM   1.061   1.46    4.4    0.197   5.10   1.0950  48.9474 3.50       
+      Coordinated GFM & GFL 1.051 1.15 3.4 0.200 5.10  0.8081  48.9768 3.44       
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+              Fig. 4. Dynamic response at Bus 509 across four cases: (a) frequency, (b) active power, (c) voltage, and (d) reactive power.
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+             Fig. 5. Comparative performance across four control schemes: (a) RoCoF and frequency nadir, and (b) voltage dip and overshoot.
+                                                                                  
+       The coordinated GFM–GFL strategy delivers the most balanced re- pure GFL to blended GFM-GFL operation improves frequency nadir, re-
+     sponse: overshoot is limited to 3.4%, RoCoF is reduced to 0.81 Hz/s (a duces overshoot, and accelerates voltage recovery (Table 3)
+     73% improvement relative to the no-IBR case), and the nadir increases Overall, the results show that the severity-aware coordinated strat-
+     to 48.98 Hz, yielding the lowest severity index (𝑆 = 3.44). These gains egy consistently outperforms either single-mode configuration, com-
+     arise from the complementary roles of GFL and GFM modes: GFL control bining their strengths to enhance stability, damping, and resilience
+     provides fast, current-limited active–reactive support, while GFM con- under grid-code fault conditions, thereby substantiating the claims of
+     trol supplies robust voltage formation and inertia-like frequency support Contribution 1.
+     as severity increases. Through the severity-dependent blending factor        
+     𝜆(𝑡), the controller smoothly shifts from GFL-dominant behaviour dur-        
+     ing mild events to greater GFM contribution during deeper faults. 4.2. Optimisation of GFM:GFL penetration ratios
+       From a control viewpoint, the shared bus functions as a multi-             
+     inverter BESS plant where GFM units act as stiff voltage sources and GFL The second contribution examines the impact of varying GFM:GFL
+     units operate as PLL-synchronised current sources. Guided by the sever- penetration ratios (𝑥 ∈ {0,0.25,0.5,0.75,1.0}) while maintaining a fixed
+     ity index, GFM provides a strong local voltage-frequency reference while total generation of 330 MW. Frequency and voltage dynamics are evalu-
+     GFL delivers rapid current support, and shifting part of the plant from ated at bus 502, with results summarised in Tables 4–5 and illustrated in
+                                         6
+
+
+===== PAGE 7 / 10 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     S.SakibandM.J.Hossain                               Electric Power Systems Research 254 (2026) 112658
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                  Fig. 6. Frequency (a) and voltage (b) responses at Bus 502 under varying GFM/GFL penetration levels.
+                                                                                  
+                                                                                  
+        Table 4                            Table 6                                
+        Frequency stability metrics under different GFM:GFL ratios. Comparison of Droop and VSM control at 50% and 75% GFM share.
+        𝑥  Nadir (Hz) Peak (Hz) Δ𝑓 (Hz) Settling Time (s) IAE ITAE Metric Droop (50%) Droop (75%) VSM (50%) VSM (75%)
+        0.00 48.71 52.21 3.50 5.05 1.361 2.364 Frequency nadir (Hz) 49.09 49.15 47.9 49.07
+        0.25 49.22 52.61 3.39 4.90 0.940 1.750 Peak overshoot (Hz) 51.91 51.84 50.95 51.77
+        0.50 49.09 51.98 2.89 4.65 0.815 1.509 Settling frequency (Hz) 49.91 48.96 49.98 49.62
+        0.75 49.15 51.84 2.69 4.50 0.661 1.124 Voltage dip (p.u.) 0.57 0.61 0.63 0.62
+        1.00 49.19 51.69 2.50 4.21 0.568 0.937 Voltage overshoot (p.u.) 1.02 1.04 1.05 1.04
+        Table 5                                                                   
+        Voltage stability metrics under different GFM:GFL ratios.                 
+                                          5. Comparative evaluation of Droop and VSM control
+        𝑥   𝑉 (p.u.) 𝑉 (p.u.) Δ𝑉 (p.u.) Objective Function 𝐽                      
+            min   𝑜𝑣𝑒𝑟                                                            
+                                            The final contribution compares Droop and VSM performance at
+        0.00 0.525 1.10 0.525 0.175                                               
+                                          50% and 75% GFM (Table 6, Fig. 8), highlighting trade-offs in tran-
+        0.25 0.572 1.02 0.448 0.456                                               
+        0.50 0.588 1.03 0.442 0.497                                               
+                                          sient response and robustness. Four cases are evaluated: Droop–50%,
+        0.75 0.614 1.04 0.426 0.569       Droop–75%, VSM–50%, VSM–75% with each scenario using a single
+        1.00 0.621 1.04 0.419 0.619       control law.                            
+                                            Droop control provides faster and more bounded transients, with
+                                          nadirs of 49.09 Hz (50% GFM) and 49.15 Hz (75% GFM) and over-
+     Figs. 6 and 7. The analysis demonstrates a consistent trend: higher GFM      
+                                          shoots of 51.91–51.84 Hz. However, its proportional 𝑃–𝑓 and 𝑄–𝑉 re-
+     penetration yields progressively enhanced stability across both domains.     
+                                          sponse lacks inertia emulation, leading to reduced long-term frequency
+       At full GFL operation (𝑥 = 0), frequency resilience is weakest, with restoration, as reflected in the lower settling frequency at 75% GFM
+     a nadir of 48.71 Hz, overshoot of 3.50 Hz, settling time of 5.05 s, and      
+                                          (48.96 Hz). VSM control, by contrast, delivers superior inertial buffering
+     the lowest 𝑉                                                                 
+           min                                                                    
+             of 0.525 p.u. Introducing partial GFM support (𝑥 = 0.25) and damping, improving nadir recovery and raising settling frequency
+     raises the nadir and shortens settling time, but error indices remain high   
+                                          to 49.98 Hz (50% GFM) and 49.62 Hz (75% GFM), albeit with slightly
+     (IAE = 0.940, ITAE = 1.750). A more balanced response appears at 𝑥 = higher voltage overshoot (1.05 p.u. versus 1.02 p.u. for Droop).
+     0.5, where overshoot falls to 2.89 Hz, settling time reduces to 4.65 s, and  
+                                            Sensitivity analysis (Fig. 9) shows that varying the droop gain
+     both IAE and ITAE drop markedly. The strongest performance occurs at         
+                                          𝑘 (0.1–0.5) or the VSM inertia constant 𝑀 (1–5) produces only
+                                           𝑝                                      
+     full GFM (𝑥 = 1.0), with the highest nadir (49.19 Hz), lowest overshoot marginal changes in voltage dip (≈0.565–0.570 p.u.) and overshoot
+     (2.50 Hz), fastest settling (4.21 s), and minimum error values (IAE =        
+                                          (≈1.01–1.05%). This narrow response band confirms that both control
+     0.568, ITAE = 0.937). Voltage stability also improves monotonically,         
+                                          methods are highly robust to parameter tuning.
+     as 𝑉                                                                         
+       min                                                                        
+         increases from 0.525 to 0.621 p.u. and Δ𝑉 contracts from 0.525 Overall, Droop is favourable when rapid transient response and
+     to 0.419 p.u.                                                                
+                                          bounded overshoot are prioritised, whereas VSM offers improved fre-
+       This monotonic trend reflects the complementary control roles of           
+                                          quency recovery and resilience in low-inertia weak grids. The comple-
+     GFM and GFL inverters. For a fixed 330 MW BESS, increasing the GFM           
+                                          mentary strengths identified here reinforce the need for coordinated
+     share 𝑥 shifts more capacity from current-following to voltage-forming, GFM–GFL deployment in high-renewable networks.
+     enhancing virtual inertia and voltage stiffness at bus 502 and thus          
+     improving nadir, reducing overshoot, and accelerating damping. The           
+     remaining GFL units exploit this strengthened reference to deliver rapid 5.1. Black start capability
+     active and reactive current injection. Together, this coordination yields    
+     an ≈ 60% reduction in ITAE, an ≈ 20% narrowing of Δ𝑉, and a 3.5 fold The black start analysis was conducted with 75% GFM share for
+     increase in 𝐽(𝑥) between 𝑥 = 0 and 𝑥 = 1. both Droop and VSM strategies, to verify whether coordinated GFM-GFL
+       𝐽(𝑥) rises steadily with GFM share, peaking at 0.619 when 𝑥 = 1. control can reliably achieve restoration rather than emphasising differ-
+     Higher GFM fractions deliver stability levels close to full GFM, im- ences between the two modes. Results (Table 7, Fig. 10) confirm that
+     proving frequency nadir, damping, recovery, and voltage support. This both strategies enable successful staged re-energisation of the system
+     confirms Contribution 2 and validates the optimisation framework in through GFM-BESS resources, including load pickup, generator crank-
+     weak-grid conditions.                ing, and island synchronisation.        
+                                         7
+
+
+===== PAGE 8 / 10 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     S.SakibandM.J.Hossain                               Electric Power Systems Research 254 (2026) 112658
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+           Fig. 7. Variation of (a) frequency and voltage indicators, and (b) objective function (J) and ITAE across different GFM penetration levels.
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+               Fig. 8. Frequency (a) and voltage (b) responses of Droop and VSM controls at 50% and 75% GFM penetration levels.
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                          Fig. 9. Variation of (a) droop coefficients and (b) inertia constants.
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+        Fig. 10. Black start restoration at Bus 509 using GFM-BESS showing voltage and frequency performance with (a) Droop control and (b) VSM control.
+                                                                                  
+                                         8
+
+
+===== PAGE 9 / 10 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     S.SakibandM.J.Hossain                               Electric Power Systems Research 254 (2026) 112658
+        Table 7                           CRediT authorship contribution statement
+        Black start restoration sequence enabled by GFM-BESS.                     
+         Time (s) Action                    Sadnan Sakib: Writing – original draft, Visualization, Validation,
+                                          Software, Methodology, Investigation, Conceptualization; M. J. Hos-
+         0   Energise Bus 509 in GFM mode (black start resource)                  
+         5   Staged load pickup at Bus 509                                        
+                                          sain: Writing – review & editing, Validation, Supervision, Software,
+         8   Staged load pickup at Bus 315                                        
+                                          Methodology, Investigation, Conceptualization.
+         12  Close line 507–509: energise cranking path                           
+         15  Load pickup at Bus 507       Declaration of competing interest       
+         20  Generator cranking at Bus 507                                        
+         22  Continue energisation toward backbone                                
+                                            The authors declare no conflicts of interest.
+         26  Additional load pickup at Bus 507                                    
+         30  Close line 504–508: transmission strengthening                       
+         35  Load pickup at Bus 508       References                              
+         40  Transformer energisation (Bus 501–504)                               
+         45  Generator cranking at Bus 501 [1] M. Amir, K. Singh, Frequency regulation strategies in renewable energy-dominated
+         50  Backbone energisation (504–508 and 505–507) power systems: issues, challenges, innovations, and future trends, in: Advanced Fre-
+         50–60 Synchronisation of islands/generators at Buses 501, 502, 503 quency Regulation Strategies in Renewable-Dominated Power Systems, Elsevier,
+                                             2024, pp. 367–381.                   
+                                           [2] R. Aljarrah, B.B. Fawaz, Q. Salem, M. Karimi, H. Marzooghi, R. Azizipanah-
+                                             Abarghooee, Issues and challenges of grid-following converters interfacing renew-
+       Droop and VSM show broadly similar restoration performance, with able energy sources in low inertia systems: a review, IEEE Access 12 (2024)
+                                             5534–5561.                           
+     Droop offering faster initial transients and VSM providing smoother tra-     
+                                           [3] D. Zhang, G.M. Shafiullah, C.K. Das, K.W. Wong, Optimal allocation of battery en-
+     jectories with reduced oscillations. This close alignment demonstrates       
+                                             ergy storage systems to improve system reliability and voltage and frequency stabil-
+     that the coordinated framework itself is capable of facilitating black ity in weak grids, Appl. Energy 377 (2025) 124541.
+     start restoration in weak grids when sufficient GFM share is present. [4] M. Eskandari, A. Rajabi, A.V. Savkin, M.H. Moradi, Z.Y. Dong, Battery energy storage
+                                             systems (BESSs) and the economy-dynamics of microgrids: review, analysis, and
+     These findings highlight the viability of the proposed control architec-     
+                                             classification for standardization of BESSs applications, J. Energy Storage 55 (2022)
+     ture, which not only enhances dynamic stability under disturbances but 105627.
+     also enables full grid restoration. This concludes the evaluation of the [5] V.V. Babu, J.P. Roselyn, C. Nithya, P. Sundaravadivel, Development of grid-forming
+                                             and grid-following inverter control in microgrid network ensuring grid stability and
+     three contributions and leads to the final discussion on conclusions and     
+                                             frequency response, Electron. (Basel) 13 (10) (2024) 1958.
+     future work.                          [6] M. Singh, L.A.C. Lopes, N.A. Ninad, Grid forming battery energy storage system
+                                             (BESS) for a highly unbalanced hybrid mini-grid, Electr. Power Syst. Res. 127 (2015)
+                                             126–133.                             
+     6. Conclusion and future work         [7] S. Ghosh, A. Bohra, S. Dutta, S. Verma, Integration strategies for large-scale re-
+                                             newable interconnections with grid forming and grid following inverters, capacitor
+                                             banks, and harmonic filters, Energies 18 (15) (2025) 3934.
+       This paper has addressed the stability challenges of renewable-            
+                                           [8] K. Maslo, S. Macejko, T. Haba, Grid forming inverter models for stability studies, in:
+     dominated weak grids by proposing a severity-aware BESS control              
+                                             2024 24th International Scientific Conference on Electric Power Engineering (EPE),
+     framework where GFL and GFM inverters operate in a blended manner IEEE, 2024, pp. 1–6.
+                                           [9] Y. Zuo, Z. Yuan, F. Sossan, A. Zecchino, R. Cherkaoui, M. Paolone, Performance
+     governed by a severity index. The framework ensures efficient current-       
+                                             assessment of grid-forming and grid-following converter-interfaced battery energy
+     following during mild disturbances while adaptively transitioning to         
+                                             storage systems on frequency regulation in low-inertia power grids, Sustain. Energy
+     voltage-forming dominance under severe faults, thus combining opera- Grid. Netw. 27 (2021) 100496.
+                                          [10] R.H. Lasseter, Z. Chen, D. Pattabiraman, Grid-forming inverters: a critical asset for
+     tional efficiency with resilience. Validation through parametric analysis    
+                                             the power grid, IEEE J. Emerg. Sel. Top. Power Electron. 8 (2) (2019) 925–935.
+     confirmed monotonic improvements in frequency nadir, RoCoF suppres-          
+                                          [11] N. Mohammed, H. Udawatte, W. Zhou, D.J. Hill, B. Bahrani, Grid-forming inverters:
+     sion, and voltage stability with increasing GFM share, while compara- a comparative study of different control strategies in frequency and time domains,
+     tive evaluation of Droop and VSM strategies highlighted the trade-off be- IEEE Open J. Ind. Electron. Soc. 5 (2024) 185–214.
+                                          [12] M. Tozak, S. Taskin, I. Sengor, B.P. Hayes, Modelling and control of grid forming
+     tween Droop’s faster transients and VSM’s superior damping and black         
+                                             converters: a systematic review, IEEE Access (2024).
+     start capability.                    [13] C. Ai, Y. Li, Z. Zhao, Y. Gu, J. Liu, An extension of grid-forming: a frequency-
+       The findings highlight severity-aware GFM-GFL coordination as a following voltage-forming inverter, IEEE Trans. Power Electron. (2024).
+                                          [14] S. Chen, Y. Wang, Z. Tian, X. Xiao, X. Xie, O. Gomis-Bellmunt, Understanding a type
+     practical pathway to resilient inverter-dominated grids, directly sup-       
+                                             of forced oscillation in grid-forming and grid-following inverter connected systems,
+     porting SDG 7. Nonetheless, the study is limited to simulation-based IEEE Trans. Power Electron. (2025).
+     validation on simplified test systems. The detailed RMS-domain simu- [15] A.B. Nassif, M. Rahmatian, A. Paaso, H. Othman, V. Gevorgian, X. Fan, M. Elizondo,
+                                             W. Du, Improving frequency stability and minimizing load shedding events by adopt-
+     lations presented are suitable for system-level evaluation under weak        
+                                             ing grid-scale energy storage with grid forming inverters, IEEE, 2023.
+     grid conditions. By contrast, hardware or hardware-in-the-loop (HIL)         
+                                          [16] O.D. Garzon, A.B. Nassif, M. Rahmatian, Grid forming technologies to improve rate
+     implementation would require extensive laboratory infrastructure and is of change in frequency and frequency nadir: analysis-based replicated load shedding
+                                             events, Electron. (Basel) 13 (6) (2024) 1120.
+     therefore identified as an important direction for future work.Future re-    
+                                          [17] H. Yu, L. Yao, S. Liang, J. Xu, F. Cheng, M. Wu, Coordinated control of grid-following
+     search should extend the framework to larger networks with renewable         
+                                             and grid-forming energy storage for virtual inertia response considering frequency
+     variability, demand fluctuations, and real-world contingencies, while modal characteristics, Int. J. Electr. Power Energy Syst. 168 (2025) 110686.
+                                          [18] M.I. Saleem, S. Saha, T.K. Roy, S.K. Ghosh, Assessment and management of fre-
+     exploring real-time optimisation of GFM:GFL allocation, hybrid Droop-        
+                                             quency stability in low inertia renewable energy rich power grids, IET Generat.
+     VSM schemes, advanced black start protocols, and experimental or HIL         
+                                             Transmiss. Distribut. 18 (7) (2024) 1372–1390.
+     implementations (e.g., on RTDS/OPAL-RT platforms with physical in- [19] Y. Tang, G. Luo, Y. Pu, Short-circuit calculation approach of grids with high propor-
+     verters) to bridge the gap between simulations and field deployment. tion of inverter-interfaced generator stations, Electr. Power Syst. Res. 241 (2025)
+                                             111407.                              
+                                          [20] H. Zhao, Q. Zong, H. Zhou, W. Yao, K. Sun, Y. Zhou, J. Wen, Frequency-voltage
+                                             active support strategy for hybrid wind farms based on grid-following and grid-
+     Funding                                                                      
+                                             forming hierarchical subgroup control, CSEE J. Power Energy Syst. (2025).
+                                          [21] A. Singhal, T.L. Vu, W. Du, Consensus control for coordinating grid-forming and grid-
+       There is no funding to report for this submission following inverters in microgrids, IEEE Trans. Smart Grid 13 (5) (2022) 4123–4133.
+                                          [22] D. Pattabiraman, SSR performance of droop-controlled grid-forming inverters in se-
+                                             ries compensated networks, Electr. Power Syst. Res. 241 (2025) 111394.
+     Data availability statement          [23] S. Sakib, M.B. Hossain, M.A. Zamee, M.J. Hossain, M.A. Habib, Role of battery en-
+                                             ergy storage systems: a comprehensive review on renewable energy zones integra-
+                                             tion in weak transmission networks, J. Energy Storage 128 (2025) 117223.
+       The data that support the findings of this study are available from        
+                                          [24] S. Chen, Y. Wang, M. Yang, X. Xiao, O. Gomis-Bellmunt, Forced oscillation in hybrid
+     the corresponding author upon reasonable request. system with grid-following and grid-forming inverters, Energy 319 (2025) 134915.
+                                         9
+
+
+===== PAGE 10 / 10 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     S.SakibandM.J.Hossain                               Electric Power Systems Research 254 (2026) 112658
+     [25] NER Clause S5.1a.8 – Fault Clearance Times, 2025. https://energy-rules.aemc.gov. [28] N. Al-Masood, Prevention of secondary PV trip in power systems with high pene-
+        au/ner/177/29929.                    tration of photovoltaics, in: Proceedings of the 2017 IEEE Power & Energy Society
+     [26] A.B. Birchfield, Graph decomposition for constructing blackstart restoration strate- General Meeting (PESGM), IEEE, 2017, pp. 1–5.
+        gies in benchmark cases, Electr. Power Syst. Res. 212 (2022) 108402. https://doi. [29] A.E.M. Operator, Application of advanced grid-scale inverters in the NEM, White
+        org/10.1016/j.epsr.2022.108402       Paper, August (2021).                
+     [27] M. Gibbard, D. Vowles, Simplified 14-Generator Model of the South East Australian [30] Aurecon Australasia Pty Ltd, Hornsdale Power Reserve Expansion
+        Power System, Technical Report, The University of Adelaide, 2014. Updated 17 May Project, Technical Report, Aurecon, 2023. Revision C, ARENA Knowledge
+        2014.                                Sharing.                             
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                         10

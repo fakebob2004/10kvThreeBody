@@ -1,0 +1,17 @@
+# Generated Simulink and MATLAB artifacts
+build/
+slprj/
+**/*.slxc
+*.autosave
+
+# Generated review images and logs
+*.png
+*.log
+logs/
+
+# macOS / MATLAB local state
+.DS_Store
+*.asv
+
+# External reference projects retain their own history and are not vendored.
+references/

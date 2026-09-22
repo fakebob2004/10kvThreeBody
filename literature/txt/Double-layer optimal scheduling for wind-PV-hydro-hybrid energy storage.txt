@@ -1,0 +1,1552 @@
+SOURCE PDF: Double-layer optimal scheduling for wind-PV-hydro-hybrid energy storage.pdf
+TOTAL PAGES: 16
+
+
+===== PAGE 1 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+                                   Energy 336 (2025) 138476                       
+                                                                                  
+                                Contents lists available at ScienceDirect         
+                                                                                  
+                                      Energy                                      
+                                                                                  
+                            journal homepage: www.elsevier.com/locate/energy      
+                                                                                  
+                                                                                  
+                                                                                  
+     Double-layer optimal scheduling for wind-PV-hydro-hybrid energy storage      
+     system with multi-timescale coordination                                     
+                                                                                  
+                          *                                                       
+     Xiaojuan Han , Xiaoyan Yang , Tianyang Bai                                   
+     School of Control and Computer Engineering, North China Electric Power University, Beijing, 102206, China
+                                                                                  
+     A R T I C L E I N F O  A B S T R A C T                                       
+                                                                                  
+     Keywords:              A multi-scenario coordinated control method for wind–photovoltaic–hydro–hybrid energy storage system is
+     Wind–photovoltaic–hydro–hybrid energy proposed to address the challenges of intensified power fluctuations and underutilized energy storage resulting
+     storage system                                                               
+                            fromhigh-penetrationrenewableintegration.TypicalwindandphotovoltaicscenariosaregeneratedusingLatin
+     Hybrid energy storage                                                        
+                            Hypercube Sampling and reduced via an improved Load Curve–ISODATA clustering algorithm to characterize
+     Fluctuation suppression                                                      
+                            output uncertainty. A mixed-integer programming model is developed to minimize system output variability,
+     Auxiliary services                                                           
+                            with pumped storage utilized for inter-day energy shifting and battery energy storage for minute-level fluctua-
+                            tionsuppression.Powerallocationunderhydropower–storagecouplingconstraintsisoptimizedusingtheGurobi
+                            solver. A capacity allocation model is formulated based on the Competition of Tribes and Cooperation of
+                            Members(CTCM)algorithmtoenhanceancillaryservicerevenues.Inthisframework,pumpedstorageprioritizes
+                            peak-valley arbitrage, while battery energy storage is allocated to fast-response frequency regulation. The
+                            effectivenessofthemethodproposedinthispaperwasverifiedthroughsimulationofactualoperatingdatafrom
+                            a northwest power grid in China.Calculation results indicate that the method proposed in this paper can reduce
+                            system volatility by 12.46 % while increasing revenue by $34,762. The system’s return on investment reaches
+                            15.3%,witha paybackperiodof6.1years, effectivelyenhancingboth systemstabilityandeconomicefficiency.
+     1. Introduction                      dispatch of renewable energy. However, most of these studies exhibit
+                                          certain shortcomings that require further refinement. Hedayatnia A
+       With the deepening implementation of the "Dual-Carbon" strategy, et al. [7] proposed a microgrid energy management method based on
+     theinstalledcapacityofrenewableenergysources(RES),representedby deep reinforcement learning. Although this approach achieved good
+     wind and photovoltaic power, has experienced exponential growth. results in real-time dynamic scheduling of microgrids, it primarily
+     However, the large-scale integration of highly volatile wind and focused on short-term energy optimization. It lacked consideration for
+     photovoltaic power into the grid poses significant challenges to the comprehensive scheduling across multiple time scales and energy
+     reliability and stability of power systems [1,2]. Hydropower, through sources, as well as long-term optimization, limiting its application in
+     the rapid operation of turbine units, provides large-scale adjustable large-scale power grids. Sepehrzad R et al. [8]proposed an intelligent
+     electricity [3,4]. Building upon this, hydropower units and pumped dynamic energy management approach based on demand response and
+     storage units can effectively mitigate the variability and uncertainty of energy storage systems. While this research has made some progress in
+     wind-photovoltaic power outputs. Electrochemical energy storage, the dispatch of smart city microgrids, it fails to thoroughly address the
+     renowned for its rapid response and high energy conversion efficiency, coordinated dispatch of different energy forms within multi-energy
+     significantly curtails RES-induced fluctuations [5,6]. Consequently, complementary systems. Particularly when confronting the fluctua-
+     constructing a coordinated wind-photovoltaic-hydro-hybrid energy tions of wind and solar power, the system’s stability and economic
+     storage system (WPHHS) has become a critical pathway for enhancing viability remain difficult to guarantee. Sepehrzad R et al. [9] focus on
+     the resilience of modern power systems. energy management within integrated energy distribution systems,
+       To address the high proportion of new energy integration, recent considering interactions in energy markets and end-user participation.
+     studies have proposed various methods to optimize the integration and Their approach effectively manages the variability of different energy
+      * Corresponding author.                                                     
+       E-mail address: xiaoyanyang73@163.com (X. Yang).                           
+     https://doi.org/10.1016/j.energy.2025.138476                                 
+     Received 10 July 2025; Received in revised form 8 September 2025; Accepted 10 September 2025
+     Available online 11 September 2025                                           
+     0360-5442/© 2025 Elsevier Ltd. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+
+
+===== PAGE 2 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+     sources through short-term probabilistic scenario optimization. How- on price arbitrage and uncertainty management of wind solar water
+     ever, it primarily concentrates on the interaction between electricity storage systems in the mid-term market, which is more suitable for the
+     markets and demand response, failing to fully account for the role of mid-term market environment and has good robustness; However, the
+     energy storage systems in mitigating variability. Furthermore, it lacks model structure is complex, with numerous parameters, and relies on
+     in-depth research on the coordinated optimization of multi-energy sys- refined system modeling and market data. The feasibility of real-time
+     tems. The above studies reveal that while significant progress has been scheduling or multi zone system expansion still needs improvement.
+     made in microgrids, demand response, and energy management, these Zhang Q et al. [24] proposes a two-stage dispatch optimization model
+     approaches generally suffer from inadequate coordination within for wind-solar-hydro-pumped storage multi-energy system. Its main
+     multi-energy systems. Most research focuses on optimizing the sched- advantages are clear modeling structure, strong practicality of dispatch
+     uling of single energy sources or technologies, failing to fully consider strategy, and the improvement of renewable energy utilization rate
+     the synergistic scheduling and optimization of multiple energy forms verified by examples. However, the model does not take into account
+     [10–12].                             practical factors such as energy storage response characteristics, energy
+       Numerous scholars worldwide have achieved notable progress in efficiencylossandcapacitydegradation,whichlimitsitsapplicationand
+     multi-energycomplementaryoptimalschedulingforwind-photovoltaic- promotion under more complex working conditions. Boretti A et al.
+     hydro system. Ariyaratna PM et al. [13] developed a cross-regional [25] quantified that Australia’s pure wind-solar grid would require 327
+     wind-photovoltaic-hydro complementary system optimization model, GW of wind-solar capacity plus 48 TWh of hydrogen storage (electro-
+     demonstrating hydropower’s effectiveness in stabilizing RES fluctua- lyzerpeakcapacity267GW/averagecapacity46GW),aresultconsistent
+     tions, yet overlooked the impact of wind-photovoltaic output uncer- with the Royal Society’s projections. However, they did not explore
+     taintyunderextremeweatherconditionsonschedulingoutcomes.Zhao nuclearpoweras analternativeforuranium-richAustralia,nordid they
+     H et al. [14] employed a multi-agent system to address short-term conduct economic analyses involving multiple investors. Geng C et al.
+     wind-photovoltaic-hydro scheduling modeling and optimization, offer- [26] propose a PVsyst-TRNSYS coupled model to optimize hybrid
+     ing decision-makers flexible trade-offs between operational efficiency wind-solar-geothermal systems for high-altitude off-grid buildings,
+     and costs. However, it failed to account for the high volatility and achieving a 95 % renewable energy share and an electricity cost of
+     unpredictability of wind and photovoltaic power, limiting its ability to $0.12/kWh. However, the study fails to quantify carbon emission re-
+     manageoperationalrisksunderstrongRESuncertainty.JinXetal.[15] ductions, and the economic model does not account for fluctuations in
+     proposedtheSDDPframeworktoaddressthelong-termcomplementary policy subsidies. Jing Z et al. [27] A et al. proposed a cascade
+     dispatchofhydro-wind-solarsystems,integratingmultipleuncertainties hydro-wind-solar-storage complementary dispatch framework based on
+     with year-end reservoir capacity management. This approach increased a multi-dimensional three-dimensional power generation database.
+     channel utilization rates by over 80 %, but its failure to account for They innovatively quantified that reversible pumped hydro storage in-
+     short-term volatility limited its fine-tuning capabilities. Tapia Carpio creases renewable energy absorption rates by 40.78 %. However, this
+     LG et al. [16] proposed an mean-variance model to optimize regional approach fails to integrate the disruptive impact of climate change on
+     combinationsofhydro,wind,andsolarpowerinBrazil.Byconstructing runoffandreliesonsimulatedwindandsolardata.Intheabovestudies,
+     an efficient frontier, they achieved smoother output fluctuations, the energy storage system is limited to a single application scenario,
+     revealingthatthecurrentwindpowermixisefficientbuthighlyvolatile, resulting in low energy storage utilization and insufficient economy.
+     solar power lies far from the frontier, and hydro power is efficient with Regardingmulti-scenarioapplicationsofenergystorage,researchers
+     low volatility. However, the model is based solely on resource input have made incremental advancements. Cao Z et al. [28] proposed a
+     variability and does not incorporate practical operational conditions dual-objective optimization model based on weight coefficient λ trans-
+     such as grid transmission capacity and dispatch constraints. Liu B et al. formation. By solving it with PSO, they obtained the optimal energy
+     [17] proposed an opportunity-constrained cascade section nesting storageconfiguration(80kW/625kWhreducingwindpowerfluctuation
+     model that leverages hydropower flexibility to coordinate wind and to 18.6 %). However, they did not analyze the sensitivity impact of λ,
+     solar integration with transmission bottlenecks. This approach signifi- and the economic model did not incorporate practical factors such as
+     cantly reduced curtailment rates for wind and solar power (99.1 % policysubsidies.DicoratoMetal.[29]proposedamarketparticipation
+     during the flood season) and smoothed peak-to-valley load differences strategy for wind-storage systems based on dynamic programming,
+     (54.4 % reduction). However, it did not extend to multi-stakeholder demonstrating that 15 MW of energy storage can improve schedule
+     economic analysis. The above studies are highly dependent on the trackingratesandrespondtoelectricitypricefluctuations.However,the
+     flexible regulation capability of hydropower [18], but multiple un- study did not quantify battery degradation costs, and its economic
+     certainties, extreme weather and forecast bias can significantly limit its model relies on Italy’s specific subsidy policies. Han X et al. [30] pro-
+     regulationeffect,leadingtoreducedunitefficiency[19],increasedwind posed a multi-scenario shared control method for wind-solar hybrid
+     and photovoltaic power abandonment rates and reduced system reli- pumped storage, integrating load tracking and ancillary service opti-
+                                                           <                      
+     ability [20]. Battery energy storage can decouple time rigidity and shift mization to achieve load deviation 2 %. However, this approach does
+     fluctuating energy to peak demand; overcome spatial constraints and not incorporate medium-to-long-term hydrological forecasts, and its
+     hedge cross-regional errors [21]; protect core equipment and reduce economic model relies on region-specific electricity pricing policies.
+     frequent hydropower regulation. The rational use of energy storage in Han X et al. [31] proposed a dual-layer dynamic game optimization
+     multi-energy systems can effectively improve the above problems. method to optimize capacity allocation and operational strategies in
+       Themulti-energycomplementarysystemwithstoragehasalsomade multi-scenariosharedenergystoragesystems,therebyincreasingannual
+     greatachievementsintheresearchonoptimalscheduling.WangHetal. revenueandhigh-valuepeakshavingratios.However,themodelsuffers
+     [22] proposes a short-term joint dispatch model for fromhighcomputationalcomplexity,simulationdependencyonspecific
+     wind-solar-hydro-storage systems with variable-speed pumped storage data, and insufficient validation of its generalization across all seasonal
+                         +                                                        
+     units, following the "variable speed unit minimum start-stop princi- variations.Theresultsshowthattheannualtotalincomeandhigh-value
+     ple"strategytooptimizesystemfluctuationcontrolandcostefficiencyat peak-shaving rate are the highest under multiple scenarios, and the
+     the same time. This study combines the characteristics of complex cost-to-incomeratioisatanacceptablelowlevel.However,theseworks
+     pumping units to enhance the adaptability of the model to the actual focused solely on single-type storage system, lacking the adaptability
+     operation of the power grid. However, the model has a large amount of required for complex multi-modal scenarios [32].
+     calculation when solving, high algorithm complexity, and strong Whensolvingmulti-energycomplementarysystemscontainingclean
+     dependenceondataaccuracyandparameters.LiZetal.[23]proposesa RES, researchers usually use optimization algorithms. Jamal R et al.
+     mid-term (multi-stage) distributed robust optimization model, focusing [33] proposed an improved artificial hummingbird algorithm for the
+                                         2
+
+
+===== PAGE 3 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+     stochastic optimal reactive power dispatch problem containing renew- Section 2 addresses the uncertainty of wind and PV generation by
+     able energy sources that avoids local optimality by enlisting flight and generating typical scenarios using LHS and L-ISODATA. Sections 3
+     distance bandwidth motion, combined with Monte Carlo simulation to establish the WPHHS that considers multi-scenario applications of
+     deal with wind and water uncertainty. The results show significant optimize operation and ancillary services. Section 4 validates the pro-
+     reduction of grid losses, improvement of voltage profile and stability, posed approach through a case study, and Section 5 summarizes the
+     and better performance than mainstream optimization algorithms. conclusions and outlines future research directions.
+     Modu B et al. [34] proposed a framework for the efficient design and         
+     evaluation of independent hybrid renewable energy systems (HRES) to 2. Scenario generation and reduction for wind-photovoltaic
+     meet the energy needs of rural communities in northeastern Nigeria, power    
+     withthegoalofminimizingtheannualsystemcostofHRES.Atthesame                   
+     time, the reliability constraints of the probabilistic loss of power supply 2.1. Wind-photovoltaic scenario generation based on LHS
+     (LPSP)wasalsoconsidered.Comparedwithmultiplealgorithms,LF-SSA                
+     hasthebestsolution.WangZetal.[35]proposedanewmulti-objective Based on the probability density distributions of wind and photo-
+     optimization framework for risk-managed economic dispatch in hybrid voltaic power, a sampling algorithm is employed to generate probabi-
+     hydrothermal-wind-photovoltaicsystems(HTWPS).Themulti-objective listic forecast scenarios. LHS, a stratified sampling technique [18],
+     artificial rabbit optimization (MOARO) algorithm was used, combined approximates random sampling from multivariate parameter distribu-
+     withtheParetocriterionandfuzzytheorytooptimizedispatchdecisions tions.Comparedtoothersamplingmethods,LHSoffershigheraccuracy,
+     while balancing costs and risks. Wang Y et al. [36] proposed the smaller sampling sizes, and superior efficiency, thereby improving the
+     FORCL-LSHADE improved algorithm for the multi-region dynamic estimation of random variable means and variances while ensuring
+     economic dispatch problem exacerbated by wind/light fluctuations by robustness [38]. The LHS process involves two steps: interval sampling
+     means of fractional order mutation with a fine learning strategy to and sample correlation sorting.
+     optimize uncertainty modeling (based on Weibull/log-normal distribu- Historical wind and photovoltaic power data from Northwest China,
+     tion). Han X et al. [37] addresses the problems of uncertainty in which follow log-normal distributions, are used to generate 1,000 sce-
+     renewable energy generation and the single operation mode of energy narios via LHS. These scenarios are illustrated in Figs. 1 and 2, where
+     storage system, and proposes a cooperative game robust optimization each colored curve represents a potential wind or photovoltaic power
+     control method for a wind-photovoltaic hybrid energy storage system output trajectory.
+     basedonthedualsettlementmodeloftheelectricitymarket.Simulation               
+     results show that the cooperative game robust optimization model 2.2. Scenario reduction based on L-ISODATA
+     achieves the optimal operation of the wind-photovoltaic hybrid energy        
+     storage system considering multiple uncertainties, which can improve The Iterative Self-Organizing Data Analysis Algorithm (ISODATA) is
+     the system’s ability to cope with uncertainty risks and the system’s an unsupervised dynamic clustering method based on statistical pattern
+     reliability. The algorithms employed in the above papers emphasize recognition. Similar to the K-means algorithm, ISODATA iteratively
+     efficient exploration-exploitation balance, handling renewable energy determines cluster centers by optimizing sample means [39,40]. The L
+     uncertainty, and multi-objective optimization. However, they suffer -ISODATA algorithm, an improved version of the ISODATA clustering
+     from high computational complexity, parameter sensitivity, slow algorithm,isfirstappliedtoloadcurveclustering[41].Inthisstudy,itis
+     convergence, or local optimum issues, which limit their large-scale employed for wind-PV scenario reduction.
+     practical application.                 The L-ISODATA further adapts the number of clusters through
+       Theprimarycontributionofthispaperliesintheproposalofanovel splitting and merging operations based on data characteristics. The
+     multi-scenario coordinated control method that deeply optimizes the scenario valuesatclustercenters areselectedastypicalscenarios,while
+     volatility and uncertainty of wind, solar, and hydroelectric hybrid en- the number of scenarios within each cluster is normalized as their
+     ergy storage systems. Compared to existing research, this paper’s in- probability relative to the total LHS-generated scenarios. The L-ISO-
+     novations are primarily reflected in the following aspects: DATA is applied to reduce the generated wind and photovoltaic power
+                                          scenarios.TheresultingtypicalscenariosareillustratedinFigs.3and4.
+     1) Innovative Application of the Load Curve-ISODATA (L-ISODATA) To validate the effectiveness of the proposed clustering method, the
+       Clustering Algorithm: This paper applies the L-ISODATA clustering          
+       algorithm to scenario reduction in multi-energy complementary              
+       systems, effectively reducing the computational burden caused by           
+       uncertainty and improving optimization efficiency.                         
+     2) Introduction of the Competition of Tribes and Cooperation of              
+       MembersAlgorithm(CTCM):ThispaperappliestheCTCMalgorithm                    
+       to capacity allocation and scheduling optimization in multi-energy         
+       systems for the first time, overcoming the vulnerability of existing       
+       methodstolocaloptimalsolutionsandimprovingthesystem’sglobal                
+       optimization capabilities.                                                 
+     3) Multi-scenario and Multi-timescale Coordinated Scheduling: Unlike         
+       existing research, this paper not only considers short-term volatility     
+       scheduling but also comprehensively considers optimization re-             
+       quirements across multiple timescales, effectively improving               
+       renewable energy utilization and enhancing system stability and            
+       economic efficiency.                                                       
+       Through these innovations, the proposed method demonstrates sig-           
+     nificant advantages in the scheduling and optimization of multi-energy       
+     systems, improving system robustness and economic efficiency while           
+     also filling gaps in existing research.                                      
+       The subsequent chapters of this paper are organized as follows: Fig. 1. Wind power output scenarios.
+                                         3
+
+
+===== PAGE 4 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+                                          scenario reduction results obtained by L-ISODATA were compared with
+                                          those of K-means, ISODATA, and K-means-L-ISODATA (K-L-ISODATA).
+                                          The clustering performance was evaluated using the Davies-Bouldin
+                                          Index (DBI) and Dunn Index (DI) [42], with comparative results sum-
+                                          marized in Table 1.                     
+                                            It can be seen in Table 1, the L-ISODATA scenario reduction algo-
+                                          rithm exhibits significant advantages in clustering performance. Taking
+                                          photovoltaic scenario reduction as an example:
+                                            DBI: The L-ISODATA algorithm achieves a DBI value of 0.0066,
+                                          which is markedly lower than 1.2245 for K-means and 1.1659 for ISO-
+                                          DATA. This demonstrates that L-ISODATA achieves a superior balance
+                                          between intra-cluster compactness and inter-cluster separation.
+                                            DI:TheL-ISODATAalgorithmattainsthehighestDIvalueof1.1419,
+                                          underscoring its exceptional capability in maximizing inter-cluster
+                                          distinguishability.                     
+                                            Combining the two evaluation indexes of DBI and DI, it can be
+                                          concluded that the L-ISODATA algorithm is not only effective in
+                                          reducingtheintra-classdispersion,butalsohasanobviousadvantagein
+                                          maintaining the inter-class differentiation, which fully reflects the
+                                          excellent performance of the algorithm in clustering tasks.
+          Fig. 2. Photovoltaic power generation output scenarios.                 
+                                          3. Multi scenario optimization scheduling architecture of the
+                                          WPHHS                                   
+                                          3.1. Optimization scheduling architecture of the WPHHS
+                                            WPHHS is mainly composed of wind, photovoltaic generators, hy-
+                                          dropower stations, HESS and control center. The Optimization sched-
+                                          uling architecture of the WPHHS is shown in Fig. 5.
+                                            It can be seen from Fig. 5, the deep coupling of wind power,
+                                          photovoltaic power, hydropower and HESS has built an energy system
+                                          with multi-energy complementarity and coordinated optimization,
+                                          which is conducive to improving the utilization efficiency of renewable
+                                          energy and the stability of the power system. As typical intermittent
+                                          renewable energy sources, wind power and photovoltaic power are
+                                          significantlyaffectedbymeteorologicalconditionsanddiurnalchanges,
+                                          showing strong randomness and volatility. In contrast, hydropower
+                                          units have superior regulation capabilities, which can improve the sys-
+                                          tem’s ability to absorb RES to a certain extent. The introduction of en-
+                                          ergy storage systems can further enhance the system’s absorption
+                                          capacity and enhance coordination and optimization capabilities.
+                                            The HESS consists of battery energy storage (BES) and pumped
+            Fig. 3. Typical output scenarios of wind power.                       
+                                          storage (PS). Due to its rapid response characteristics, electric energy
+                                          storage can effectively suppress short-term fluctuations in wind and
+                                          photovoltaic power generation. When used in instantaneous power
+                                          buffering scenario, it can improve the quality of electricity and the
+                                          stability of grid operation; pumped storage, as a large-capacity, long-
+                                          cycle energy storage technology, is good at long-term energy trans-
+                                          portation. Through the two-way conversion mechanism of "electric
+                                          energy-potential energy", it absorbs excess electricity when wind and
+                                          photovoltaic power output is surplus, and releases it at peak load to
+                                          alleviate the contradiction between supply and demand of the grid. The
+                                          complementary synergy of the two types of energy storage methods
+                                          builds a hierarchical, multi-time scale energy storage network, which
+                                          effectivelyalleviatesthemismatchbetweentheuncertaintyofwindand
+                                          photovoltaic power generation and the load demand of the power grid.
+                                          Table 1                                 
+                                          Performance comparison of four wind farm scene reduction algorithms.
+                                           algorithm wind         photovoltaic    
+                                                     DBI    DI    DBI    DI       
+                                           K-means   2.2638 0.0023 1.2245 0.0058  
+            Fig. 4. Typical output scenarios of photovoltaics. ISODATA 2.1928 0.0030 1.1659 0.0070
+                                           K-L-ISODATA 0.0060 2.0581 0.0074 1.0829
+                                           L-ISODATA 0.0047 2.0856 0.0066 1.1419  
+                                         4
+
+
+===== PAGE 5 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                            Fig. 5. Optimization scheduling architecture of the WPHHS.
+                                                                                  
+     As a new type of hybrid power generation system, the WPHHS organi-           
+     cally combines wind energy, photovoltaic energy and hydropower, and          
+     utilizes the regulation capacity of hydropower stations and electric en-     
+     ergy storage to effectively mitigate system output fluctuations and          
+     improve the utilization efficiency of renewable energy. At the same          
+     time, the multi-energy complementary system can also be used to              
+     participate in auxiliary services, fully utilize the system capacity, and    
+     increase system benefits.                                                    
+     3.2. Multi-scenario two-layer collaborative optimization strategy            
+       Based on the WPHHS under multiple time scales, a two-layer                 
+     collaborative optimization strategy including optimized operation and        
+     ancillary services is constructed, as shown in Fig. 6.                       
+       It can be seen in Fig. 6 that the multi-energy complementary system        
+     coordinates diverse energy sources through a control center platform to      
+     ensure secure and stable operation. The upper-layer model, targeting         
+     minimization of system power fluctuations, addresses the inherent            
+     randomness and intermittency of wind and photovoltaic generation by          
+     establishing a mixed-integer linear programming (MILP) framework.            
+     This framework focuses on the aggregated system output and average           
+     power profile, coordinating energy storage devices and conventional          
+     generation units to minimize the mean squared deviation of power             
+     fluctuations over the operational horizon. The upper-layer model             
+     effectively reduces fluctuation amplitudes, enhancing grid stability.        
+       The lower-layer model optimizes economic benefits in ancillary             
+     service markets through a CTCM-based remaining capacity allocation           
+     strategy, achievingsynergistic maximization of revenue fromfrequency         
+     regulation, peak shaving, and peak-valley arbitrage. System revenue          
+     originates from two streams:                                                 
+     1) Peak-valley arbitrage: Storing energy (e.g., charging storage or          
+                                                Fig. 6. Dual layer collaborative optimization strategy.
+       pumping water) during low-demand periods with low electricity              
+                                         5
+
+
+===== PAGE 6 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+       prices and discharging/selling energy during high-demand periods ⎧         
+                                          ⎪                                       
+       with premium prices.               ⎪ ⎪V ≤ V ( t ) ≤ V                      
+                                          ⎪ ⎪ umin u umax                         
+                                          ⎨                                       
+     2) Ancillaryservice compensation:Adjustingpoweroutput tomaintain V ≤ V ( t ) ≤ V
+                                            dmin d  dmax                          
+                                                                           (6)    
+       gridfrequencystabilityandsupply-demandbalance,therebyearning ⎪ ⎪ ⎪ ⎪ V u ( 1 ) ≤ V u be
+       service fees from the grid operator. ⎪ ⎩ V ( 1 ) ≤ Vbe                     
+                                            d   d                                 
+     3.3. Operation optimization model for WPHHS based on MILP where V and V are minimum storage capacities of the upper and
+                                              umin dmin                           
+                                          lower reservoirs, respectively; V and V are maximum storage
+                                                          umax  dmax              
+     3.3.1. Objective function            capacities of the upper and lower reservoirs, respectively; Vbe and Vbe
+                                                                        u   d     
+       The WPHHS primarily integrates PS and BES into the existing wind-          
+                                          are initial storage capacities of the upper and lower reservoirs, respec-
+     photovoltaic-hydroframework.Byleveragingtheoperationalflexibility            
+                                          tively.                                 
+     of energy storage, this system mitigates the randomness, intermittency,      
+                                            Water Level-Storage Capacity Coupling Constraints
+     andvolatilityinhydro,wind,andphotovoltaicpowergenerationcaused {             
+                                            ( ) = ( ( ))                          
+     by geographical and meteorological factors, thereby reducing adverse V u t f u Z u t
+                                                                           (7)    
+                                            ( ) = ( ( ))                          
+                                           V t f Z t                              
+     impacts on grid security and stability. Therefore, an optimization con- d d d
+     trol model is developed with the objective of minimizing system              
+                                               ( ) ( )                            
+                                          whereZ t andZ t arewaterlevelsoftheupperandlowerreservoirs,
+     aggregated output fluctuation.           u    d                              
+     ⎧                                    respectively; f                         
+                                                  (⋅)                             
+                                                    and f                         
+                                                       (⋅)                        
+                                                        are elevation-storage curves defining the
+                                                 u    d                           
+     ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ minF 1 = T 1 ∑ T t=1 ( P a ( t )(cid:0) P av ) rela W tio a n te s r hi L p ev b e e l tw Fl e u e c n tu r a e t s i e o r n vo C i o r n c s a t p ra a i c n it t y s and water level, respectively.
+     ⎨                                                                            
+                                          {                                       
+      P ( t ) = P ( t )+ P ( t )+ P ( t )+ P ( t )+ P ( t ) (1) | Z ( T )(cid:0) Z ( 1 )| ≤ ε
+     ⎪ a   w  pv  s   ps  d                 u   u                                 
+     ⎪                                                                     (8)    
+     ⎪ ⎪ ⎪ ∑                               | Z u ( t )(cid:0) Z u ( t (cid:0) 1 )| ≤ ω
+     ⎪ ⎪ ⎪ ⎩P                                                                     
+       av                                                                         
+        =                                                                         
+         T                                                                        
+         1 T                                                                      
+           t=1                                                                    
+             P                                                                    
+             a                                                                    
+              ( t )                                                               
+                                          whereεiswaterleveldifferenceoftheupperreservoirbetweenthestart
+                                          and end of the planning period; ω is water level difference between
+     where F is fluctuation index of the system aggregated output; P is           
+         1                            av  adjacent scheduling periods.            
+     average aggregated output of the WPHHS over one operational cycle; T         
+                                            The output constraints of hydro power:
+                                     ( )                                          
+     is total duration of one operational cycle (24 h in this study); P t is      
+                                     a                                            
+                                             ≤ ( ) ≤                              
+                            ( )           P   P t P                        (9)    
+     aggregatedoutputofthesystematmomentt;P t iswindpoweroutput smin s smax       
+                            w                                                     
+             ( )                    ( )                                           
+     atmomentt,P t isphotovoltaicpoweroutputatmomentt,P t isthe                   
+            pv                     s                                              
+                                          whereP andP aretheminimumandmaximumpoweroutputsof
+     power output of the hydropower at moment t, P is the generation or smin smax 
+                             ps                                                   
+                                          the hydro unit, respectively.           
+     pumping power of the pumped storage unit at moment t, P is the dis-          
+                                  d                                               
+                                            Flow Constraints.                     
+     charging power of electric energy storage at moment t.The operational        
+                                            Constraints on the generation flow of conventional hydroelectric
+     cycle is defined as one day, divided into 96 intervals with a 15-min         
+                                          units                                   
+     resolution.                                                                  
+                                             ≤ ≤                                  
+                                          Q   Q  Q                         (10)   
+                                           gmin g gmax                            
+     3.3.2. Constraints                                                           
+                                          whereQ isthedischargeatmomentt;Q andQ aretheminimum
+                                              g               gmin gmax           
+     1) The output constraints of wind power and maximum discharge, respectively. 
+      ≤ ( ) ≤ ( )                                                                 
+     0 P t P  t                       (2)                                         
+        w   wmax                          4) PS constraints                       
+           ( )                                                                    
+     where P t is maximum wind power output at moment t.                          
+         wmax                                                                     
+                                            Pumped storage unit power output constraints
+     2) The output constraints of photovoltaic power P ≤ P ≤ P             (11)   
+                                           psmin ps psmax                         
+      ≤ ( ) ≤ ( )                                                                 
+     0 P t P  t                       (3)                                         
+        pv  pvmax                                                                 
+                                          where P and P are the minimum and maximum generation or
+                                              psmin psmax                         
+                                          pumping power, respectively.            
+           ( )                                                                    
+     where P t is maximum photovoltaic power output at moment t.                  
+         wmax                                                                     
+                                            PS power generation flow constraints  
+     3) The output constraints of hydropower Q ≤ Q ( t ) ≤ Q               (12)   
+                                           pmin p  pmax                           
+                                               ( )                                
+       The balance constraints for upper and lower reservoirs of hydro whereQ t istheinstantaneouspumpedstoragePSflow,andQ and
+                                              p                          pmin     
+     electric power stations:             P  are the minimum and maximum pumped storage power genera-
+                                           pmax                                   
+                 (cid:0)      )                                                   
+                                          tion flow, respectively.                
+     V ( t )= V ( t (cid:0) 1 )+ 3600 I ( t )+ Q ( t )(cid:0) Q ( t )(cid:0) Q ( t ) Δt (4)
+      u   u       u  p   g   e              Generation head constraints:          
+                 (cid:0)      )                                                   
+     V d ( t )= V d ( t (cid:0) 1 )+ 3600 I d ( t )+ Q g ( t )(cid:0) Q p ( t )+ Q e ( t ) Δt (5) H i,t = Z u ( t )(cid:0) Z u ( t (cid:0) 1 ) (cid:0) Z d ( t )(cid:0) Z d ( t (cid:0) 1 ) (13)
+                                                 2        2                       
+          ( )  ( )                                                                
+     where V t and V t represent the storage capacity of the upper and            
+         u    d                                                                   
+     lowerwarehousesatmomentt,respectively;I ( t ) andI ( t ) representthe where H i,t is the generation head of hydropower or pumped storage at
+                           u    d                                                 
+                                          moment t.                               
+     incomingwaterflowrateoftheupperandlowerreservoirsatmomentt,                  
+             ( )                            Constraints on unit output characteristic relationships
+     respectively; Q t is the power generation flow rate of PS/hydropower         
+            g                                                                     
+                                          {      (cid:0) )                        
+             ( )                                                                  
+     atmomentt;Q p t isthepumpingflowrateoftwopumpingandstorage P s ( t ) = f 1,nhq (cid:0)Q g ( t ), H i ( t ) )
+     units at moment t; Q e ( t ) is the ecological flow of the power station at P ps ( t ) = f 2, nhq Q p ( t ), H i ( t ) (14)
+     moment t; Δt is the step size of the calculation period.                     
+       Constraints on storage capacity size                                       
+                                         6
+
+
+===== PAGE 7 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+     where f 1,nhq and f 2,nhq represent functions of the relationship between    
+                                          Q and H are the endpoint values for each interval of flow and level,
+                                           n   n                                  
+     output, flow rate and head for hydropower and pumped storage, +              
+                                          respectively. For any range from n to n 1, and can be expressed in
+     respectively.                                                                
+                                          equation (22).                          
+       State of charge (SOC) constraints: {                                       
+       The remaining water volume in the upper reservoir can be analo- Q = α 0 Q n +α 1 Q n+1
+                                                                           (22)   
+     gized to the SOC of a battery, mathematically defined as: H = δ 0 H n +δ 1 H n+1
+           ( )                                                                    
+     SOC ( t )= V u t                 (15) where α 0 、 α 1 、 δ 0 、 δ 1 are all positive real numbers.
+       P                                                                          
+          V                                                                       
+           umax                             The relationship between the output of unit P, the flow rate and the
+                                          head can be expressed as (23), where the output of unit P can be
+           ( )                                                                    
+     where SOC t is the remaining available water volume percentage at            
+           P                                                                      
+                                          expressedfromnonlineartolinearintermsofaandb.Theoutputofunit
+     moment t.                                                                    
+                                          P can be expressed in terms of λ and p .
+                                                          ij ij                   
+                                          ⎧                                       
+     5) Ramp Rate Constraints             ⎪                                       
+     {                                    ⎪ ⎨p ij = H i Q j                       
+      (cid:0) (cid:0) Δ Δ P P s ps ≤ ≤ P P s ( p t s ( + t + 1 ) 1 (cid:0) )(cid:0) P s P ( t p ) s ( ≤ t ) Δ ≤ P Δ s P ps (16) ⎪ ⎪ ⎩P = ∑ n i= 1 1 ∑ n j= 2 1 λ ij p ij (23)
+     where ΔP and ΔP are the maximum ramp rates of the hydro unit and             
+          s   ps                          where p is the intermediate variable; λ is the combination coefficient.
+                                              ij             ij                   
+     pumped storage unit, respectively.                                           
+                                          ThelinearizationoftheotherequationsiscitedinRefs.[44–46]andwill
+                                          not be repeated here.                   
+     6) constraints of BES                                                        
+       SOC Constraints:                   3.4. CTCM-based optimization control for the WPHHS in grid ancillary
+                ⎧∫                                                                
+                                          services                                
+                ⎪ P ( t )×η                                                       
+                ⎪ ⎨ c c                                                           
+                    E                                                             
+     SOC ( t )= SOC ( t (cid:0) 1 )+ ∫ (17) After meeting load demand and smoothing out the system output
+                ⎪                                                                 
+                ⎪ ⎩ P ( t )×η                                                     
+                   d  d                   fluctuations, the WPHHS typically retains surplus capacity, including
+                    E                                                             
+                                          idle BES capacity, output margins of PS, and generation flexibility of
+                                          hydroelectric units (treated equivalently to PS in this study). To fully
+         ≤  ( ) ≤                                                                 
+     SOC  SOC t SOC                   (18)                                        
+       min      max                                                               
+                                          utilize these underused resources and maximize revenue, a multi-
+          ( )                             scenario utilization model is developed for deploying surplus system
+     whereSOC t isthestateofcharge(SOC)oftheenergystoragesystemat                 
+                                          capacity in ancillary services. System operators can leverage this ca-
+     moment t; P is the discharging power of electric energy storage at           
+           d                                                                      
+     moment t; η and η are the charging/discharging efficiency of the en- pacity to participate in electricity market transactions (e.g., frequency
+           c   d                                                                  
+                                          regulation, peak shaving, and energy arbitrage), generating additional
+     ergy storage system at moment t, respectively; E is the BES capacity;        
+                                          profits through flexible dispatch of storage and hydro resources.
+     SOC and SOC are the lower and upper SOC limits of the system,                
+       min   max                                                                  
+     respectively.                                                                
+                                          3.4.1. Objective function               
+       BES charge/discharge power constraints                                     
+     ⎧                                                                            
+     ⎪ ⎪ ⎨ 0 ≤ P c ( t ) ≤ γ c ( t ) P cmax 1 The objective function is formulated as follows:
+      0 ≤ P ( t ) ≤ γ ( t ) P                                                     
+         d   d dmax                   (19)    =  + +                              
+     ⎪ ⎪ γ ( t )+γ ( t ) = 1              maxF 2 C ab C fr C pr            (24)   
+     ⎩ c  d                                                                       
+      γ ( t ),γ ( t ) ∈ { 0 , 1 }                                                 
+       c d                                                                        
+                                          where F denotes the total revenue; C represents the revenue from
+                                              2              ab                   
+     whereP cmax andP dmax aremaximumcharginganddischargingpowerof peak-valley arbitrage, and C fr and C pr denote the revenues from
+     the system, respectively; γ ( t ) and γ ( t ) charge/discharge status vari- participating in frequency regulation and peak shaving services,
+                  c    d                                                          
+     ables of the system at moment t, taking values 0 or 1. respectively.         
+                                                (                                 
+                                             ∑                                    
+     7) System power balance constraints  C =  T y ( t ) p ( t )(cid:0) y ( t ) p ( t )+
+                                           ab  t=1 g g p  p                       
+                                                                           (25)   
+      ( )+ ( )+ ( )+ ( )+ ( )(cid:0) ( ) = ( )                                    
+     P t P t P t P t P t P t P t      (20)                                        
+      w  pv  s   ps  d   c  load           ( ) ( )(cid:0) ( ) ( ))                
+                                          y t p t y t p t                         
+                                           d d1  c c1                             
+           ( )                                                                    
+     where P t is electric load power.                                            
+         load                                  ( ) ( )                            
+                                          wherey t andy t denotetheelectricitypricesforunitgenerationand
+                                              g    p                              
+                                                             ( )  ( )             
+                                          pumping consumption at moment t; p t and p t represent the power
+     3.3.3. Model solving                                    g   p                
+                                          outputs of generation and pumping for PS at moment t, respectively;
+       Theoptimalschedulingmodelforfluctuationsmoothingscenariosis                
+                                           ( )  ( )                               
+                                          y t and y t denote the electricityprices fordischarging and charging
+     a high-dimensional nonlinear model with complex constraints. It is d c       
+                                                      ( )   ( )                   
+                                          of BES at moment t; p t and p t represent the power outputs of
+     difficult to solve this model directly. Therefore, the complex scheduling d1 c1
+                                          discharging and charging for BES at moment t.
+     model is transformed into a MILP problem [43] via a linear trans-            
+                                             ∑                                    
+     formation and solved by Gurobi, a commercial solver in Matlab. = T ( ( )+ ( ))
+                                          C     y p t y p t                (26)   
+       Accordingto(14),itcanbeseenthatthereisanonlinearrelationship fr t=1 s s2 e e
+     between the output of the unit, flow rate and head. The triangular           
+                                          where y and y denote the frequency regulation capacity prices of PS
+                                              s   e                               
+     weight method is used to linearize it. Firstly, the flow and head are        
+                                                            ( ) ( )               
+                                          andbatterystorage,respectively;p t andp t representtheallocated
+                                                           s2   e                 
+     divided into two intervals, n1-1 and n2-1, which can be expressed as         
+                                          frequency regulation power of PS and battery storage at moment t,
+     equation (21)                                                                
+                                          respectively.                           
+     {                                                                            
+      Q min = Q 0 < Q 1 < Q 2 < … < Q n < … < Q n1(cid:0) 1 (21) = ∑ T ( ( )+ ( ))
+      H min = H 0 < H 1 < H 2 < … < H n < … < H n2(cid:0) 1 C pr t=1 y s1 p s3 t y e1 p e1 t (27)
+                                         7
+
+
+===== PAGE 8 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+                                          the velocity matrix of the society; p indicates the population size in the
+     where y and y denote the peak shaving prices of PS and BES,                  
+         s1   e1                                                                  
+             ( )   ( )                    primitive society; n signifies the number of tribes; m corresponds to the
+     respectively; p t and p t represent the allocated peak shaving               
+            s3    e1                                                              
+                                          number of members per tribe; d denotes the dimensionality of the so-
+     power of PS and BES at moment t, respectively.                               
+                                          lution space.                           
+      2 .                                                                         
+                                          2) Cooperation of members (exploitation)
+     3.4.2. Constraints                                                           
+                                            Within a tribe, the chief manages and strategizes the tribe’s future
+                                          development. While most members adhere to the chief’s plans and di-
+     1) Frequency regulation-related constraints                                  
+     {                                    rectives, each member retains individual autonomy, leading to fluctu-
+      0 ≤ p ( t ) ≤ σ p ( t )             ating loyalty over time. This loyalty exhibits chaotic behavior as
+         s2  1 1 max                                                              
+                                      (28)                                        
+      0 ≤ p e ( t ) ≤ σ 2 p 2 max ( t )   temporal iterations progress, and the chaotic dynamics become more
+                                          pronounced as the number of tribes increases. To model this phenom-
+     where σ and σ denote the maximum percentage of rated power allo-             
+         1   2                            enon,theconceptofasinechaoticmapisintroducedtocharacterizethe
+     catedtofrequencyregulationcapacityforPSandBES, respectively,and              
+                                          evolution of member loyalty.            
+     p  and p represent the maximum allowable power output of PS ⎧                
+      1max 2max                                                                   
+                                            ⎨U ( 0 , 1 ), if t = km , k ∈ Z       
+     and BES at moment t, respectively.                                           
+                                               (   )                              
+                                          r =  π                           (32)   
+                                           t ⎩   (cid:0) ,                        
+                                             sin r 1 else                         
+                                                t                                 
+     2) Peak shaving-related constraints       2                                  
+     {                                                                            
+      0 ≤ p ( t ) ≤ ς p ( t )             where r denotes the loyalty of an individual member.
+         s3  1 1max                   (29)    t                                   
+      0 ≤ p ( t ) ≤ ς p ( t )               Each member consults the tribal chief to receive directives for their
+         e1  2 2 max                                                              
+                                          nextaction.Whileadheringtothesedirectives,thememberincorporates
+     where ς 1 and ς 2 denote the maximum percentage of rated power allo- its own experiential knowledge, which supplements decision-making
+     cated to peak shaving for PS and BES, respectively. with a stochastic element to diversify potential actions.
+       Other constraints related to hydroelectric units, PS, and BES align ( )    
+                                              3                                   
+     with those defined in Section 3.4.2 and are not reiterated here. Vt+1 = Vt + c rt Xbest (cid:0) Xt
+                                           n,m,d                                  
+                                              5                                   
+                                               n,m,d                              
+                                                   (                              
+                                                   1 1,n,m,d n,m,d                
+                                                         )                        
+                                                           n,m,d                  
+                                                                           (33)   
+                                              + c rt Xbest (cid:0) Xt             
+     3.4.3. Model solving                      2 2,n,m,d tribe n,m,d              
+       The CTCM is employed to solve the HESS capacity allocation model.          
+     The schematic diagram of the CTCM mechanism is illustrated in Fig. 7. whereVt+1 andVt denotethevelocitiesofthem-thmemberinthen-
+                                              n,m,d n,m,d                         
+       It can be seen from Fig. 7, the CTCM mimics early human tribes’ th tribe at time t + 1 and t, respectively; Xbest represents the best fitness
+                                                              n,m,d               
+     settlement-seeking behavior through four core mechanisms: coopera-           
+                                          position of the member across the entire optimization horizon; Xt
+                                                                           n,m,d  
+     tion, competition, migration, and conflict. The optimization process of      
+                                          signifies the position of the member at time t; Xbest denotes the best
+     the algorithm unfolds as follows:                             tribe          
+                                          fitness position of the n-th tribe; c and c correspond to the weights for
+                                                           1  2                   
+                                          experiential adherence and chief compliance of the tribe member,
+     1) Initialization                                                            
+       ⎡ ⎤      ⎡ ⎤                       respectively; and rt and rt represent the chaotic loyalty co-
+                                                    1,n,m,d 2,n,m,d               
+        X        V                                                                
+         1       1                        efficients of individual members, governed by the sine chaotic map
+       ⎢ ⎥      ⎢ ⎥                                                               
+     X =⎢ ⎣ X 2⎥ ⎦ ∈Rp×d, V =⎢ ⎣ V 2⎥ ⎦ ∈ Rp×d (30) dynamics.                     
+        ⋯        ⋯                                                                
+        X        V                                                                
+         n       n                                                                
+                                          3) Competition of tribes (exploration)  
+        ⎡        ⎤                                                                
+        V n,1,1 V n,1,2 ⋯V n,1,d                                                  
+     V n                                                                          
+       = ⎢ ⎢                                                                      
+        ⎣                                                                         
+        V                                                                         
+        ⋯                                                                         
+         n                                                                        
+         ⋯                                                                        
+          ,2,1                                                                    
+           ⋯                                                                      
+           V                                                                      
+            ⋯                                                                     
+            n,2,2 ⋯V n,2,d ⎥ ⎥                                                    
+                 ⎦                                                                
+                  ∈ Rm×d                                                          
+                                      (31) wea                                    
+                                            S                                     
+                                            k                                     
+                                             t                                    
+                                             e                                    
+                                             o                                    
+                                             r                                    
+                                             ch                                   
+                                              tr                                  
+                                               a                                  
+                                               i                                  
+                                               s                                  
+                                               b                                  
+                                                t                                 
+                                                e                                 
+                                                ic                                
+                                                s (t                              
+                                                  i                               
+                                                  h                               
+                                                  n                               
+                                                   o                              
+                                                   te                             
+                                                   s                              
+                                                    r                             
+                                                    e                             
+                                                    -t                            
+                                                    w                             
+                                                     ri                           
+                                                     i                            
+                                                     b                            
+                                                      th                          
+                                                      al                          
+                                                       lo                         
+                                                        c                         
+                                                        w                         
+                                                        o                         
+                                                         e                        
+                                                         n                        
+                                                         r                        
+                                                          fl                      
+                                                          fi                      
+                                                          ic                      
+                                                           tn                     
+                                                           ts                     
+                                                            ess                   
+                                                             oc                   
+                                                             v                    
+                                                              c                   
+                                                              a                   
+                                                              u                   
+                                                               lu                 
+                                                               r                  
+                                                               es                 
+                                                                d                 
+                                                                )                 
+                                                                 u                
+                                                                 a                
+                                                                 r                
+                                                                  r               
+                                                                  i               
+                                                                  e               
+                                                                  ng              
+                                                                   pru            
+                                                                    it            
+                                                                     n            
+                                                                     e            
+                                                                     e            
+                                                                     r            
+                                                                      d           
+                                                                      at          
+                                                                       o          
+                                                                       io         
+                                                                       r          
+                                                                        n         
+                                                                        d         
+                                                                        s         
+                                                                         i        
+                                                                         ,        
+                                                                         sp       
+                                                                          w       
+                                                                          la      
+                                                                           h      
+                                                                           c      
+                                                                           e      
+                                                                           e      
+                                                                            r     
+                                                                            d     
+                                                                            e     
+                                                                             ,    
+        V n,m,1 V n,m,2 ⋯V n,m,d          while stronger tribes (higher fitness) remain unaffected and continue
+                                          dominating resource allocation.         
+                                                  (      )                        
+     where X denotes the initial position of the entire society; V represents     
+                                          Rt = c rt Xt (cid:0) Xbest              
+                                           n,m,d 3 3,n,m,d n,m,d rival            
+                                              ⎧                                   
+                                              ⎨ Vt+1 (cid:0) Rt , if Fbest < Fbest (34)
+                                          Vt+1 = n,m,d n,m,d n rival              
+                                           n,m,d ⎩ Vt+1 ,                         
+                                                  else                            
+                                                n,m,d                             
+                                          whereXbest denotesthebestpositiondiscoveredbyopposingtribes;Fbest
+                                              rival                        n      
+                                          represents the best fitness value of the n-th tribe; Fbest signifies the best
+                                                                   rival          
+                                          fitness value of opposing tribes; c corresponds to the tribal escape co-
+                                                           3                      
+                                          efficientgoverningretreatdynamicsduringconflicts;rt denotesthe
+                                                                     3,n,m,d      
+                                          chaotic stochastic factor modulating retreat velocity, derived from sine
+                                          chaoticmapiterations.Theremainingcapacityallocationprocessbased
+                                          on the CTCM algorithm [47] is illustrated in Fig. 8.
+                                            The specific solution steps are as follows:
+                                          1) Retrieve the remaining capacity and state constraints of system
+                                            components at each time step from the control model;
+                                          2) Determine the capacity allocation scheme with the objective of
+                                            maximizing revenue;                   
+              Fig. 7. Principle of CTCM algorithm.                                
+                                         8
+
+
+===== PAGE 9 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                           Fig. 8. The process of HESS capacity allocation based on CTCM.
+     3) Initialize the population size and maximum iterations for the TheoveralllogicalstructureofthispaperisillustratedinFig.9,with
+       algorithm;                         the specific workflow as follows: First, uncertainty optimization pro-
+     4) Obtaintheoptimalallocationresultsviaiterativeoptimizationusing cessing for wind and solar energy is conducted at the input layer. Using
+       the CTCM algorithm.                the LHS method, a large number of wind and solar scenarios are
+                                          generated. Subsequently, the L-ISODATA is employed to select typical
+     3.4.4. Cost-benefit analysis         scenarios. Concurrently, quantitative analysis of DBI and DI is per-
+                                          formed to ensure the representativeness and rationality of the selected
+     1. System annualized net income      typical scenarios. Second, the optimization layer constructs a two-tier
+     {                                    optimization strategy for multi-energy complementary systems across
+        =  (cid:0)                                                                
+      R  R  C                                                                     
+       net tot opex                       multiple timescales: the upper layer minimizes system fluctuation
+                                      (35)                                        
+      C opex = C fix + Cb va e r s + Cp va h r s + Cb d e e s g handling volume as its core objective, solved using the MILP approach;
+                                          thelowerlayermaximizesancillaryservicerevenueasitskeyobjective,
+     Where R is the system annualized net income, R is the annualized solved using the CTCM algorithm. Finally, the output layer conducts
+         net                  tot                                                 
+     total income and C is the annualized operation and maintenance phased validation and assessment: First, the foundational effectiveness
+               opex                                                               
+     cost.C ,Cbes,C phs ,andCbes arefixedoperationandmaintenancecosts, of the optimization strategy is verified through system volatility vali-
+        fix var var deg                                                           
+                                          dation and ancillary service revenue validation. Subsequently,
+     batteryvariableoperationandmaintenancecosts,PSvariableoperation              
+                                          comprehensive stability and overall performance under various oper-
+     and maintenance costs, and battery degradation costs, respectively.          
+                                          ating conditions are evaluated through multi-scenario robustness vali-
+                                          dation and multi-dimensional performance assessment.
+     2. Return on investment and payback period                                   
+     ⎧                                                                            
+     ⎪ ⎪ ⎪ ⎪ROI = R net × 100%            4. Case study                           
+     ⎪                                                                            
+     ⎪    C                                                                       
+     ⎨    capex                                                                   
+         C                            (36) 4.1. Data sources and parameter settings
+     ⎪ ⎪T = capex                                                                 
+     ⎪ ⎪ ⎪ ⎪ p R net                                                              
+     ⎩                                                                            
+         =  +                               Thedatais sourcedfromadomesticpowerplantwith950MWwind
+      C   C  C                                                                    
+       capex bes phs                                                              
+                                          and 910 MW photovoltaic capacities. The hybrid pumped storage plant
+                                          comprises two reservoirs and one pumping station, with data recorded
+     Where ROI and T represent the return on investment and payback               
+              p                                                                   
+                                          at 15-min resolution. The water level difference between the upper and
+     period, respectively; C is the capital expenditures, C and C are             
+                capex           bes  phs                                          
+                                          lowerreservoirsismaintainedwithinε = 0 . 25m,andtheinter-temporal
+     the capital costs of BES and PS, respectively.                               
+                                          water level fluctuation is constrained below ω = 0 . 1 m to prevent
+                                         9
+
+
+===== PAGE 10 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                    Fig. 9. A dual-layer optimization framework and validation system for multi-time-scale WPHHS.
+     destabilizing effects on the coastal slope [48]. Parameters for hydro-       
+                                          Table 3                                 
+     power and PS are listed in Tables 2 and 3.                                   
+                                          Characteristic parameters of hydropower and pumped storage.
+       The energy storage system employs lithium iron phosphate batteries         
+     configured with 50 MW/100 MWh capacity and charge/discharge effi- Reservoir NormalWater Minimumwater Initialwater Inflowrate
+                                                level(m) level(m) Level(m) (m3/s) 
+     ciency of 0.95. TheSOC limits for the battery and PS are set to [0.1 0.9]    
+     and[0.11],respectively.TheunitcostofBESisUSD245/kW.PSutilizes Upper 1105 1059 1100 60
+                                           Lower 956    920      959    0         
+     existing power plant capacity expansion and retrofitting, with a con-        
+     verted cost of approximately USD 50/kW. Operating and maintenance            
+     costsaresetat1.5%oftotalinvestmentperannum.Thepaybackperiod                  
+     is 15 years, with a discount rate of 8 % [49,50].The time-of-use (TOU) Table 4
+     electricity price, frequency regulation capacity price, and peak shaving Time of use electricity price, peak shaving and frequency regulation capacity
+                                          price.                                  
+     capacity price are detailed in Table 4.                                      
+                                           Type            Timeperiod  PS  BES    
+                                           Peakpriceperiod(USD/MWh) 8:00–12:00;17:00–21:00 109 109
+     4.2. Comparison of system output smoothing effects under different Valleypriceperiod(USD/MWh) 0:00–8:00 46 46
+     schemes                               Normalpriceperiod(USD/MWh) 12:00–17:00;21:00–24:00 87 87
+                                           Peakshaving(USD/MWh) /       7  10     
+                                           Frequencyregulation(USD/MWh) / 17 24   
+       In order to clearly analyze the specific role of the WPHHS in              
+     smoothing out volatility, we can start our analysis by comparing the         
+     following two systems:                                                       
+       Wind-PV-hydro system (WPHS): The WPHS represents a conven-                 
+     tional wind-PV-hydro control approach that coordinates wind energy,          
+     PV power generation, and hydropower without incorporating any en-            
+     ergy storage systems. In this system, electricity generated from wind,       
+     PV, and hydropower is directly used to meet load demand. When gen-           
+     eration is insufficient, power is purchased from the external grid to        
+     bridge the gap.                                                              
+       Wind-PV-hydro system with pumped storage system (WPHPS): The               
+     WPHPS extends the WPHS by integrating a pumped storage system,               
+     whichregulatesenergysupplythroughwaterpumpinganddischarging.                 
+       The model is solved using Gurobi, with the system fluctuation miti-        
+     gation performance of different dispatch systems illustrated in Fig. 10      
+     and Table 5.                                                                 
+       It can be seen from Fig. 9 and Table 5, the WPHS exhibits a system         
+     output fluctuation of 81.60 MW, with wind and photovoltaic curtail-          
+     mentratesof21.3%and18.95%,respectively,attributed tothelackof                
+     energy storage. In the WPHPS, the integration of PS reduces the fluc-        
+     tuation to 72.73 MW and lowers wind and photovoltaic curtailment             
+     Table 2                                                                      
+                                             Fig. 10. Comparison of calming effects under different systems.
+     Characteristic parameters of hydropower and PS.                              
+      Type  Maximum Maximum Maximum Climbrate rates to 4.46 % and 10.05 %, thereby improving energy utilization. The
+            power   pumping flow(m3/s) (MW/                                       
+                                          WPHHS, which combines pumped storage and battery ESS, exhibits the
+            generation power(MW)   15min)                                         
+                                          lowest fluctuation (71.43 MW) compared to the two aforementioned
+            (MW)                                                                  
+                                          systems,itachievesreductionsof12.46%and1.78%,respectively.And
+      Hydropower 440 /      630    70                                             
+                                          it eliminates curtailment (0 % for both wind and PV). These results
+      PS    400     360     585    70                                             
+                                         10
+
+
+===== PAGE 11 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+     Table 5                                                                      
+     Characteristic parameters of different models.                               
+      System Fluctuation WindCurtailmentRate PVCurtailmentRate                    
+           (MW)    (%)        (%)                                                 
+      WPHS 81.60   21.23      18.95                                               
+      WPHPS 72.73  4.46       10.05                                               
+      WPHHS 71.43  0           0                                                  
+     demonstrate that integrating pumped storage and BES enhances energy          
+     utilization and strengthens the system’s coordinated control                 
+     capabilities.                                                                
+       Fig. 11 shows the output curves of the WPHHS.                              
+       It can be seen in Fig. 11, during the 00:00–05:00 period with low          
+     load demand and high wind power output, the surplus wind power is            
+     primarily absorbed by the PS through pumping operations. In the              
+     05:00–13:45 and 17:00–22:15 periods, when load demand exceeds                
+     renewable generation, the hydropower and PS (in generation mode)             
+     compensate for the energy deficit, while the battery storage collabora-      
+     tively mitigates system output fluctuations. During 13:45–17:00,             
+                                               Fig. 12. Changes in water level of the upper reservoir.
+     renewable generation continuously exceeds load demand, with the              
+     surplus energy absorbed by both pumped storage pumping and battery           
+                                          scenario-based analysis is conducted for the hydropower plant during
+     charging. Thus, the WPHHS significantly reduces output fluctuations,         
+                                          wet, normal, and dry seasons, with the smoothing effectiveness sum-
+     improves energy utilization, and eliminates wind and photovoltaic            
+                                          marized in Table 6.                     
+     curtailment while reliably meeting base load requirements.                   
+                                            It can be seen in Table 6 that the integration of pumped storage and
+       Fig. 12 illustrates the water level variation curve of the upper           
+                                          BES systems significantly reduces system output fluctuations across all
+     reservoir in the hydropower station during system fluctuation mitiga-        
+                                          hydrologicalseasons,withtheWPHHSachieving12.46%,16.05%,and
+     tion using the WPHHS.                                                        
+                                          20.61 % reductions in output fluctuations during wet, normal, and dry
+       It can be seen in Fig. 12 that during 00:00–05:00 period, the PS           
+                                          seasons compared to the WPHPS, respectively, where the dry season
+     operateinpumpingmode,raisingthewaterleveloftheupperreservoir.                
+                                          exhibits the most notable improvement. From the overall trend, the
+     From 05:00–13:45 and 17:00–22:15, when load demand exceeds wind              
+                                          volatility of the system shows a decreasing law with the change of hy-
+     andphotovoltaicgeneration,thehydrounitsincreasewaterdischargeto              
+                                          drological period: it is the largest during the Wet season, the second
+     meet energy deficits, resulting in a decline in the upper reservoir level.   
+                                          largestduringthenormalseason,andthesmallestduringthedryseason.
+     Between 13:45–17:00, reduced load demand triggers pumping opera-             
+                                          This phenomenon mainly stems from the difference in the peak adjust-
+     tions by the PS, elevating the upper reservoir level to enhance genera-      
+                                          mentabilityofhydropowersystemsindifferenthydrologicalconditions:
+     tion efficiency. In the 22:00–24:00 period, as load demand diminishes,       
+                                          in the wet season, hydropower mainly undertakes base load operation,
+     the hydro units resume pumping, causing the upper reservoir level to         
+                                          and its peak adjustment ability and regulation ability for wind power
+                             <                                                    
+     rise. The total water level decline (0.22 m 0.25 m, the safety               
+                                          generation are relatively weak; while in the dry season, hydropower
+     threshold) remains within operational limits, ensuring system stability.     
+                                          systems have the optimal regulation performance, and thus the system
+                                          fluctuationisthesmallest.Thiscorrelationbetweenhydrologicalseason
+     4.3. Comparative analysis of smoothing effects under different and system volatility reflects the important role of hydropower regula-
+     hydrological conditions              tion capability in power system stability.
+       To investigate the fluctuation mitigation performance of the hybrid        
+                                          4.4. Economic comparison for the WPHHS under different operational
+     complementary system under different hydrological conditions, a              
+                                          strategies                              
+                                            To quantify the comprehensive benefits of utilizing surplus capacity
+                                          for ancillary services, this study designs coordinated control strategies
+                                          between PS and the BES using a controlled variable method, as follows:
+                                            Strategy 1: PS prioritize peak-valley arbitrage; Battery storage fo-
+                                          cuses on peak shaving and frequency regulation.
+                                            Strategy 2: PS prioritizes peak-valley arbitrage; BES operates in
+                                          multi-scenario mode (simultaneous arbitrage, peak shaving, and fre-
+                                          quency regulation).                     
+                                            Strategy 3: PS and BES operate in multi-scenario mode.
+                                            Strategy4:PSadoptsmulti-scenariooperations;BESprioritizespeak
+                                          shaving and frequency regulation.       
+                                          Table 6                                 
+                                          The effect of stabilizing system fluctuations under different hydrological
+                                          conditions.                             
+                                           Systems Wetseason(MW) Normalseason(MW) Dryseason(MW)
+                                           WPHS  81.60     69.95     58.61        
+                                           WPHPS 72.73     60.23     47.87        
+                                           WPHHS 71.43    58.72      46.53        
+            Fig. 11. System output curve of the WPHHS.                            
+                                         11
+
+
+===== PAGE 12 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+       TheCTCMoptimizationalgorithmisappliedtosolvethemodel,with                  
+     theeconomicperformancecomparisonsacrossstrategiessummarizedin                
+     Table 7.                                                                     
+       It can be seen in Table 7, Strategy 4 achieves the highest system          
+     revenue at 34,762 USD, while Strategy 3 yields the lowest revenue            
+     at28,770 USD,whichis17.23%lowerthanStrategy4. Strategy2ranks                 
+     secondwitharevenueof33,084USD,trailingStrategy4by4.83%.This                  
+     variation results from the distinct technical advantages of BES and PS:      
+     BES excels in fast response and high energy conversion efficiency,           
+     maximizing revenue when fully allocated to frequency regulation ser-         
+     vices, whereas PS leverage long-duration energy storage capabilities to      
+     dominate peak-valley arbitrage while partially participating in peak         
+     shaving and frequency regulation to enhance earnings.                        
+       Under Strategy 4, the CTCM capacity allocations and revenue dis-           
+     tributions for PS and BES are detailed in Fig. 13 and Table 8.               
+       It can be seen in Fig. 13 and Table 8, BES prioritizes frequency           
+     regulationservicesduetotheirhighestrevenuecontribution(77.81%of              
+     total system revenue), allocating 637 MW of capacity to frequency            
+     regulation and the remaining capacity to peak shaving. For PS, simul-        
+     taneous participation in three ancillary services maximizes revenue:         
+     946 MW for peak-valley arbitrage, 835 MW for peak shaving, and 803           
+     MW for frequency regulation. The revenue distribution is dominated by        
+     frequency regulation (50.72 %), followed by peak-valley arbitrage            
+     (29.54%)andpeakshaving(19.74%).Thisallocationreflectsthelower                
+     frequencyregulationrevenueofPScomparedtobatterystorage,making                
+     full capacity dedication to frequency regulation suboptimal, and the         
+     need to balance volatile arbitrage gains (due to fluctuating peak-valley     
+     electricity prices) with other services to mitigate risks. Overall, Strat-   
+     egy 4 effectively reduces idle capacity by deploying 1,033 MW for peak       
+     shaving, 960 MW for frequency regulation, and 946 MW for arbitrage,          
+     demonstrating synergistic utilization of PS and BES.                         
+       To more balancedly assess the economic feasibility of hybrid energy        
+     storage systems, this section further introduces capital expenditure         
+     (CAPEX) and operation and maintenance expenditure (OPEX), and uses           
+     the return on investment (ROI) and payback period indicators for an          
+     expanded analysis. The results are shown in Table 9.                         
+       As shown in Table 9, after accounting for CAPEX and OPEX, all four         
+     strategies achieve positive returns, with payback periods of less than 8     
+     years, significantly shorter than the 15-year economic lifecycle of a        
+     hybrid energy storage system. Strategy 4 performs best, achieving an         
+     ROIof15.3%andapaybackperiodof6.1years.Thisnotonlyincreases                   
+     system revenue (an additional $34,762 compared to the baseline) but          
+                                                Fig. 13. Capacity allocation results based on CTCM.
+     also demonstrates strong economic viability. Strategies 1–3, with ROIs       
+     of9.2%,11.4%,and12.6%,respectively,andpaybackperiodsranging                  
+                                          from 9.7 % to 19.7 %. This result demonstrates that a higher peak-to-
+     from6.9to7.8years,alsodemonstrateconsiderableinvestmentappeal.               
+                                          valley price difference can help improve system profitability and re-
+       Time-of-use pricing serves as a crucial mechanism for enhancing the        
+                                          turn on investment, but it also suggests that the impact of electricity
+     economic efficiency and reliability of power systems. To investigate the     
+                                          price fluctuations on system operations must be comprehensively
+     impact of electricity pricing on system benefits, this study employs         
+                                          considered during implementation.       
+     multiple pricing schemes for sensitivity analysis: while maintaining the     
+     benchmark off-peak rate unchanged, the peak-to-off-peak price ratio is       
+     set within the range of 1–7 [51]. The comparative results are presented 4.5. Economic comparison across optimization algorithms
+     in Fig. 14.                                                                  
+       It can been seen from Fig. 14, as the peak-to-valley ratio increases, Tovalidatetheeffectivenessandsuperiorityof theCTCMalgorithm,
+     bothancillaryservicerevenueandROIshowasignificantupwardtrend, the model is solved using three benchmark optimization algorithms:
+     indicating that the system’s economic benefits are effectively improved Particle Swarm Optimization (PSO), Starfish Optimization Algorithm
+     despite significant electricity price fluctuations. Specifically, as the (SFOA), and Sparrow Search Algorithm (SSA). The parameters are set
+     peak-to-valley ratio increases from 1 to 7, ancillary service revenue in- with a population size of 60 and 500 iterations. Taking the revenue
+     creases from approximately $22,100 to $66,300, while ROI increases allocationofPSasanexample,Fig.15comparestheconvergencecurves
+                                          of different algorithms. The results obtained after conducting 30 simu-
+                                          lationsforeachofthefouralgorithmsareshowninTable10.Tovalidate
+     Table 7                                                                      
+                                          the algorithm’s scalability, model optimization verification was con-
+     Economic performance comparison across operational strategies.               
+                                          ducted sequentially over 12-h, 24-h, and 48-h periods. The results are
+      Economic/USD Strategy1 Strategy2 Strategy3 Strategy4                        
+                                          presented in Table 11.                  
+      PS       21882  26306 21882  26306    It can be seen in Fig. 15 and Table 10, the CTCM algorithm dem-
+      BES      8456   6888   6888   8456  onstrates significant advantages across all performance metrics. Its
+      Totalrevenue 30338 33194 28770 34762                                        
+                                          convergence curve exhibits rapid and stable descent, far outperforming
+                                         12
+
+
+===== PAGE 13 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+     Table 8                                                                      
+     Capacity allocation and revenue situation under Strategy 4.                  
+      Type    Peakshaving            Frequencyregulation   Peak-valleyarbitrage   
+              Capacity/MW Revenue/USD Capacity/MW Revenue/USD Capacity/MW Revenue/USD
+      PS      835        5194        803        13342      946         7770       
+      BES     198        1876        157        6580       /           /          
+      Total   1033       7070        960        19922      946         7770       
+                                                                                  
+     Table 9                              Table 10                                
+     Return on investment and payback period for different strategies. Comparison of results from four algorithms.
+      Strategy Annualizedincome/104USD ROI/% Paybackperiod/years Algorithm Average Optimal Worst CV Average
+                                                 value value  value    time/s     
+      Strategy1 698.57    9.2  7.8                                                
+      Strategy2 734.29    11.4 7.2         PSO   (cid:0) 122,125 (cid:0) 143,434 (cid:0) 111,450 0.85 4.7
+      Strategy3 755.71    12.6 6.9         SFOA  (cid:0) 144,141 (cid:0) 147,221 (cid:0) 129,634 1.10 10.3
+      Strategy4 810.86    15.3 6.1         SSA   (cid:0) 181,427 (cid:0) 190,245 (cid:0) 175,334 1.42 6.7
+                                           CTCM  (cid:0) 187,928 (cid:0) 198,763 (cid:0) 179,445 0.21 5.8
+                                          Table 11                                
+                                          Scalability comparison of four algorithms.
+                                           Algorithm 48×3(12h) 96×3(24h) 192×3(48h)
+                                                 Time/s Fitness Time/s Fitness Time/s Fitness
+                                           PSO   3.4 (cid:0) 87,510 4.7 (cid:0) 122,125 / /
+                                           SFOA  7.2 (cid:0) 90,843 10.3 (cid:0) 144,141 13.8 (cid:0) 298,741
+                                           SSA   4.9 (cid:0) 90,821 6.7 (cid:0) 181,427 9.5 (cid:0) 334,657
+                                           CTCM  4.5 (cid:0) 92,517 5.8 (cid:0) 187,928 7.7 (cid:0) 387,620
+                                          other algorithms. Regarding fitness values, CTCM ranks first in average
+                                           (cid:0)    (cid:0)     (cid:0)         
+                                          ( 187,928), optimal ( 198,763), and worst ( 179,445) values. Its
+                                          averagecomputationtime(5.8s)rankssecondonlytoPSO.Moreover,it
+                                          exhibits the lowest coefficient of variation(CV) at 0.21, indicating
+                                          greater stability, reduced susceptibility to random factors, and superior
+                                          robustness and reliability. As shown in Table 11, as problem scale in-
+                                          creases, CTCM consistently maintains the optimal fitness value
+                                           (cid:0)                                
+                                          ( 387,620) while requiring less computational time than comparison
+     Fig. 14. Sensitivity analysis results for peak-to-valley ratio in time-of-use algorithms, demonstrating its exceptional scalability, stability, and
+     electricity pricing.                 efficiency.                             
+                                            TheSOCcurvesoftheBESandPSduringthecontrolperiodisshown
+                                          in Fig. 16.                             
+                                            It can be seen in Fig. 16, from 0:00 to 5:00 and 14:00 to 18:45, PS is
+                                          responsible for energy transfer and absorbs excess wind energy; from
+                                          10:00 to 12:00 and 18:45 to 20:45, HESS synergistically suppresses
+                                          system fluctuations. And the SOC of the BES remains strictly within the
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+              Fig. 15. Algorithm convergence curves.                              
+                                                                                  
+                                                                                  
+                                                     Fig. 16. The curves of the SOC.
+                                         13
+
+
+===== PAGE 14 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+     safeoperatingrangeof0.1–0.9throughoutthecontrolperiod,whilethe effectofthismethod,thisarticleselectedfourtypicalpowergridregions
+     PS exhibit minimal SOC fluctuations around a baseline of 0.984 (within for analysis, including data from Northwest and Southwest China [52],
+     the0.1–1.0safetymargin),withnooverchargeorover-dischargeevents the European Union [53], and North America [54]. Table 13 shows the
+     observed for either technology.This demonstratesexcellent operational optimized dispatch results of different power grid regions.
+     stability and safety for both storage systems under complex multi- ItcanbeenseeninTable13,theproposedmethodeffectivelyreduces
+     scenario coupled conditions. Notably, the BES maintains an initial systemoutputfluctuationswhenoptimizedinallfourregions,achieving
+     SOC near 0.5 at the start of each control cycle, whereas the PS sustain a thehighestperformanceinSouthwestChina,withamagnitudeof15.47
+     high SOC baseline of 0.948, reflecting divergent SOC regulation strate- %, and the lowest performance in North America, with a magnitude of
+     gies that provide optimal initial energy reserve conditions for subse- 10.68 %. This research method demonstrates significant cross-regional
+     quent operational cycles.            applicability, effectively smoothing system output fluctuations and
+                                          improving renewable energy consumption in power grids in China, the
+                                          West, and other regions. A hybrid energy storage solution combining
+     4.6. Multi-scenario robustness verification and performance evaluation batteries and pumped storage can completely eliminate wind and solar
+                                          curtailment and significantly enhance grid stability. Furthermore, this
+       Tofurtherevaluatetherobustnessofthemulti-energyhybridsystem strategycangeneratesubstantialeconomicbenefitsacrossallregionsby
+     in practical applications, the paper introduced four extreme scenario participating in ancillary services such as frequency regulation and
+     analyses. These scenarios simulate the system’s responsiveness and peak-valley arbitrage. Multi-regional validation results demonstrate the
+     adaptability to external shocks.     method’s excellent scalability and adaptability, enabling it to flexibly
+                                          adapt to diverse grid structures and resource conditions, demonstrating
+     Case A. Considering an extreme weather scenario, a typhoon or                
+                                          its broad potential for widespread adoption.
+     sandstorm causes a 50 % drop in wind and solar output to test the sys-       
+     tem’s stability under severe fluctuations in renewable energy.               
+                                          5. Conclusion and future work           
+     Case B. Simulating a combination of dry years and abundant solar             
+     years,thepaperexploredthesynergisticeffectsofhydropowerandwind 5.1. Conclusion
+     and solar complementarity and the adaptability of the multi-source           
+     energy scheduling strategy.            The WPHHS has great application prospects in dealing with wind
+                                          and photovoltaic fluctuations and alleviating the problem of wind and
+     Case C. Considering the uncertainty of the electricity market, the           
+                                          photovoltaic power abandonment. In order to further explore its oper-
+     paper introduced a market volatility scenario in which the peak-to-          
+     valley price difference was tripled to evaluate the system’s economic ation mode, this study established a multi-energy complementary sys-
+                                          tem architecture based on "BES -PS dual-core drive", which realizes
+     feasibility and scheduling strategy under severe price fluctuations.         
+                                          energy space-time transportation through PS and completes power
+     CaseD. Tosimulatetheimpactofequipmentfailureonthesystem,the instantaneous buffering through BES, forming a "double insurance"
+     paper studied an equipment failure scenario, assuming a temporary 40 mechanism for smoothing system output fluctuations, and effectively
+     % reduction in BES capacity, to analyze the system’s emergency improvingtheproblemofenergystorageidleness.Themainconclusions
+     response and capacity allocation capabilities in the event of an equip- of the paper are as follows:
+     ment failure.                                                                
+                                          1) LHS-generated renewable scenarios combined with L-ISODATA
+     Case E. Baseline scenario.                                                   
+                                            clustering effectively mitigate the impact of wind/PV generation
+       The specific impacts of these extreme scenarios on system perfor- uncertainty on control outcomes.
+     mance are shown in Table 12.         2) The proposed system reduces output volatility by 12.46 % and 1.78
+       It can been seen in Table 12, the proposed model maintains optimal % compared to conventional WPHS and WPHPS systems, respec-
+     convergence under extreme scenarios. However, the system fluctuation tively, achieving zero curtailment rates. Under varying hydrological
+     suppression rate drops to 8.2 % in the typhoon scenario due to the conditions (wet, normal, and dry seasons), the system maintains
+     sudden drop in wind and solar output, which prevents the PS from fully optimal fluctuation mitigation, with volatility decreasing progres-
+     storing energy. Profits increase to $41,586 under the electricity price sively (most notably in dry seasons), demonstrating robust adapt-
+     fluctuation scenario, demonstrating the model’s dynamic response to ability to complex scenarios.
+     market signals. Although the fluctuation suppression rate decreases in 3) The capacity allocation model provides 1,033 MW of peak shaving
+     theBESfailurescenario,theCTCMreallocationofPScapacitymaintains capacity,960MWoffrequencyregulationcapacity,and946MWfor
+     profits above 85 % of the baseline level, highlighting the strategy’s peak-valley arbitrage, reducing idle capacity while generating
+     resilience. Overall, the system demonstrates strong robustness and 34,762 USD in additional revenue.
+     maintains high stability under various extreme scenarios. 4) From a cost-benefit perspective, WPHHS achieves a ROI of 15.3 %
+       In order to comprehensively evaluate the feasibility and application withapaybackperiodof6.1years.Moreover,thehigherthepeak-to-
+                                            valley ratio, the greater the system’s ROI. Under extreme operating
+     Table 12                                                                     
+     System performance changes under different extreme scenarios.                
+                                          Table 13                                
+      Case Systematicvolatility Powercurtailment Changesin                        
+                                          Optimization results in different regions.
+          changes/%  rate/%    earnings/USD                                       
+                                           Region Systematicvolatility Powercurtailment Changesin
+      Case (cid:0) 8.2 4.3     +28,115                                            
+                                                  changes/% rate/%   earnings/USD 
+       A                                                                          
+      Case (cid:0) 10.1 1.8    +31,240     Northwest (cid:0) 12.46 0 +34,762      
+       B                                    China                                 
+      Case (cid:0) 13.9 0      +41,586     Southwest (cid:0) 15.47 0 +33,025      
+       C                                    China                                 
+      Case (cid:0) 9.7 2.5     +29,874     European (cid:0) 11.30 0  +33,500      
+       D                                    Union                                 
+      Case (cid:0) 12.46 0     +34,762     North  (cid:0) 10.68 0    +34,587      
+       E                                    America                               
+                                         14
+
+
+===== PAGE 15 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+       conditions, simulation results for four typical extreme scenarios [2] LeiK,ChangJ,WangX.Peakshavingandshort-termeconomicoperationofhydro-
+                                             wind-PVhybridsystemconsideringtheuncertaintyofwindandPVpower.Renew
+       demonstrate that the proposed model maintains high stability and           
+                                             Energy 2023;215:118903. https://doi.org/10.1016/j.renene.2023.118903.
+       robustness, exhibiting strong interference resistance. Furthermore,        
+                                           [3] Zhu F, Zhong P, Xu B, Liu W, Wang W, Sun Y, et al. Short-term stochastic
+       compatibility tests across three distinct regional grid types reveal optimization of a hydro-wind-photovoltaic hybrid system under multiple
+                                             uncertainties.EnergyConversManag2020;214:112902.https://doi.org/10.1016/
+       that the model effectively adapts to varying grid topologies and           
+                                             j.enconman.2020.112902.              
+       operational environments, showcasing exceptional adaptability and          
+                                           [4] Short-termschedulingstrategiesforhydro-wind-solar-storageconsideringvariable-
+       scalability.                          speed unit of pumped storage. Appl Energy 2025;377:124336. https://doi.org/
+                                             10.1016/j.apenergy.2024.124336.      
+                                           [5] ADALINE (ADAptive Linear NEuron)-based coordinated control for wind power
+       In summary, the proposed model enhances system stability, renew-           
+                                             fluctuations smoothing with reduced BESS (battery energy storage system)
+     able utilization, and economic performance through synergistic coor- capacity. Energy 2016;101:1–8. https://doi.org/10.1016/j.energy.2016.01.100.
+     dination of multi-energy resources, providing a reliable and flexible [6] Ariyaratna PM, Muttaqi KM, Sutanto D. The simultaneous mitigation of slow and
+                                             fast voltage fluctuations caused by rooftop solar PV by controlling the charging/
+     solution for power systems with high renewable penetration.                  
+                                             dischargingofanintegratedbatteryenergystoragesystem.JEnergyStorage2019;
+                                             26:100971. https://doi.org/10.1016/j.est.2019.100971.
+                                           [7] Hedayatnia A, Ghafourian J, Sepehrzad R, Al-Durrad A, Anvari-Moghaddam A.
+     5.2. Future work                        Two-stage data-driven optimal energy management and dynamic real-time
+                                             operation in networked microgrid based on a deep reinforcement learning
+                                             approach. Int J Electr Power Energy Syst 2024;160:110142. https://doi.org/
+       While effective in practical examples, this method still requires          
+                                             10.1016/j.ijepes.2024.110142.        
+     refinementintermsofrobustness,errorsensitivity,andphysicalfidelity. [8] Two-Stage experimental intelligent dynamic energy management of microgrid in
+     Multi-daystresstesting(95th/99thpercentiles)androllingoptimization smart cities based on demand response programs and energy storage system
+                                             participation. Int J Electr Power Energy Syst 2024;155:109613. https://doi.org/
+     will be conducted to address distribution shifts and extreme weather         
+                                             10.1016/j.ijepes.2023.109613.        
+     conditions. Opportunity constraints, distributed robustness, and CVaR [9] Short-term and probability scenario-oriented energy management of integrated
+     will be used to quantify the impact of wind and solar forecast errors on energy distribution systems with considering energy market interactions and end-
+                                             user participation. Energy 2025;322:135691. https://doi.org/10.1016/j.
+     power balance and SOC safety. Frequency regulation mileage fees,             
+                                             energy.2025.135691.                  
+                                     +                                            
+     performance coefficients, energy bias costs, and "energy budget SOC [10] Sepehrzad R, Faraji MJ, Al-Durra A, Sadabadi MS. Enhancing cyber-resilience in
+     rebate" will be added to the model to enhance the credibility of the electric vehicle charging stations: a multi-agent deep reinforcement learning
+                                             approach. IEEE Trans Intell Transport Syst 2024;25:18049–62. https://doi.org/
+     results.                                                                     
+                                             10.1109/TITS.2024.3408238.           
+       For project implementation, market participation rules (capacity           
+                                          [11] Demand response-based multi-layer peer-to-peer energy trading strategy for
+     certification, minimum duration, response time, energy neutrality, and renewable-powered microgrids with electric vehicles. Energy 2025;320:135206.
+                                             https://doi.org/10.1016/j.energy.2025.135206.
+     participation caps), grid connection specifications (ride-through capa-      
+                                          [12] Sepehrzad R, Khodadadi A, Adinehpour S, Karimi M. A multi-agent deep
+     bility, primary/fast frequency response, reactive power/power factor,        
+                                             reinforcement learning paradigm to improve the robustness and resilience of grid
+     and telemetry timeliness), and metering and settlement will be trans- connectedelectricvehiclechargingstationsagainstthedestructiveeffectsofcyber-
+                                             attacks. Energy 2024;307:132669. https://doi.org/10.1016/j.
+     formed into explicit constraints and cost items, incorporating licensing     
+                                             energy.2024.132669.                  
+     and safety compliance costs. Further consideration will be given to the      
+                                          [13] JinX,LiuB,DengZ,ZhaoZ,ZhangY,CaoR,etal.Derivingstrategicregion-wise
+     inherent feedback of large-scale energy storage participation on price hydro-wind-solarportfolios.RenewSustainEnergyRev2025;210:115145.https://
+     formation, and scaled up using cross-regional, multi-year data and doi.org/10.1016/j.rser.2024.115145.
+                                          [14] ZhaoH,LiaoS,LiuB,FangZ,WangH,ChengC,etal.Multiagentoptimizationfor
+     decomposition algorithms to develop a deployable solution that bal-          
+                                             short-term generation scheduling in hydropower-dominated hydro-wind-solar
+     ances technical, economic, and regulatory considerations. supply systems with spatiotemporal coupling constraints. Appl Energy 2025;382:
+                                             125324. https://doi.org/10.1016/j.apenergy.2025.125324.
+                                          [15] JinX,ChengC,CaiS,YanL,ZhaoZ.Usingstochasticdualdynamicprogramming
+     CRediT authorship contribution statement                                     
+                                             to design long-term operation policy of hydro-wind-solar energy systems
+                                             consideringmultiplecoupleduncertaintiesandend-of-yearcarryoverstorage.Appl
+       Xiaojuan Han: Writing – review & editing, Resources, Project Energy 2025;393:126072. https://doi.org/10.1016/j.apenergy.2025.126072.
+                                                          ˜                       
+                                          [16] Tapia Carpio LG, Cardoso Guimaraes FA. Regional diversification of hydro, wind,
+     administration, Funding acquisition, Data curation. Xiaoyan Yang:            
+                                             and solar generation potential: a mean-variance model to stabilize power
+     Writing – original draft, Visualization, Validation, Supervision, Soft- fluctuations in the Brazilian integrated electrical energy transmission and
+     ware, Methodology, Formal analysis. Tianyang Bai: Formal analysis, distribution system. Renew Energy 2024;235:121266. https://doi.org/10.1016/j.
+                                             renene.2024.121266.                  
+     Data curation, Conceptualization.                                            
+                                          [17] LiuB,LiuT,LiaoS,LuJ,ChengC.Short-termcoordinatedhybridhydro-wind-solar
+                                             optimal scheduling model considering multistage section restrictions. Renew
+                                             Energy 2023;217:119160. https://doi.org/10.1016/j.renene.2023.119160.
+     Declaration of competing interest    [18] Lin M, Shen J, Cheng C, Lü Q, Wang Y. Long-term multi-objective optimal
+                                             scheduling for large cascaded hydro-wind-photovoltaic complementary systems
+                                             considering short-term peak-shaving demands. Energy Convers Manag 2024;301:
+       The authors declare that they have no known competing financial            
+                                             118063. https://doi.org/10.1016/j.enconman.2024.118063.
+     interestsorpersonalrelationshipsthatcouldhaveappearedtoinfluence [19] Zhou S, Han Y, Zalhaf AS, Chen S, Zhou T, Yang P, et al. A novel multi-objective
+                                             scheduling model for grid-connected hydro-wind-PV-battery complementary
+     the work reported in this paper.                                             
+                                             system under extreme weather: a case study of Sichuan, China. Renew Energy
+                                             2023;212:818–33. https://doi.org/10.1016/j.renene.2023.05.092.
+     Acknowledgements                     [20] Li Y, Su Y, Zhang Y, Wu W, Xia L. Two-layered optimal scheduling under a semi-
+                                             model architecture of hydro-wind-solar multi-energy systems with hydrogen
+                                             storage. Energy 2024;313:134115. https://doi.org/10.1016/j.
+       This paper is supported by the National Natural Science Foundation         
+                                             energy.2024.134115.                  
+     of China (52277216).                 [21] Sui Y, Lin H, Ding Z, Li F, Sui Z, Wu W. Compact, efficient, and affordable
+                                             absorption Carnot battery for long-term renewable energy storage. Appl Energy
+                                             2024;357:122504. https://doi.org/10.1016/j.apenergy.2023.122504.
+     Data availability                                                            
+                                          [22] WangH,LiaoS,ChengC,LiuB,FangZ,WuH.Short-termschedulingstrategiesfor
+                                             hydro-wind-solar-storageconsideringvariable-speedunitofpumpedstorage.Appl
+                                             Energy 2025;377:124336. https://doi.org/10.1016/j.apenergy.2024.124336.
+       The data that has been used is confidential.                               
+                                          [23] Li Z, Yang P, Guo Y, Lu G. Medium-term multi-stage distributionally robust
+                                             scheduling of hydro–wind–solar complementary systems in electricity markets
+     References                              considering multiple time-scale uncertainties. Appl Energy 2023;347:121371.
+                                             https://doi.org/10.1016/j.apenergy.2023.121371.
+                                          [24] Zhang Q, Wang X, Yang T, Liang J. Research on scheduling optimisation for an
+      [1] LuP,ZhangN,YeL,DuE,KangC.Advancesinmodelpredictivecontrolforlarge-      
+                                             integrated system of wind-photovoltaic-hydro-pumped storage. J Eng 2017;2017:
+       scalewindpowerintegrationinpowersystems.AdvApplEnergy2024;14:100177.       
+                                             1210–4. https://doi.org/10.1049/joe.2017.0521.
+       https://doi.org/10.1016/j.adapen.2024.100177.                              
+                                         15
+
+
+===== PAGE 16 / 16 =====
+
+                                                                                  
+                                                                                  
+                                                                                  
+     X. Han et al.                                                 Energy336(2025)138476
+     [25] BorettiA,CastellettoS.Hydrogenenergy storagerequirementsforsolarandwind adaptivethresholdcontrolforsmartgridloadprofiling.ElecPowerSystRes2025;
+       energy production to account for long-term variability. Renew Energy 2024;221: 247:111774. https://doi.org/10.1016/j.epsr.2025.111774.
+       119797. https://doi.org/10.1016/j.renene.2023.119797. [40] Shields MD, Zhang J.The generalization ofLatin hypercubesampling. Reliab Eng
+     [26] Geng C, Zhang T, Sun W. Hybrid solar, wind, and geothermal power generation Syst Saf 2016;148:96–108. https://doi.org/10.1016/j.ress.2015.12.002.
+       combined with energy storage for sustainable energy management in remote [41] Wang J, Shen Y, Wang X, Xu J. An energy storage planning method based on the
+       buildings. J Energy Storage 2025;123:116655. https://doi.org/10.1016/j. Vinecopulamodelwithhighpercentageofnewenergyconsumption.EnergyEngJ
+       est.2025.116655.                      Assoc Energy Eng 2025;122:2751–66. https://doi.org/10.32604/ee.2025.064317.
+     [27] Jing Z, Wang Y, Chang J, Wang X, Guo A, Meng X. Hydro-wind-PV-storage [42] Wang Y, Pei A, Lei M, Ji Y, Wang Z, Zong J. Adaptive state-of-charge limit based
+       complementary operation based on a multivariate 3D power generation database optimal configuration method of battery energy storage system for offshore
+       consideringcomprehensiveutilizationtasksofcascadehydropowerstationsinthe isolated power grids considering wind uncertainty and frequency stability.
+       river basin. Energy 2025;322:135672. https://doi.org/10.1016/j. J Energy Storage 2025;119:116344. https://doi.org/10.1016/j.est.2025.116344.
+       energy.2025.135672.                [43] Yang D, He Z, Sun Y, Li B, Li D, Liu X, et al. Optimised operation of integrated
+     [28] CaoZ,WangC,PengB,WangY,DuP,GuoY,etal.Optimizationofenergystorage community energy system considering integrated energy pricing strategy: a two-
+       capacity tosmooth windpower fluctuation.IOP ConfSer Earth EnvironSci2021; layer Stackelberg game approach. J Energy Storage 2024;87:111383. https://doi.
+       687:012103. https://doi.org/10.1088/1755-1315/687/1/012103. org/10.1016/j.est.2024.111383.
+     [29] DicoratoM,ForteG,PisaniM,TrovatoM.Planningandoperatingcombinedwind- [44] Multivariate probabilistic forecasting and its performance’s impacts on long-term
+       storage System in electricity market. IEEE Trans Sustain Energy 2012;3:209–17. dispatch of hydro-wind hybrid systems. Appl Energy 2021;283:116243. https://
+       https://doi.org/10.1109/TSTE.2011.2179953. doi.org/10.1016/j.apenergy.2020.116243.
+                                              ´   ´                               
+     [30] Han X, Lv F, Li J, Zeng F. Flexible interactive control method for multi-scenario [45] GuisandezI,Perez-DíazJI.Mixedintegerlinearprogrammingformulationsforthe
+       sharing of hybrid pumped storage-wind-photovoltaic power generation. J Energy hydro production function in a unit-based short-term scheduling problem. Int J
+       Storage 2024;100:113590. https://doi.org/10.1016/j.est.2024.113590. Electr Power Energy Syst 2021;128:106747. https://doi.org/10.1016/j.
+     [31] HanX,LiJ,ZhangZ.Dynamicgameoptimizationcontrolforsharedenergystorage ijepes.2020.106747.
+       inmultipleapplicationscenariosconsideringenergystorageeconomy.ApplEnergy [46] Optimization model for long-distance integrated transmission of wind farms and
+       2023;350:121801. https://doi.org/10.1016/j.apenergy.2023.121801. pumped-storage hydropower plants. Appl Energy 2019;242:285–93. https://doi.
+     [32] LuoX,WangJ,DoonerM,ClarkeJ.Overviewofcurrentdevelopmentinelectrical org/10.1016/j.apenergy.2019.03.080.
+       energy storage technologies and the application potential in power system [47] Chen Z, Li S, Khan AT, Mirjalili S. Competition of tribes and cooperation of
+       operation. Appl Energy 2015;137:511–36. https://doi.org/10.1016/j. members algorithm: an evolutionary computation approach for model free
+       apenergy.2014.09.081.                 optimization. Expert Syst Appl 2025;265:125908. https://doi.org/10.1016/j.
+     [33] Jamal R, Zhang J, Men B, Khan NH, Ebeed M, Kamel S. Solution to the eswa.2024.125908.
+       deterministic and stochastic Optimal Reactive Power Dispatch by integration of [48] DengZ,WangG,WangZ,JinW.Modellingerosionandstabilitydegradationofa
+       solar, wind-hydro powers using Modified Artificial Hummingbird Algorithm. reservoirslopeunderperiodicwaterlevelfluctuations.ComputGeotech2024;166:
+       Energy Rep 2023;9:4157–73. https://doi.org/10.1016/j.egyr.2023.03.036. 106021. https://doi.org/10.1016/j.compgeo.2023.106021.
+     [34] Modu B, Abdullah MP, Bukar AL, Hamza MF, Adewolu MS. Operational strategy [49] GuoQ, LiJ,LiQ,SunY,LiF, YanL,etal.Performanceanalysisand applicability
+       and capacity optimization of standalone solar-wind-biomass-fuel cell energy evaluation of electrochemical energy storage under the high percentage of
+       system using hybrid LF-SSA algorithms. Int J Hydrogen Energy 2024;50:92–106. renewable energy penetration. Energy Rep 2025;14:978–88. https://doi.org/
+       https://doi.org/10.1016/j.ijhydene.2023.07.215. 10.1016/j.egyr.2025.07.007.
+     [35] Wang Z, Sun T, Liu N. Risk-managed economic dispatch in hybrid hydrothermal- [50] Cost-sharing mechanisms for pumped storage plants at different market stages in
+       wind-solar systems: a novel multi-objective optimization approach. Int J Electr China. Renew Energy 2023;217:119183. https://doi.org/10.1016/j.
+       Power Energy Syst 2025;169:110753. https://doi.org/10.1016/j. renene.2023.119183.
+       ijepes.2025.110753.                [51] Coordinated operation of conventional hydropower plants as hybrid pumped
+     [36] Wang Y, Xiong G, Xu S, Suganthan PN. Dynamic economic dispatch of multi-area storage hydropower with wind and photovoltaic plants. Energy Convers Manag
+       wind-solar-thermal power systems with fractional order comprehensive learning 2023;277:116654. https://doi.org/10.1016/j.enconman.2022.116654.
+       differential evolution. Energy 2025;326:136233. https://doi.org/10.1016/j. [52] Medium-term multi-stage distributionally robust scheduling of hydro–wind–solar
+       energy.2025.136233.                   complementary systems in electricity markets considering multiple time-scale
+     [37] Han X, Wang Z, Li H, Liu M. Cooperative game robust optimization control for uncertainties. Appl Energy 2023;347:121371. https://doi.org/10.1016/j.
+       wind-solar-sharedenergystorageintegratedsystembasedondual-settlementmode apenergy.2023.121371.
+       and multiple uncertainties. Appl Energy 2025;378:124799. https://doi.org/ [53] JohlasH,WitherbyS,DoyleJR.Storagerequirementsforhighgridpenetrationof
+       10.1016/j.apenergy.2024.124799.       windandsolar powerfortheMISOregionofNorthAmerica:acasestudy.Renew
+     [38] XueC,BaiX.Probabilisticcarbonemissionflowcalculationofpowersystemwith Energy 2020;146:1315–24. https://doi.org/10.1016/j.renene.2019.07.043.
+       LatinHypercubeSampling.EnergyRep2025;14:751–65.https://doi.org/10.1016/ [54] The complementary role of energy system and power grid models: an analysis of
+       j.egyr.2025.06.040.                   the European energy transformation from a holistic perspective. Energy Convers
+     [39] Tian X, Yuan B, Zheng P. Tri-objective enhanced ISODATA: a synergistic Manag 2024;315:118761. https://doi.org/10.1016/j.enconman.2024.118761.
+       framework of cluster core optimization, inter-class divergence maximization, and
+                                         16
