@@ -27,6 +27,10 @@ build_wind_standalone
 validate_wind_resource_v2
 ```
 
+R2024b-targeted exports of both accepted resources are maintained under
+`models/r2024b/`. See [R2024b compatibility](docs/R2024B_COMPATIBILITY.md)
+for regeneration and smoke-test commands.
+
 See [architecture rules](docs/ARCHITECTURE_RULES.md),
 [PV acceptance](docs/PV_V2_ACCEPTANCE.md), and
 [Wind acceptance](docs/WIND_V2_ACCEPTANCE.md).
