@@ -10,6 +10,12 @@ Current v2 status:
 - Wind-GFL: generated from source and accepted (`WIND_RESOURCE_V2_ACCEPTANCE_PASS=1`).
 - BESS-GFM migration and the three-resource assembly remain subsequent phases.
 
+An additional 5 MW direct-drive Wind-GFL course model is maintained at
+`models/resources/Wind_DirectDrive_Average.slx`. It preserves the physical
+1500 V DC link and 0.69/10 kV grid interface while using an averaged-switch
+GSC for system-level coordination studies. See
+[`design/WIND_COURSE_AVERAGE.md`](design/WIND_COURSE_AVERAGE.md).
+
 Each renewable resource owns an independent source/DC side, PCS, filter,
 0.69/10 kV transformer, local PLL and PCC measurement.  Reuse is implemented
 through MATLAB builders and parameter schemas, not by sharing physical block
