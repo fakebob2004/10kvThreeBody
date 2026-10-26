@@ -1,7 +1,10 @@
-function modelFile=build_bess_standalone()
+function modelFile=build_bess_standalone(strategy)
 %BUILD_BESS_STANDALONE Generate the maintainable v2 BESS-GFM island harness.
 root=setup_v2_paths();define_resource_buses(true);define_v2_parameters(true);
+if nargin<1,strategy='droop';end
+assert(any(strcmp(strategy,{'droop','dvoc'})));
 model='bess_resource_standalone';folder=fullfile(root,'models','resources');
+if strcmp(strategy,'dvoc'),configure_bess_dvoc();model='bess_resource_dvoc';end
 if ~exist(folder,'dir'),mkdir(folder);end;modelFile=fullfile(folder,[model '.slx']);
 if bdIsLoaded(model),close_system(model,0);end
 new_system(model);load_system('ee_lib');load_system('fl_lib');load_system('nesl_utility');
@@ -23,16 +26,22 @@ a=Simulink.Annotation(model,sprintf([ ...
 a.Position=[45 20 1330 105];a.FontSize=14;a.FontWeight='bold';
 initCmd=char("root=fileparts(fileparts(fileparts(get_param(bdroot,'FileName')))); " + ...
     "addpath(root); setup_v2_paths; define_resource_buses(true); define_v2_parameters(true);");
+if strcmp(strategy,'dvoc'),initCmd=[initCmd ' configure_bess_dvoc;'];end
+if strcmp(strategy,'dvoc')
+    set_param(bess,'Position',[300 180 690 430]);
+    set_param([model '/Load Step Command'],'Position',[720 315 795 345]);
+end
 set_param(model,'InitFcn',initCmd,'StopTime','0.8','MaxStep','1e-5', ...
     'SolverType','Variable-step','Solver','ode23t','Location',[50 50 1500 900]);
 v2_disable_previews(model);v2_route_level(model);
 set_param(model,'SimulationCommand','update');save_system(model,modelFile);
 artifact=fullfile(root,'artifacts','architecture_v2');
+if strcmp(strategy,'dvoc'),artifact=fullfile(root,'artifacts','bess_dvoc');end
 v2_render(model,fullfile(artifact,'BESS_01_Standalone.png'));
 v2_render(bess,fullfile(artifact,'BESS_02_Resource.png'));
 v2_render([bess '/01 BESS Source and DC Side'],fullfile(artifact,'BESS_03_Source_DC.png'));
 v2_render([bess '/02 PCS'],fullfile(artifact,'BESS_04_GFM_PCS.png'));
-v2_render([bess '/02 PCS/01 GFM Strategy'],fullfile(artifact,'BESS_05_Droop_Strategy.png'));
+v2_render([bess '/02 PCS/01 GFM Strategy'],fullfile(artifact,['BESS_05_' strategy '_Strategy.png']));
 v2_render([bess '/02 PCS/02 Virtual Impedance Policy'],fullfile(artifact,'BESS_06_VI_Policy.png'));
 v2_render([bess '/02 PCS/03 Virtual Impedance Interface'],fullfile(artifact,'BESS_07_VI_Interface.png'));
 v2_render([bess '/03 AC Interface'],fullfile(artifact,'BESS_08_AC_Interface.png'));

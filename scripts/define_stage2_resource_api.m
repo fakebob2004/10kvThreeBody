@@ -3,17 +3,22 @@ cmdNames={'P_ref_W','Q_ref_var','enable','mode'};
 statusNames={'P_W','Q_var','Vpcc_V','frequency_Hz','available_power_W', ...
     'power_headroom_W','current_limit_factor','health','energy_state_pu', ...
     'Vdc_V','mppt_capture_pu','dispatch_limit_W'};
+% Semantic note: For Resource 1 (BESS), column 11 ('mppt_capture_pu') conveys
+% the BESS short-term overload capability budget E_budget in [0, 1] (3.0 pu / 10 s).
 
 S2_ResourceCommand=Simulink.Bus;
+eCmd=repmat(Simulink.BusElement,1,numel(cmdNames));
 for k=1:numel(cmdNames)
-    e(k)=Simulink.BusElement;e(k).Name=cmdNames{k};e(k).DataType='double'; %#ok<SAGROW>
+    eCmd(k).Name=cmdNames{k};eCmd(k).DataType='double';
 end
-S2_ResourceCommand.Elements=e;clear e;
+S2_ResourceCommand.Elements=eCmd;clear eCmd;
+
 S2_ResourceStatus=Simulink.Bus;
+eStat=repmat(Simulink.BusElement,1,numel(statusNames));
 for k=1:numel(statusNames)
-    e(k)=Simulink.BusElement;e(k).Name=statusNames{k};e(k).DataType='double'; %#ok<SAGROW>
+    eStat(k).Name=statusNames{k};eStat(k).DataType='double';
 end
-S2_ResourceStatus.Elements=e;clear e;
+S2_ResourceStatus.Elements=eStat;clear eStat;
 
 S2_API=struct();
 S2_API.sample_time_s=.005;
@@ -29,7 +34,7 @@ S2_API.soc.min=.20;S2_API.soc.max=.90;
 S2_API.health.good=1;S2_API.health.bad=0;
 S2_API.runtime.coordinator_enable=0;
 S2_API.runtime.mode=[0 0 0];
-S2_API.runtime.bess_command=[0 0 1];
+S2_API.runtime.bess_command=[1.0e6 0.0 1.0];
 % Flat numeric contract for MATLAB Function/code generation and future
 % Python/C++ bindings.  Keep cells/strings/nested metadata out of the
 % real-time function boundary.

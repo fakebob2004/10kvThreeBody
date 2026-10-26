@@ -10,6 +10,7 @@ gnd=sprintf('ee_lib/Connectors &\nReferences/Grounded Neutral\n(Three-Phase)');
 xf=sprintf('ee_lib/Passive/Transformers/Two-Winding\nTransformer\n(Three-Phase)');
 cfgData=evalin('base',cfg);isLCL=isfield(cfgData.filter,'topology')&& ...
     strcmpi(cfgData.filter.topology,'LCL');
+localSense=isfield(cfgData.control,'strategy')&&strcmpi(cfgData.control.strategy,'dvoc');
 if isLCL
     add_block(rlc,[path '/Inverter-side R1 + L1'],'Position',[130 55 260 125], ...
         'component_structure','ee.enum.rlc.structure.SeriesRL', ...
@@ -40,10 +41,35 @@ meas=add_pcc_measurement(path,'PCC Measurement',cfg,[800 35 1000 155]);
 if isLCL
     add_line(path,v2_physical_port([path '/PCS AC Terminal']), ...
         v2_port([path '/Inverter-side R1 + L1'],'LConn',1));
-    add_line(path,shuntNode,v2_port([path '/Grid-side R2 + L2'],'LConn',1));
+    if localSense
+        add_local_filter_sensor(path,shuntNode,v2_port([path '/Grid-side R2 + L2'],'LConn',1));
+    else
+        add_line(path,shuntNode,v2_port([path '/Grid-side R2 + L2'],'LConn',1));
+    end
 else
     add_line(path,v2_physical_port([path '/PCS AC Terminal']), ...
         v2_port([path '/Equivalent Filter Series R'],'LConn',1));
+end
+
+function add_local_filter_sensor(path,left,right)
+sensor=[path '/Local Filter VI'];
+add_block(sprintf('ee_lib/Sensors &\nTransducers/Current and Voltage\nSensor (Three-Phase)'), ...
+    sensor,'Position',[335 45 395 120],'vMeasurementType','ee.enum.vmeasurement.ll');
+add_line(path,left,v2_port(sensor,'LConn',1));
+add_line(path,v2_port(sensor,'RConn',3),right);
+pss=sprintf('nesl_utility/PS-Simulink\nConverter');
+names={'Filter Voltage LL','External Terminal Current'};units={'V','A'};
+for k=1:2
+    y=300+65*(k-1);
+    add_block(pss,[path '/' names{k}],'Position',[460 y 590 y+35],'Unit',units{k});
+    add_line(path,v2_port(sensor,'RConn',k),v2_port([path '/' names{k}],'LConn',1),'autorouting','on');
+end
+add_block('simulink/Signal Routing/Mux',[path '/Local Measurements'], ...
+    'Position',[700 300 705 405],'Inputs','2');
+for k=1:2,add_line(path,[names{k} '/1'],sprintf('Local Measurements/%d',k));end
+add_block('simulink/Ports & Subsystems/Out1',[path '/FilterMeasurements'], ...
+    'Position',[1120 350 1150 364],'Port','2');
+add_line(path,'Local Measurements/1','FilterMeasurements/1');
 end
 add_line(path,shuntNode,v2_port([path '/Damped Shunt C'],'LConn',1));
 add_line(path,v2_port([path '/Damped Shunt C'],'RConn',1),v2_port([path '/Filter Ground'],'LConn',1));

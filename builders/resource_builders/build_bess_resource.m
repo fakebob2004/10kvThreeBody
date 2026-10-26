@@ -16,6 +16,9 @@ add_line(path,'ResourceCommandBus/1','02 PCS/1','autorouting','on');
 add_line(path,'03 AC Interface/1','01 BESS Source and DC Side/1','autorouting','on');
 add_line(path,'03 AC Interface/1','02 PCS/2','autorouting','on');
 add_line(path,'01 BESS Source and DC Side/1','02 PCS/3','autorouting','on');
+if strcmpi(evalin('base',[cfg '.control.strategy']),'dvoc')
+    add_line(path,'03 AC Interface/2','02 PCS/4','autorouting','on');
+end
 add_line(path,'01 BESS Source and DC Side/2','Status Interface/1','autorouting','on');
 add_line(path,'02 PCS/1','Status Interface/2','autorouting','on');
 add_line(path,'03 AC Interface/1','Status Interface/3','autorouting','on');

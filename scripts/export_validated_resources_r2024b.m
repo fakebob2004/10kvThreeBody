@@ -12,7 +12,7 @@ sourceFolder = fullfile(root,'models','resources');
 targetFolder = fullfile(root,'models','r2024b');
 if ~exist(targetFolder,'dir'), mkdir(targetFolder); end
 
-models = {'pv_resource_standalone','wind_resource_standalone'};
+models = {'pv_resource_standalone','wind_resource_standalone','bess_resource_standalone'};
 files = cell(size(models));
 for k = 1:numel(models)
     model = models{k};

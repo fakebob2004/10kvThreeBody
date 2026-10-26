@@ -3,9 +3,12 @@ build/
 slprj/
 **/*.slxc
 *.autosave
+*.mat
+artifacts/
 
 # Generated review images and logs
 *.png
+*.jpg
 *.log
 logs/
 

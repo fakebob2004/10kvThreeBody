@@ -1,0 +1,417 @@
+\documentclass[UTF8,zihao=-4,fontset=fandol]{ctexrep}
+\usepackage[a4paper,left=2.7cm,right=2.5cm,top=2.6cm,bottom=2.6cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{listings}
+
+\graphicspath{{../build/}}
+% 正常从 report/ 目录编译时载入工程图片；单文件沙箱无法复制附属图片时，
+% 自动生成带文件名的占位框，从而仍可完成全文语法与版式诊断。
+\newif\ifcoursefigures
+\IfFileExists{../build/WIND_COURSE_R2_01_Top.png}{\coursefigurestrue}{\coursefiguresfalse}
+\newcommand{\courseimage}[2][\textwidth]{%
+  \ifcoursefigures
+    \includegraphics[width=#1]{#2}%
+  \else
+    \fbox{\parbox[c][4.2cm][c]{0.90\linewidth}{\centering
+      \textbf{模型插图：}\\[0.5em]\texttt{\detokenize{#2}}\\[0.5em]
+      （单文件编译预览未载入；从工程 report 目录编译时自动显示原图）}}%
+  \fi}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,urlcolor=blue!55!black,citecolor=blue!45!black}
+\captionsetup{font=small,labelsep=quad}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.25em}
+\setlist{nosep,leftmargin=2.2em}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{直驱永磁同步风力发电系统建模与仿真}
+\fancyhead[R]{MATLAB/Simulink 课程设计}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\lstset{basicstyle=\ttfamily\small,frame=single,breaklines=true,columns=fullflexible,
+  backgroundcolor=\color{gray!6},keywordstyle=\color{blue!55!black}}
+
+\newcommand{\modelname}{\texttt{Wind\_DirectDrive\_SPWM\_R2}}
+\newcommand{\pu}{\mathrm{pu}}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{1.8cm}
+  {\zihao{1}\bfseries 电力电子技术课程设计报告\par}
+  \vspace{1.5cm}
+  {\zihao{2}\bfseries 基于全功率变流器的直驱永磁同步\par}
+  \vspace{0.3cm}
+  {\zihao{2}\bfseries 风力发电系统建模与仿真\par}
+  \vspace{0.9cm}
+  {\zihao{4}Direct-Drive PMSG Wind Energy Conversion System\\
+  with Full-Scale Converter and SPWM\par}
+  \vfill
+  \renewcommand{\arraystretch}{1.8}
+  \begin{tabular}{>{\bfseries}r l}
+    学生姓名： & \underline{\hspace{7cm}} \\
+    学号： & \underline{\hspace{7cm}} \\
+    专业班级： & \underline{\hspace{7cm}} \\
+    指导教师： & \underline{\hspace{7cm}} \\
+    仿真平台： & MATLAB/Simulink R2026a、Simscape Electrical \\
+  \end{tabular}
+  \vfill
+  {\zihao{4}浙江大学\par}
+  \vspace{0.4cm}
+  {\zihao{4}\today\par}
+\end{titlepage}
+
+\pagenumbering{Roman}
+\chapter*{摘\quad 要}
+\addcontentsline{toc}{chapter}{摘要}
+本文面向电力电子课程设计，独立搭建了一套额定功率为\(5\,\mathrm{MW}\)的直驱永磁同步风力发电系统。系统采用“风轮气动模型---机械转子---永磁同步发电机/机侧变流器平均值模型---直流母线---两电平网侧变流器---交流滤波器---升压变压器---电网”等完整能量链。网侧变流器采用六路互补的\(5\,\mathrm{kHz}\)正弦脉宽调制（SPWM），并建立直流电压外环、圆形电流限幅、同步旋转坐标系电流内环和解耦前馈控制。直流侧包含预充电支路、母线电容、电压/电流测量和过压制动逻辑；电网侧按短路比显式建立戴维南等值阻抗，避免理想电源内部阻抗与外部阻抗重复计算。
+
+模型由 MATLAB 脚本完整生成，不使用 MATLAB Function 黑盒，结构、参数和测试过程均可复现。\(8\,\mathrm{ms}\)开关级冒烟测试表明六路门极为二值信号、同一桥臂上下管互补，直流电压保持在设定范围内；\(80\,\mathrm{ms}\)运行点测试得到机侧平均功率约\(3.196\,\mathrm{MW}\)、并网点有功功率约\(2.961\,\mathrm{MW}\)、无功功率约\(0.419\,\mathrm{Mvar}\)、直流电压约\(1500.18\,\mathrm{V}\)，功率传输判据通过。模型适合用于分析直驱风电全功率变流器的拓扑、控制、限流和并网过程，也为后续增加故障穿越与保护协调功能保留了接口。
+
+\noindent\textbf{关键词：}直驱风力发电；永磁同步发电机；全功率变流器；SPWM；网侧变流器；Simscape Electrical
+
+\chapter*{符号与缩写}
+\addcontentsline{toc}{chapter}{符号与缩写}
+\begin{longtable}{p{2.8cm}p{10.2cm}}
+\toprule
+PMSG & 永磁同步发电机（Permanent Magnet Synchronous Generator）\\
+MSC/GSC & 机侧变流器/网侧变流器\\
+PCC & 公共耦合点\\
+SPWM & 正弦脉宽调制\\
+SRF-PLL & 同步旋转坐标系锁相环\\
+MPPT & 最大功率点跟踪\\
+SCR & 短路比\\
+\(V_{dc}\) & 直流母线电压\\
+\(i_d,i_q\) & 同步旋转坐标系下的有功、无功电流分量\\
+\bottomrule
+\end{longtable}
+
+\tableofcontents
+
+\clearpage
+\pagenumbering{arabic}
+\chapter{课题要求与方案选择}
+\section{课程设计任务}
+课程要求使用 PSCAD/EMTDC 或 MATLAB/Simulink 搭建一类指定电力电子装置，并提交可运行模型及建模测试报告。风力发电方向允许选择双馈型或直驱型方案。本文选择直驱型方案，重点展示全功率变流器的能量通道、开关行为和并网控制。
+
+\section{直驱 PMSG 与 DFIG 的区别}
+“双馈”和“直驱”是两条不同的技术路线，不能将本文模型称作 DFIG。双馈感应发电机（DFIG）的定子直接并网，转子通过部分容量背靠背变流器与电网交换功率，通常配置齿轮箱；直驱 PMSG 取消高速齿轮箱，发电机全部功率经过全功率变流器后并网。本文模型的电气隔离和控制自由度更高，且与两电平 VSC、SPWM 和直流母线控制这一课程重点更契合。
+
+\begin{table}[H]
+\centering
+\caption{两类风力发电方案对比}
+\begin{tabular}{p{3.1cm}p{5.0cm}p{5.0cm}}
+\toprule
+项目 & 双馈感应发电机 & 本文直驱 PMSG\\
+\midrule
+并网关系 & 定子直接并网，转子经变流器 & 发电机功率全部经变流器\\
+变流器容量 & 约为机组容量的一部分 & 与机组功率同等级\\
+机械传动 & 通常使用齿轮箱 & 低速多极发电机，可直接驱动\\
+电网解耦 & 受定子直接并网约束 & 发电机与电网由直流链解耦\\
+本文是否采用 & 否 & 是\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{系统总体结构}
+\section{功率与控制链路}
+模型名称为\modelname，额定风机功率\(5\,\mathrm{MW}\)，变流器容量\(6.25\,\mathrm{MVA}\)。主能量链自左向右布置，控制与测量信号尽量靠近使用位置，顶层不暴露仅用于内部记录的测量端口。整体结构如图\ref{fig:top}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage{WIND_COURSE_R2_01_Top.png}
+\caption{直驱风力发电系统顶层模型}
+\label{fig:top}
+\end{figure}
+
+系统划分为六个主要模块：气动与转子动力学、PMSG/MSC 平均值能量接口、直流链与两电平 GSC、GFL 控制与 SPWM、滤波器/变压器/PCC、电网等值。该分层兼顾课程可读性和接口清晰度，没有为了隐藏连线而引入总线或不透明函数块。
+
+\section{平均值模型与开关模型的边界}
+风轮、机械转子、PMSG 转矩执行环节和 MSC 采用平均值模型，以较低计算量保留风能获取、转速变化、MPPT 转矩和功率损耗动态；直流母线电容、网侧两电平桥、交流滤波器、变压器及电网使用物理网络。GSC 保留六个开关器件及显式载波比较，因此能够观察门极互补性、开关纹波和直流侧瞬态。该混合精度划分把计算资源集中在本课程最关心的电力电子环节。
+
+\chapter{风轮、传动链与机侧能量模型}
+\section{气动模型}
+风轮吸收功率为
+\begin{equation}
+P_t=\frac{1}{2}\rho A v_w^3 C_p(\lambda,\beta),\qquad
+\lambda=\frac{\omega_r R}{v_w},
+\end{equation}
+其中，\(\rho\)为空气密度，\(A=\pi R^2\)为扫风面积，\(v_w\)为风速，\(R\)为叶轮半径，\(\omega_r\)为转子机械角速度。为突出变流器控制，本文使用以\(\lambda_{opt}=8.1\)为峰值点的平滑\(C_p\)近似，最大功率系数取\(C_{p,max}=0.48\)。气动模块如图\ref{fig:aero}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.94\textwidth]{WIND_COURSE_R2_02_Aerodynamics.png}
+\caption{风速、叶尖速比和气动功率计算模块}
+\label{fig:aero}
+\end{figure}
+
+\section{转子动力学与 MPPT 转矩}
+转子运动方程写为
+\begin{equation}
+J\frac{d\omega_r}{dt}=T_t-T_e-B\omega_r,
+\qquad T_t=\frac{P_t}{\max(\omega_r,\varepsilon)},
+\end{equation}
+其中\(J=3.0\times10^7\,\mathrm{kg\,m^2}\)，\(B=1.0\times10^5\,\mathrm{N\,m\,s/rad}\)。最优功率跟踪采用
+\begin{equation}
+T_e^*=K_{opt}\omega_r^2,
+\end{equation}
+并经过额定转矩、功率爬坡率及一阶 MSC 动态限制。这样既保留机械惯性和风速扰动对直流功率的影响，又避免在课程模型中引入高阶电机电磁暂态所造成的求解负担。
+
+\section{PMSG/MSC 平均值接口}
+PMSG 采用\(60\)对极低速多极设定，发电机效率为\(97.5\%\)，MSC 等效时间常数为\(10\,\mathrm{ms}\)。机侧输出功率经损耗和限幅后，以受控直流电流注入物理直流母线：
+\begin{equation}
+I_{msc}^*=\operatorname{sat}\!\left(\frac{P_{msc}}{\max(V_{dc},0.6V_{dc,n})}\right).
+\end{equation}
+图\ref{fig:pmsg}给出相应实现。电流指令的 Simulink--PS 转换器竖直放置并靠近受控源，以减少折线；转速和转矩信号则布置在模块外侧，避免与主能量链交叉。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.95\textwidth]{WIND_COURSE_R2_03_PMSG_MSC.png}
+\caption{PMSG、MPPT 转矩与 MSC 平均值能量接口}
+\label{fig:pmsg}
+\end{figure}
+
+\chapter{直流链与两电平网侧变流器}
+\section{直流母线与辅助支路}
+直流母线额定电压为\(1500\,\mathrm{V}\)，电容为\(0.20\,\mathrm{F}\)，等效串联电阻为\(3\,\mathrm{m\Omega}\)。其能量平衡可写成
+\begin{equation}
+C_{dc}V_{dc}\frac{dV_{dc}}{dt}=P_{msc}-P_{gsc}-P_{loss}.
+\end{equation}
+模型设置启动支撑/预充电接触器，并在\(0.100\,\mathrm{s}\)后断开。制动电阻为\(0.50\,\Omega\)，过压投入阈值为\(1.08V_{dc,n}\)，退出阈值为\(1.04V_{dc,n}\)，形成带回差的直流过压保护。控制与监视模块保留直流电压和支路电流测量接口，便于后续故障穿越研究。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.93\textwidth]{WIND_COURSE_R2_04_DC_GSC.png}
+\caption{直流链、保护支路与两电平 GSC}
+\label{fig:dcgsc}
+\end{figure}
+
+\section{两电平三相桥}
+网侧变流器每相桥臂由上下两个功率开关组成。直流正、负母线保持水平，各桥臂垂直接入，从而直观显示电流换流路径。六路门极顺序固定为
+\begin{equation}
+[g_{AH},g_{AL},g_{BH},g_{BL},g_{CH},g_{CL}],
+\end{equation}
+互补对分别为\((1,2)\)、\((3,4)\)、\((5,6)\)。门极逻辑直接连接到六个 Simulink--PS 转换器，再进入物理六脉冲接口，删除了“先压缩再解压缩”的冗余 Mux/Demux 层。
+
+\chapter{跟网控制与 SPWM}
+\section{控制器分层}
+控制器保留六个可解释层级：三相测量与\(dq\)变换、SRF-PLL、直流电压与功率参考、圆形电流限幅、\(dq\)电流调节、载波比较与物理门极接口。图\ref{fig:control}中，上部为同步与诊断带，下部形成连续的参考---限幅---电流环---PWM 主链。
+
+\begin{figure}[H]
+\centering
+\courseimage{WIND_COURSE_R2_05_Control.png}
+\caption{GFL 控制器与 SPWM 总体结构}
+\label{fig:control}
+\end{figure}
+
+\section{同步、功率与直流电压外环}
+三相量通过 Park 变换得到\(v_d,v_q,i_d,i_q\)，有功与无功按
+\begin{equation}
+P=\frac{3}{2}(v_di_d+v_qi_q),\qquad
+Q=\frac{3}{2}(v_qi_d-v_di_q)
+\end{equation}
+计算，并使用\(100\,\mathrm{Hz}\)低通滤波。SRF-PLL 以\(v_q\to0\)为目标，频率限制在\(45\sim55\,\mathrm{Hz}\)。当前已验证基线使用已知\(50\,\mathrm{Hz}\)理想电网角度（初相角\(-90^\circ\)）驱动坐标变换；PLL 保留并记录，用于后续独立整定后重新接入。这样能够把功率链问题与同步环问题分开验证，避免把尚未整定的 PLL 误当作已闭环功能。
+
+电流方向定义为变流器流向电网，因而有功电流参考为
+\begin{equation}
+i_d^*=\frac{P_{msc}}{\max(v_d,v_{d,min})}
++K_{pv}(V_{dc}-V_{dc}^*)+K_{iv}\int(V_{dc}-V_{dc}^*)dt.
+\end{equation}
+无功参考在本基线中取零。为限制故障或启动时的过流，采用圆形限幅：
+\begin{equation}
+\begin{bmatrix}i_{d,lim}^*\\i_{q,lim}^*\end{bmatrix}
+=\min\!\left(1,\frac{I_{max}}{\sqrt{{i_d^*}^2+{i_q^*}^2}}\right)
+\begin{bmatrix}i_d^*\\i_q^*\end{bmatrix},
+\end{equation}
+其中\(I_{max}=1.10\,\pu\)。
+
+\section{电流内环与解耦}
+交流滤波器在同步坐标系下存在交叉耦合。按本文电流方向和坐标约定，电压指令为
+\begin{align}
+v_d^*&=v_{gd}+\mathrm{PI}_d(i_d^*-i_d)-\omega L_f i_q,\\
+v_q^*&=v_{gq}+\mathrm{PI}_q(i_q^*-i_q)+\omega L_f i_d.
+\end{align}
+图\ref{fig:current}将两条比例解耦通道布置在相应信号的水平路径上：\(i_q\)项进入\(v_d\)指令，\(i_d\)项进入\(v_q\)指令。布局调整只改变块位置和线段，不改变数学连接。
+
+\begin{figure}[H]
+\centering
+\courseimage{WIND_COURSE_R2_07_Current_Controller.png}
+\caption{带电网电压前馈和交叉解耦的\(dq\)电流控制器}
+\label{fig:current}
+\end{figure}
+
+\section{调制与六路门极}
+\(dq\)电压指令经反 Park 变换得到三相调制波，并按实测\(V_{dc}\)归一化。调制度限制为\(0.95\)，三相正弦参考与\(5\,\mathrm{kHz}\)三角载波比较生成上桥臂脉冲，下桥臂取逻辑互补。图\ref{fig:pwm}明确标注门极顺序，并将诊断记录留在 PWM 子系统内部。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.92\textwidth]{WIND_COURSE_R2_06_PWM_Gate_Order.png}
+\caption{载波比较 SPWM 与六路互补门极接口}
+\label{fig:pwm}
+\end{figure}
+
+\chapter{交流接口与电网模型}
+\section{滤波器、变压器和 PCC}
+交流滤波器、\(0.69/10\,\mathrm{kV}\)升压变压器及 PCC 测量被封装为一个“并网接口”模块，因为三者共同定义变流器与外部电网的电气边界。内部主功率链保持一条水平线，测量量在模块内部转换并记录，不在顶层暴露不必要端口。结构如图\ref{fig:filter}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage{WIND_COURSE_R2_08_Filter_Transformer_PCC.png}
+\caption{交流滤波器、升压变压器与 PCC 测量}
+\label{fig:filter}
+\end{figure}
+
+低压侧基准阻抗为\(Z_b=V_{LL}^2/S_b\)，滤波器参数取\(R_f=0.01Z_b\)、\(X_f=0.15Z_b\)。变压器额定容量为\(6.3\,\mathrm{MVA}\)，采用\(0.69/10\,\mathrm{kV}\) Y--Y 接线，两侧电阻均为\(0.005\,\pu\)，漏抗均为\(0.03\,\pu\)。
+
+\section{强电网等值}
+电网按\(SCR=20\)、\(X/R=10\)计算戴维南等值阻抗：
+\begin{equation}
+|Z_g|=\frac{Z_{b,HV}}{SCR},\quad
+R_g=\frac{|Z_g|}{\sqrt{1+(X/R)^2}},\quad
+L_g=\frac{(X/R)R_g}{2\pi f}.
+\end{equation}
+外部支路显式表示\(R_g+L_g\)，理想三相源自身阻抗关闭，避免同一电网强度被重复计入。源块水平翻转，使交流端口朝向阻抗，三相主线保持直线，中性点竖直接地。
+
+\chapter{参数设计}
+\begin{table}[H]
+\centering
+\caption{系统额定参数}
+\begin{tabular}{p{5.2cm}p{3.2cm}p{4.0cm}}
+\toprule
+参数 & 数值 & 说明\\
+\midrule
+风机额定功率 & \(5\,\mathrm{MW}\) & 直驱 PMSG\\
+PCS 额定容量 & \(6.25\,\mathrm{MVA}\) & 留有无功与过载裕度\\
+低压/高压线电压 & \(690\,\mathrm{V}/10\,\mathrm{kV}\) & 变压器变比\\
+额定频率 & \(50\,\mathrm{Hz}\) & 强电网基线\\
+直流母线额定电压 & \(1500\,\mathrm{V}\) & GSC 直流侧\\
+直流电容/ESR & \(0.20\,\mathrm{F}/3\,\mathrm{m\Omega}\) & 物理电容模型\\
+开关频率 & \(5\,\mathrm{kHz}\) & 显式 SPWM\\
+最大调制度 & \(0.95\) & 避免过调制\\
+最大交流电流 & \(1.10\,\pu\) & 圆形限流\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{风轮、控制与电网关键参数}
+\begin{tabular}{p{5.4cm}p{3.2cm}p{3.8cm}}
+\toprule
+参数 & 数值 & 说明\\
+\midrule
+叶轮半径 & \(70\,\mathrm{m}\) & 扫风面积\(\pi R^2\)\\
+空气密度 & \(1.225\,\mathrm{kg/m^3}\) & 标准条件\\
+最优叶尖速比/最大\(C_p\) & \(8.1/0.48\) & MPPT 峰值点\\
+初始风速 & \(9\,\mathrm{m/s}\) & \(0.08\,\mathrm{s}\)增加\(1\,\mathrm{m/s}\)\\
+转动惯量 & \(3.0\times10^7\,\mathrm{kg\,m^2}\) & 机械惯性\\
+PMSG 极对数 & \(60\) & 低速多极机\\
+电流环带宽 & \(200\,\mathrm{Hz}\) & PI 参数据\(R_f,L_f\)计算\\
+直流环\(K_p/K_i\) & \(2/50\) & 外环参数\\
+PLL\(K_p/K_i\) & \(-60/-1400\) & 极性含坐标约定\\
+电网 SCR、\(X/R\) & \(20,10\) & 强电网\\
+控制/PWM 采样时间 & \(10\,\mathrm{\mu s}/200\,\mathrm{\mu s}\) & 多速率实现\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+按基值计算，低压侧\(Z_b=0.07618\,\Omega\)，因此\(R_f=0.7618\,\mathrm{m\Omega}\)，\(L_f\approx36.37\,\mathrm{\mu H}\)。高压侧\(Z_b=16\,\Omega\)，由 SCR 得\(|Z_g|=0.8\,\Omega\)，进而\(R_g\approx0.0796\,\Omega\)、\(L_g\approx2.53\,\mathrm{mH}\)。这些量均由参数脚本计算，而不是分散写入模块掩码。
+
+\chapter{仿真测试与结果}
+\section{测试方法与通过准则}
+模型采用“结构检查---短时开关测试---运行点审计”的递进验证流程。
+\begin{enumerate}
+  \item 结构检查：确认六个控制层级、物理功率链、六路门极顺序和必要日志存在，不含 MATLAB Function/System 黑盒。
+  \item \(8\,\mathrm{ms}\)开关冒烟测试：检查门极只取 0/1、每相上下管互补、直流电压处于\(1400\sim1600\,\mathrm{V}\)。
+  \item \(80\,\mathrm{ms}\)运行点测试：取\(60\sim80\,\mathrm{ms}\)窗口，统计直流电压、机侧功率、PCC 有功/无功、三相 RMS 及正负序分量。
+\end{enumerate}
+功率传输通过条件设置为：PCC 有功与 MSC 平均功率偏差小于\(15\%\)，无功绝对值小于\(0.10S_n\)，电流负序/正序比小于\(5\%\)。
+
+\section{开关级测试结果}
+自动化测试确认六个门极均为二值信号，三组上下桥臂互补误差为零。\(6\sim8\,\mathrm{ms}\)内直流电压均值约为\(1502.44\,\mathrm{V}\)，说明在显式\(5\,\mathrm{kHz}\)开关和物理直流电容条件下，启动阶段没有发生不可接受的母线偏移。测试同时验证了删除冗余 Gate Mux/Demux 后，六路逻辑门极仍按既定顺序进入物理接口。
+
+\section{80 ms 运行点结果}
+表\ref{tab:op}汇总稳态窗口的核心结果。机侧向直流链注入约\(3.196\,\mathrm{MW}\)，PCC 向电网输出约\(2.961\,\mathrm{MW}\)。两者差值包含变流器开关、滤波器、变压器以及模型设定损耗，并处于预设\(15\%\)判据内。直流电压误差仅约\(0.18\,\mathrm{V}\)，说明外环与网侧有功通道建立了有效功率平衡。无功约\(0.419\,\mathrm{Mvar}\)，小于\(0.625\,\mathrm{Mvar}\)上限；电流负/正序比约\(0.57\%\)，三相不平衡较小。
+
+\begin{table}[H]
+\centering
+\caption{\(60\sim80\,\mathrm{ms}\)运行点审计结果}
+\label{tab:op}
+\begin{tabular}{p{6.0cm}p{4.0cm}p{2.5cm}}
+\toprule
+指标 & 结果 & 判定\\
+\midrule
+机侧变流器平均功率\(P_{msc}\) & \(3.196\,\mathrm{MW}\) & ---\\
+PCC 平均有功功率\(P_{PCC}\) & \(2.961\,\mathrm{MW}\) & 通过\\
+PCC 平均无功功率\(Q_{PCC}\) & \(0.419\,\mathrm{Mvar}\) & 通过\\
+直流母线平均电压\(V_{dc}\) & \(1500.18\,\mathrm{V}\) & 通过\\
+电流负序/正序比 & 约\(0.57\%\) & 通过\\
+综合功率传输标志 & \texttt{true} & 通过\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{初始化警告说明}
+仿真启动时，Simscape 会提示直流电容电压和三相滤波电感电流的高优先级初值未能全部同时满足，随后自动放宽优先级并完成求解。该警告源于物理网络初始约束、受控源和开关初始状态之间的瞬时不一致，而不是仿真中途发散。结构检查、\(8\,\mathrm{ms}\)测试和\(80\,\mathrm{ms}\)测试均能完成。为保持报告可信度，本文保留并说明该警告；后续可通过一致初始化、软启动电压斜坡和滤波电流初值联合求解进一步消除。
+
+\section{结果适用范围}
+当前\(80\,\mathrm{ms}\)审计在风速阶跃发生前结束，因此验证的是初始\(9\,\mathrm{m/s}\)工况下的功率传输，而不是\(9\to10\,\mathrm{m/s}\)全过程。\(0.100\,\mathrm{s}\)前直流支撑接触器仍闭合。因而不能仅凭该运行点宣称已完成风速阶跃、接触器退出或电网故障穿越验证；这些应在延长仿真后单独给出能量与保护判据。
+
+\chapter{模型可读性、复现方法与局限}
+\section{可读性设计原则}
+模型由代码生成，因此布局规则固化在构建脚本中，而不是依赖一次性手工拖动。主要原则包括：主功率链自左向右；直流正负母线分别保持水平；物理/数字转换块沿信号方向布置；边界端口靠近首个使用者或最终产生者；内部诊断使用日志或局部 sink，不提升到顶层；只在能显著减少线长和折角时调整封装。由此保证每次重建后都能得到基本一致、可审查的结构。
+
+\section{复现步骤}
+在 MATLAB R2026a 中将工程根目录设为\texttt{PVwindBESS}，依次执行：
+\begin{lstlisting}[language=Matlab]
+run('parameters/init_wind_course_spwm_r2.m');
+run('scripts/build_wind_course_spwm_r2.m');
+run('scripts/validate_wind_course_spwm_r2.m');
+run('scripts/diagnose_wind_course_operating_point_r2.m');
+\end{lstlisting}
+构建脚本生成\texttt{build/Wind\_DirectDrive\_SPWM\_R2.slx}；验证脚本执行结构检查和短时开关测试；诊断脚本输出\(80\,\mathrm{ms}\)运行点指标。参数集中保存在\texttt{parameters/init\_wind\_course\_spwm\_r2.m}中，避免依赖工作区中来源不明的历史变量。
+
+\section{已知局限与改进方向}
+\begin{enumerate}
+  \item PMSG 与 MSC 目前为平均值能量模型，不能分析发电机定子谐波、机侧开关损耗和电磁转矩脉动。下一阶段可替换为\(dq\)电磁模型及机侧开关桥。
+  \item SRF-PLL 已存在并记录，但当前基线仍采用已知理想电网角度。应在弱网和相角扰动工况下独立整定 PLL，再将其接回主控制链。
+  \item 当前 SPWM 没有显式死区。若研究桥臂直通、死区畸变或器件损耗，应加入死区与更真实的半导体模型。
+  \item 尚未完成低电压穿越、直流制动全过程、接触器退出、过流保护与继电保护配合验证。
+  \item 平均值机侧与开关级网侧形成多时间尺度模型。进一步提高精度时，需要重新评估求解器、最大步长和初值一致性。
+\end{enumerate}
+
+\chapter{结论}
+本文完成了一个可运行、可复现且层级清晰的\(5\,\mathrm{MW}\)直驱 PMSG 风力发电系统模型。模型覆盖从风能捕获、机械惯性和 MPPT，到直流链、两电平变流器、SPWM、电流控制、升压变压器及强电网等值的完整链路。六路门极开关测试和\(80\,\mathrm{ms}\)运行点审计均通过，证明系统已经建立有效的直流电压调节和并网有功传输。与此同时，报告明确保留了初始化警告、PLL 尚未接入主链及机侧平均值化等边界，避免超出证据作结论。该模型满足课程对“直驱型风力发电装置模型与测试报告”的基本要求，并为后续开展风速阶跃、故障穿越与控制---保护协同研究提供了可扩展基座。
+
+\begin{thebibliography}{9}
+\bibitem{burton} T. Burton, N. Jenkins, D. Sharpe, and E. Bossanyi. \textit{Wind Energy Handbook}. Wiley.
+\bibitem{yazdani} A. Yazdani and R. Iravani. \textit{Voltage-Sourced Converters in Power Systems}. IEEE/Wiley.
+\bibitem{mohan} N. Mohan, T. Undeland, and W. Robbins. \textit{Power Electronics: Converters, Applications, and Design}. Wiley.
+\bibitem{mathworks} MathWorks. \textit{Simulink and Simscape Electrical Documentation}, MATLAB R2026a.
+\end{thebibliography}
+
+\appendix
+\chapter{提交文件建议清单}
+\begin{itemize}
+  \item 可运行模型：\texttt{build/Wind\_DirectDrive\_SPWM\_R2.slx}；
+  \item 参数文件：\texttt{parameters/init\_wind\_course\_spwm\_r2.m}；
+  \item 构建脚本：\texttt{scripts/build\_wind\_course\_spwm\_r2.m}；
+  \item 验证脚本：\texttt{scripts/validate\_wind\_course\_spwm\_r2.m}；
+  \item 运行点诊断：\texttt{scripts/diagnose\_wind\_course\_operating\_point\_r2.m}；
+  \item 本报告源文件及编译后的 PDF。
+\end{itemize}
+
+\chapter{独立性声明建议}
+本模型的系统结构、参数组织、代码化构建、控制逻辑、图形整理和自动化测试均围绕本课程任务独立完成。模型使用 MATLAB/Simulink 与 Simscape Electrical 官方库元件，但未复制他人的完整课程模型。提交前应由学生本人核对全部参数、图表与仿真输出，并按课程要求填写个人信息。
+
+\end{document}

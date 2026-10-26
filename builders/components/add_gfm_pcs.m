@@ -11,12 +11,22 @@ add_block('simulink/Ports & Subsystems/In1',[path '/BESSStatusBus'], ...
     'Position',[20 295 50 309],'Port','3','OutDataTypeStr','Bus: BESSStatusBus');
 
 strategy=evalin('base',[cfg '.control.strategy']);
-assert(strcmpi(strategy,'droop'),'Unsupported GFM strategy: %s',strategy);
-add_gfm_droop_strategy(path,'01 GFM Strategy',cfg,[120 30 330 125]);
+assert(any(strcmpi(strategy,{'droop','dvoc'})),'Unsupported GFM strategy: %s',strategy);
+if strcmpi(strategy,'dvoc')
+    add_gfm_dvoc_strategy(path,'01 GFM Strategy',cfg,[120 30 330 125]);
+    add_block('simulink/Ports & Subsystems/In1',[path '/LocalFilterMeasurements'], ...
+        'Position',[20 400 50 414],'Port','4');
+else
+    add_gfm_droop_strategy(path,'01 GFM Strategy',cfg,[120 30 330 125]);
+end
 add_static_virtual_impedance_policy(path,'02 Virtual Impedance Policy',cfg,[390 30 590 125]);
 add_virtual_impedance_interface(path,'03 Virtual Impedance Interface',cfg,[650 30 880 145]);
 add_gfm_common_protection(path,'04 Common Protection and Limiter',cfg,[930 30 1160 145]);
 converter=add_average_voltage_converter(path,'05 Average Voltage Converter',cfg,[1210 30 1430 145]);
+if strcmpi(strategy,'dvoc')
+    add_line(path,'05 Average Voltage Converter/1','01 GFM Strategy/3','autorouting','on');
+    add_line(path,'LocalFilterMeasurements/1','01 GFM Strategy/4','autorouting','on');
+end
 v2_add_pmio(path,'AC_690V',1,'Right','foundation.electrical.three_phase',[1500 75 1530 105]);
 
 add_line(path,'CommandBus/1','01 GFM Strategy/1','autorouting','on');
