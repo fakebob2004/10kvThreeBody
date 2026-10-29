@@ -1,5 +1,5 @@
 # Generated Simulink and MATLAB artifacts
-build/
+# build/ is unblocked to track core integrated .slx models
 slprj/
 **/*.slxc
 *.autosave
