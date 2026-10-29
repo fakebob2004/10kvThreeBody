@@ -10,7 +10,8 @@ set_param(0, 'ErrorIfLoadNewModel', 'off');
 
 model = 'BESS_PV_WIND_STAGE2_R2_API';
 if bdIsLoaded(model), close_system(model, 0); end
-load_system(fullfile(root, 'build', [model '.slx']));
+modelPath = get_stage2_model_path(model);
+load_system(modelPath);
 c = onCleanup(@() close_system(model, 0));
 
 run(fullfile(scriptDir, 'init_bess_pv_wind_stage2_r1.m'));

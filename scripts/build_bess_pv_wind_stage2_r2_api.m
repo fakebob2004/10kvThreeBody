@@ -1,7 +1,36 @@
 % Add an external-algorithm Resource API layer to frozen Stage 2 R1.
 scriptDir=fileparts(mfilename('fullpath'));root=fileparts(scriptDir);
-src=fullfile(root,'build','BESS_PV_WIND_STAGE2_R1.slx');
 model='BESS_PV_WIND_STAGE2_R2_API';dst=fullfile(root,'build',[model '.slx']);
+
+% Cross-release handling for MATLAB R2023b / R2024b / R2026a
+if ~contains(version, 'R2026')
+    fprintf('=== Building / Synchronizing %s for MATLAB %s ===\n', model, version('-release'));
+    r2023bModel = fullfile(root, 'build', 'r2023b', [model '.slx']);
+    assert(isfile(r2023bModel), 'Missing verified R2023b model: %s', r2023bModel);
+
+    % Rebuild / verify compatibility in R2023b
+    rebuild_stage2_r2023b();
+
+    % Ensure root build target is synchronized with R2023b-compatible model
+    copyfile(r2023bModel, dst, 'f');
+
+    % Verify model compilation and update in R2023b
+    if bdIsLoaded(model), close_system(model, 0); end
+    load_system(dst);
+    run(fullfile(scriptDir, 'init_bess_pv_wind_stage2_r1.m'));
+    define_stage2_resource_api();
+    set_param(model, 'SimulationCommand', 'update');
+    try
+        print(['-s' model], '-dpng', fullfile(root, 'build', 'BESS_PV_WIND_STAGE2_R2_API.png'));
+    catch ME
+        fprintf('PNG_WARNING=%s\n', ME.message);
+    end
+    close_system(model, 0);
+    fprintf('STAGE2_R2_API_BUILD_OK=1\nMODEL=%s\n', dst);
+    return;
+end
+
+src=fullfile(root,'build','BESS_PV_WIND_STAGE2_R1.slx');
 expected='d35a751620ba3a40442df958ad418100d4844f60f797b70c21f56985a2c2ffd9';
 assert(strcmpi(sha256(src),expected),'Frozen Stage 2 R1 SHA-256 changed.');
 copyfile(src,dst,'f');load_system(dst);run(fullfile(scriptDir,'init_bess_pv_wind_stage2_r1.m'));

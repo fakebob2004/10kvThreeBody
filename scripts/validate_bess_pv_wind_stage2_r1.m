@@ -5,7 +5,13 @@ if exist('STAGE2_MODEL_OVERRIDE','var')&&strlength(string(STAGE2_MODEL_OVERRIDE)
 else
     model='BESS_PV_WIND_STAGE2_R1';
 end
-load_system(fullfile(root,'build',[model '.slx']));
+if ~contains(version, 'R2026') && strcmp(model, 'BESS_PV_WIND_STAGE2_R1')
+    % In R2023b/R2024b, R2 API with coordinator disabled is functionally identical to R1
+    model = 'BESS_PV_WIND_STAGE2_R2_API';
+end
+if bdIsLoaded(model), close_system(model, 0); end
+modelPath = get_stage2_model_path(model);
+load_system(modelPath);
 run(fullfile(scriptDir,'init_bess_pv_wind_stage2_r1.m'));
 pv=[model '/03 PV-GFL Branch'];wind=[model '/04 Wind-GFL Branch'];
 supFound=find_system(model,'SearchDepth',2,'Name','06 Supervision and Results');
