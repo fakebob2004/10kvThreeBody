@@ -1,0 +1,897 @@
+\documentclass[UTF8,zihao=-4,fontset=none]{ctexrep}
+\IfFontExistsTF{Songti SC}{
+  \setCJKmainfont[BoldFont=STHeiti]{Songti SC}
+  \setCJKsansfont{PingFang SC}
+  \setCJKmonofont{PingFang SC}
+}{
+  \setCJKmainfont[BoldFont=FandolSong-Bold]{FandolSong-Regular}
+  \setCJKsansfont{FandolHei-Regular}
+  \setCJKmonofont{FandolFang-Regular}
+}
+\usepackage[a4paper,left=2.7cm,right=2.5cm,top=2.6cm,bottom=2.6cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{listings}
+
+\graphicspath{{figures/}}
+\newif\ifcoursefigures
+\IfFileExists{figures/WIND_COURSE_R2_01_Top.png}{\coursefigurestrue}{\coursefiguresfalse}
+\newcommand{\courseimage}[2][\textwidth]{%
+  \ifcoursefigures
+    \includegraphics[width=#1]{#2}%
+  \else
+    \fbox{\parbox[c][4.2cm][c]{0.90\linewidth}{\centering
+      \textbf{模型插图：}\\[0.5em]\texttt{\detokenize{#2}}\\[0.5em]
+      （单文件编译预览未载入；从工程 report 目录编译时自动显示原图）}}%
+  \fi}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,urlcolor=blue!55!black,citecolor=blue!45!black}
+\captionsetup{font=small,labelsep=quad}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.25em}
+\emergencystretch=3em
+\setlist{nosep,leftmargin=2.2em}
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{15pt}
+\fancyhead[L]{直驱 PMSG 与双馈 DFIG 风力发电系统建模与仿真}
+\fancyhead[R]{MATLAB/Simulink 课程设计}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\lstset{basicstyle=\ttfamily\small,frame=single,breaklines=true,columns=fullflexible,
+  backgroundcolor=\color{gray!6},keywordstyle=\color{blue!55!black}}
+
+\newcommand{\modelname}{\texttt{Wind\_DirectDrive\_SPWM\_R2}}
+\newcommand{\dfigmodelname}{\texttt{Wind\_DFIG\_Reused\_R2}}
+\newcommand{\pu}{\mathrm{pu}}
+% 章首要点框与层级标签，提升可读性
+\newcommand{\keypoints}[1]{\par\noindent\fbox{\parbox{0.94\linewidth}{\small\textbf{本章要点：}#1}}\par\medskip}
+\newcommand{\Lone}{\textbf{[L1]}}
+\newcommand{\Ltwo}{\textbf{[L2]}}
+\newcommand{\Lthree}{\textbf{[L3]}}
+\setcounter{tocdepth}{1}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{1.8cm}
+  {\zihao{1}\bfseries 电力电子技术课程设计报告\par}
+  \vspace{1.5cm}
+  {\zihao{2}\bfseries 直驱 PMSG 与双馈 DFIG\par}
+  \vspace{0.3cm}
+  {\zihao{2}\bfseries 风力发电系统建模与仿真\par}
+  \vspace{0.9cm}
+  {\zihao{4}Direct-Drive PMSG and Doubly-Fed Induction Generator\\
+  Wind Energy Conversion Systems\par}
+  \vfill
+  \renewcommand{\arraystretch}{1.8}
+  \begin{tabular}{>{\bfseries}r l}
+    学生姓名： & \underline{\makebox[7cm][c]{陈桢博}} \\
+    学号： & \underline{\makebox[7cm][c]{12610093}} \\
+    专业班级： & \underline{\makebox[7cm][c]{电气工程直博}} \\
+    仿真平台： & MATLAB/Simulink R2026a、Simscape Electrical \\
+  \end{tabular}
+  \vfill
+  {\zihao{4}浙江大学\par}
+  \vspace{0.4cm}
+  {\zihao{4}\today\par}
+\end{titlepage}
+
+\pagenumbering{Roman}
+\chapter*{摘\quad 要}
+\addcontentsline{toc}{chapter}{摘要}
+本文是电力电子技术课程设计报告，在 MATLAB/Simulink 中搭建并测试了两套额定功率为\(5\,\mathrm{MW}\)的风力发电并网模型。主模型为直驱永磁同步发电机（PMSG）全功率变流方案，包括风轮气动、单质量块转子动力学、机侧平均值能量接口、\(1500\,\mathrm{V}\)直流母线、两电平三相网侧变流器（GSC）、\(5\,\mathrm{kHz}\)正弦脉宽调制（SPWM）、\(RL\)交流滤波器、\(0.69/10\,\mathrm{kV}\)升压变压器和强电网戴维南等值电路。扩展模型为双馈感应发电机（DFIG）平均值方案：风轮、直流母线、网侧变流器、滤波器和并网主回路沿用主模型，机侧换成分层搭建的绕线式感应电机\(dq\)模型和转子侧平均值变流器（RSC），定子三相电流直接注入\(690\,\mathrm{V}\)低压母线。
+
+报告从顶层到底层逐级说明两套模型的子系统划分，直至 Simulink 基础积木和 Simscape 物理元件的连接关系、端口与参数。仿真结果如下：直驱模型六路门极脉冲满足上下桥臂互补，\(9\,\mathrm{m/s}\)风速下机侧输入功率约\(3.196\,\mathrm{MW}\)，公共耦合点（PCC）有功约\(2.961\,\mathrm{MW}\)，直流母线电压保持在\(1500.18\,\mathrm{V}\)；双馈模型在\(10\,\mathrm{m/s}\)亚同步工况下，转子从直流母线吸收约\(26.70\,\mathrm{kW}\)滑差功率，PCC 有功约\(3.791\,\mathrm{MW}\)，直流母线电压为\(1515.37\,\mathrm{V}\)，定子注入电流的负序分量很小。
+
+\noindent\textbf{关键词：}风力发电；直驱永磁同步发电机；双馈感应发电机；网侧变流器；转子侧变流器；SPWM；Simscape Electrical
+
+\chapter*{符号与缩写}
+\addcontentsline{toc}{chapter}{符号与缩写}
+\begin{longtable}{p{2.8cm}p{10.2cm}}
+\toprule
+PMSG & 永磁同步发电机（Permanent Magnet Synchronous Generator）\\
+DFIG & 双馈感应发电机（Doubly-Fed Induction Generator）\\
+RSC & 转子侧变流器（Rotor-Side Converter）\\
+MSC/GSC & 机侧变流器/网侧变流器（Machine-/Grid-Side Converter）\\
+PCC & 公共耦合点（Point of Common Coupling）\\
+SPWM & 正弦脉宽调制（Sinusoidal Pulse Width Modulation）\\
+SRF-PLL & 同步旋转坐标系锁相环（Synchronous Reference Frame PLL）\\
+MPPT & 最大功率点跟踪（Maximum Power Point Tracking）\\
+SCR & 短路比（Short-Circuit Ratio）\\
+\(V_{dc}\) & 直流母线电压\\
+\(i_d,i_q\) & 同步旋转坐标系下的有功、无功电流分量\\
+\(\psi_{ds},\psi_{qs},\psi_{dr},\psi_{qr}\) & 定子、转子在同步旋转坐标系下的\(d/q\)轴磁链分量\\
+\bottomrule
+\end{longtable}
+
+\tableofcontents
+\clearpage
+\listoffigures
+\listoftables
+
+\clearpage
+\pagenumbering{arabic}
+\part{概述与建模方法}
+\chapter{课题要求与方案选择}
+\keypoints{说明课程任务与两类风电拓扑的差异，并给出两套模型（直驱主模型、双馈扩展模型）的定位与取舍依据。}
+\section{课程设计任务}
+课程要求用 PSCAD/EMTDC 或 MATLAB/Simulink 搭建一种指定的电力电子装置，并提交可运行的模型和建模测试报告。风力发电方向可以选双馈型或直驱型。本文以直驱 PMSG（\modelname）为主模型，重点是全功率变流器的能量通道、两电平桥臂开关行为和跟网型闭环控制；另外提交一个双馈扩展模型（\dfigmodelname），用来展示定子直接并网、转子侧定子磁链定向矢量控制和转差功率的双向流动。
+
+\section{直驱 PMSG 与 DFIG 的区别}
+双馈和直驱是两条不同的技术路线。DFIG 的定子绕组直接接工频电网，转子经背靠背变流器与电网交换转差功率，变流器容量只需机组额定容量的\(30\%\sim35\%\)，机侧要配多级增速齿轮箱。直驱 PMSG 用低速多极永磁电机与风轮同轴相连，不要高速齿轮箱，发出的全部变频交流电经机侧变流器（MSC）、直流母线和网侧变流器（GSC）后并网。两者的对比见表\ref{tab:topo_cmp}。
+
+\begin{table}[H]
+\centering
+\caption{两类风力发电方案对比}
+\label{tab:topo_cmp}
+\begin{tabular}{p{3.1cm}p{5.0cm}p{5.0cm}}
+\toprule
+项目 & 双馈感应发电机（DFIG） & 直驱永磁同步发电机（PMSG）\\
+\midrule
+并网关系 & 定子直接并网，转子经背靠背变流器 & 发电机功率全部经全功率变流器\\
+变流器容量 & 约为机组额定容量的\(30\%\sim35\%\) & 与机组额定功率同等级（\(100\%\sim125\%\)）\\
+机械传动 & 需配置增速齿轮箱（如变比\(\approx147.6\)） & 低速多极发电机，风轮直接驱动\\
+电网解耦 & 定子磁链受电网电压直接约束 & 发电机与电网由直流母线解耦\\
+本文模型定位 & 扩展对比模型（\dfigmodelname） & 课程主模型（\modelname）\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{阅读指南与建模方法}
+\keypoints{给出全文结构与三级层次命名约定，说明参考的开源项目，并阐述全脚本化生成（Code-as-Model）的方法与优势。后续各章均按“自顶向下”顺序展开。}
+
+\section{报告结构与阅读路径}
+全文按“概述\(\to\)直驱主模型\(\to\)双馈扩展模型\(\to\)对比与结论”四个部分组织，各部分内容与对应模型见表\ref{tab:roadmap}。读者若只关注某一类机型，可直接跳转至对应部分；若关注某一具体功能（如锁相环、电流内环、转子侧控制），可按表\ref{tab:locator}定位到相应章节。
+
+\begin{table}[H]
+\centering
+\caption{报告整体结构}
+\label{tab:roadmap}
+\begin{tabular}{p{2.6cm}p{3.2cm}p{7.0cm}}
+\toprule
+部分 & 章节 & 内容\\
+\midrule
+第一部分 & 第 1--2 章 & 课题要求、方案选择、层次约定、参考项目与脚本化建模方法\\
+第二部分 & 第 3--8 章 & 直驱 PMSG 主模型：总体架构、机侧、直流链与 GSC、GFL 控制与 SPWM、并网接口、参数与校核\\
+第三部分 & 第 9 章 & 双馈 DFIG 扩展模型：复用架构、电机本体、转子侧控制、接口与仿真结果\\
+第四部分 & 第 10--11 章 & 两类机型对比、结论\\
+附录 & 附录 A & 模型、参数与脚本文件清单\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{按功能查找章节}
+\label{tab:locator}
+\begin{tabular}{p{4.6cm}p{4.2cm}p{4.0cm}}
+\toprule
+关注内容 & 直驱主模型 & 双馈扩展模型\\
+\midrule
+风轮气动与传动链 & 第 4 章 & 第 9 章（齿轮箱与 MPPT）\\
+机侧能量/电机模型 & 第 4 章（PMSG/MSC 平均模型） & 第 9 章（\(dq\)磁链模型）\\
+直流母线与变流器 & 第 5 章 & 第 9 章（复用）\\
+控制器与调制 & 第 6 章（GFL 与 SPWM） & 第 9 章（RSC 控制器）\\
+滤波器、变压器、电网 & 第 7 章 & 第 9 章（定子汇流）\\
+参数与仿真结果 & 第 8 章 & 第 9 章末节\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{三级层次约定与图示规则}
+全文按三级结构介绍模型：
+\begin{itemize}
+  \item \textbf{第 1 层（顶层）}：模型根画布，包含 6 个一级功能子系统，按“上方主功率链、下方闭环控制”布置；
+  \item \textbf{第 2 层（功能层）}：一级子系统内部的功能划分，例如网侧控制器的 6 个子模块、双馈机侧系统的 5 个子模块；
+  \item \textbf{第 3 层（底层）}：由 Simulink 基本运算模块或 Simscape 物理元件直接搭成、不再向下嵌套的底层图。
+\end{itemize}
+介绍底层电路与控制框图时，正文先给出物理机理和数学关系，再对照图中的主要模块说明信号流向。图中模块名用\texttt{等宽字体}标出，以便与模型文件核对。全篇统一符号方向：网侧变流器电流以流向电网为正；双馈感应电机采用电动机惯例，发电运行时电磁转矩和定子有功功率为负。
+
+\section{开源项目参考与分层思想}
+子系统的划分和变流器控制的层次参考了 MathWorks 的开源项目 \textit{Renewable Energy Integration Design with Simscape}（\texttt{WindGFLMpp} / \texttt{WindGFMMpp}）\cite{simscape_re}。该项目将风机变流器控制拆分为机侧控制与网侧控制，并在控制器内部按“功率/转矩参考生成\(\to\)指令限幅\(\to\)带解耦前馈的电流内环\(\to\)坐标变换与测量”分块封装，避免了把数十个标量运算块平铺在同一张画布上。
+
+\section{全脚本化生成（Code-as-Model）及其优势}
+上述开源参考项目以二进制\texttt{.slx}文件发布，修改拓扑时仍需在图形界面中手动调整。本文在借鉴其分层架构的同时，全部采用 MATLAB 脚本自动生成模型（构建脚本见附录 A），具有三方面优势：
+\begin{enumerate}
+  \item \textbf{便于智能体（AI Agent）阅读和局部修改。}二进制模型文件难以直接检索或做文本比对。把子系统划分、模块连接和布局封装为结构化脚本后，后续若在机侧或控制侧增补低电压穿越、无功支撑等功能，只需修改对应子函数并局部重新生成该子系统，既节省上下文开销，也不会误改动其他已定型的模块。
+  \item \textbf{底层公式完全透明。}脚本全部调用 Simulink 标准数学模块和 Simscape 基础电气元件建模，不依赖自定义语言组件或黑盒封装，微分方程、电感矩阵求逆及解耦前馈关系均可直接在底层图中查看。
+  \item \textbf{建模与校核可一键复现。}参数脚本、建模脚本与校验脚本相互配合，修改参数或控制逻辑后可通过批处理直接重建模型并完成稳态、暂态指标检验。
+\end{enumerate}
+
+
+\part{直驱 PMSG 主模型}
+\chapter{直驱主模型总体架构}
+\keypoints{给出直驱主模型的顶层结构与六个一级子系统的层级关系，并说明机侧平均值模型与网侧物理开关网络之间的两处接口。}
+\section{三级子系统组织与功率控制链路}
+直驱主模型\modelname 的风机额定功率为\(5\,\mathrm{MW}\)，网侧变流器额定视在容量取\(6.25\,\mathrm{MVA}\)。模型不采用黑盒函数模块，统一按“顶层系统—功能子系统—底层运算块/物理元件”三级构建。第 1 层顶层结构如图\ref{fig:top}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage{WIND_COURSE_R2_01_Top.png}
+\caption{直驱风力发电系统第 1 层顶层架构（\modelname）}
+\label{fig:top}
+\end{figure}
+
+顶层自左向右布置六个一级子系统，其内部组成见表\ref{tab:dd_hierarchy}。上方从风轮、永磁同步发电机及机侧变流器（MSC）、直流母线与两电平网侧变流器（GSC），一直到交流滤波器、升压变压器和\(10\,\mathrm{kV}\)电网，构成主功率通路；下方为跟网型（GFL）闭环控制器与正弦脉宽调制（SPWM）驱动环节。
+\begin{table}[H]
+\centering
+\caption{直驱主模型\modelname 的子系统层级拆解}
+\label{tab:dd_hierarchy}
+\begin{tabular}{p{4.3cm}p{4.6cm}p{4.2cm}}
+\toprule
+第 1 层子系统 & 第 2 层内部划分 & 第 3 层（底层）实现内容\\
+\midrule
+\texttt{01 Wind Turbine Aerodynamics} & 直接由底层运算块构成 & 风速给定、叶尖速比\(\lambda\)与\(C_p\)曲线、气动功率/转矩、单质量块转子运动方程\\
+\texttt{02 PMSG and MSC Average Model} & 直接由底层运算块构成上下双通道 & 最优转矩跟踪、一阶电磁响应、气隙功率折算与损耗扣除\\
+\texttt{03 DC Link and Two-Level GSC} & 物理主回路 + 直流控制监测子系统 & 预充电支路、直流母线电容、受控电流源、两电平开关桥、过压卸荷监测\\
+\texttt{04 GFL Control and SPWM} & 划分为 6 个二级控制子模块 & 采样与坐标变换、锁相环、直流电压外环、圆形限流、解耦电流内环、SPWM\\
+\texttt{05 Filter Transformer and PCC} & 直接由底层物理元件构成 & 三相\(RL\)滤波器、\(0.69/10\,\mathrm{kV}\)升压变压器、并网点电压电流测量\\
+\texttt{06 Grid Equivalent and Source} & 直接由底层物理元件构成 & 电网等值阻抗\(R_g+L_g\)、\(10\,\mathrm{kV}\)三相电压源、接地基准与求解器配置\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{平均值模型与物理开关网络的接口}
+为兼顾仿真速度与网侧开关谐波分析精度，主模型将风轮气动、单质量块转子惯量以及机侧能量转换建为连续时间信号模型，向直流母线输出机侧有功功率\(P_{\mathrm{msc}}\)；而直流母线电容、预充电支路、两电平三相桥、交流滤波器、升压变压器及\(10\,\mathrm{kV}\)电网均采用 Simscape Electrical 物理网络建模。两部分之间的接口位于以下两处：
+\begin{enumerate}
+  \item \textbf{功率注入与脉冲驱动接口（控制域\(\to\)物理域）}：在\texttt{03 DC Link and Two-Level GSC}内，机侧有功功率\(P_{\mathrm{msc}}\)除以采样直流母线电压得到机侧注入电流指令\(I_{\mathrm{msc}}^*\)，经信号转换器驱动跨接在直流母线上的受控电流源；网侧控制器生成的六路互补门极脉冲同样转换为物理信号，直接控制两电平桥臂开关。
+  \item \textbf{电压电流采样接口（物理域\(\to\)控制域）}：直流母线电压传感器与并网点（PCC）三相电压、电流传感器的测量信号转换为普通控制信号后，送入\texttt{04 GFL Control and SPWM}参与闭环运算。
+\end{enumerate}
+
+\chapter{风轮气动、传动链与机侧底层实现}
+\keypoints{说明风轮气动捕获、单质量块转子运动方程以及 PMSG/MSC 机侧能量转换的数学模型与底层框图。}
+\section{\texttt{01 Wind Turbine Aerodynamics} 模块解析}
+\texttt{01 Wind Turbine Aerodynamics}直接由基础运算模块搭成，输入为发电机电磁制动转矩\(T_e\)，输出为气动功率\(P_{\mathrm{aero}}\)、风轮机械角速度\(\omega_r\)和实时风速\(v_w\)。底层结构如图\ref{fig:aero}所示，上半部分计算风轮捕获的气动功率，下半部分解算转子摇摆方程。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.95\textwidth]{WIND_COURSE_R2_02_Aerodynamics.png}
+\caption{\texttt{01 Wind Turbine Aerodynamics}最底层基础模块连接图}
+\label{fig:aero}
+\end{figure}
+
+\begin{enumerate}
+  \item \textbf{风速给定与叶尖速比计算（左上至中上）}：初始风速\(v_0=9\,\mathrm{m/s}\)（\texttt{Initial Wind Speed}）与\(t=0.08\,\mathrm{s}\)时幅值为\(+1\,\mathrm{m/s}\)的风速阶跃（\texttt{Wind Speed Step}）在\texttt{Wind Speed Profile}中叠加，生成风速序列\(v_w(t)\)。风轮角速度\(\omega_r\)与风速\(v_w\)汇总后送入\texttt{Tip-Speed Ratio lambda}，按叶轮半径\(R=70\,\mathrm{m}\)计算叶尖速比（对风速做\(0.1\,\mathrm{m/s}\)下限保护以防除零）：
+  \begin{equation}
+    \lambda=\frac{\omega_r R}{\max(v_w,\,0.1)}.
+  \end{equation}
+  \item \textbf{风能利用系数\(C_p(\lambda)\)与气动功率（中上至右上）}：额定风速以下桨距角固定为\(\beta=0^\circ\)，\texttt{Cp Curve}采用高斯钟形曲线拟合风能利用系数：
+  \begin{equation}
+    C_p(\lambda)=C_{p,\max}\exp\!\left[-\left(\frac{\lambda-\lambda_{\mathrm{opt}}}{\sigma_\lambda}\right)^2\right],
+  \end{equation}
+  其中最优叶尖速比\(\lambda_{\mathrm{opt}}=8.1\)，最大风能利用系数\(C_{p,\max}=0.48\)，展宽系数\(\sigma_\lambda=3.5\)。随后，\texttt{Aerodynamic Power Equation}根据空气密度\(\rho=1.225\,\mathrm{kg/m^3}\)和扫风面积\(A=\pi R^2\)计算气动功率，并经\texttt{Aerodynamic Power Limit}（上限\(1.10P_{\mathrm{rated}}\)）限幅后输出：
+  \begin{equation}
+    P_{\mathrm{aero}}=\frac{1}{2}\rho A C_p(\lambda)v_w^3.
+  \end{equation}
+  \item \textbf{气动转矩与单质量块转子运动方程（下部反馈回路）}：气动功率与转子角速度送入\texttt{Mechanical Torque}，按\(T_{\mathrm{aero}}=P_{\mathrm{aero}}/\max(\omega_r,0.2)\)折算为气动机械转矩。在求和节点\texttt{Net Rotor Torque}中，气动转矩减去端口输入的电磁转矩\(T_e\)和粘滞阻尼转矩\(B_t\omega_r\)（\texttt{Viscous Torque}），得到净加速转矩；再依次经过转动惯量倒数\texttt{Inverse Inertia}（\(1/J_t\)，\(J_t=3.0\times10^7\,\mathrm{kg\,m^2}\)）和积分器\texttt{Rotor Inertia}（初值取\(9\,\mathrm{m/s}\)最优转速\(1.0414\,\mathrm{rad/s}\)），闭环解算转子运动方程：
+  \begin{equation}
+    J_t\frac{d\omega_r}{dt}=T_{\mathrm{aero}}-T_e-B_t\omega_r.
+  \end{equation}
+\end{enumerate}
+
+\section{\texttt{02 PMSG and MSC Average Model} 模块解析}
+\texttt{02 PMSG and MSC Average Model}以风轮角速度\(\omega_r\)为输入，输出电磁制动转矩\(T_e\)和馈入直流母线的机侧有功功率\(P_{\mathrm{msc}}\)。内部按上、下两条通道布置，如图\ref{fig:pmsg}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.95\textwidth]{WIND_COURSE_R2_03_PMSG_MSC.png}
+\caption{\texttt{02 PMSG and MSC Average Model}最底层基础模块连接图}
+\label{fig:pmsg}
+\end{figure}
+
+\begin{enumerate}
+  \item \textbf{最优转矩给定与机侧变流器动态（上通道）}：在最大功率点跟踪（MPPT）区，参考电磁转矩与转速平方成正比。\texttt{MPPT Torque Law}按最优转矩系数\(K_{\mathrm{opt}}\)计算转矩指令并做额定转矩上限保护：
+  \begin{equation}
+    K_{\mathrm{opt}}=\frac{1}{2}\rho\pi R^5\frac{C_{p,\max}}{\lambda_{\mathrm{opt}}^3},\qquad
+    T_e^*=\min(K_{\mathrm{opt}}\omega_r^2,\,T_{\max}).
+  \end{equation}
+  机侧变流器电流内环的闭环动态由一阶惯性环节\texttt{MSC Torque Response}（\(\frac{1}{\tau_{\mathrm{msc}}s+1}\)，时间常数\(\tau_{\mathrm{msc}}=15\,\mathrm{ms}\)）等效，经\texttt{MSC Torque Limit}非负限幅后输出实际电磁转矩\(T_e\)。
+  \item \textbf{机侧功率转换与损耗扣除（下通道）}：乘法器\texttt{Air-Gap Power}计算气隙机械功率\(P_{\mathrm{ag}}=\omega_r T_e\)，乘以发电机与机侧变流器综合效率\texttt{Generator and MSC Efficiency}（\(\eta=96.5\%\)），再由偏置模块\texttt{Auxiliary Loss}扣除\(25\,\mathrm{kW}\)固定铁损与辅助损耗，最后经额定功率限幅\texttt{MSC Power Limit}（\([0,\,5\,\mathrm{MW}]\)）得到注入直流母线的有功功率：
+  \begin{equation}
+    P_{\mathrm{msc}}=\operatorname{sat}\!\left(\eta\,\omega_r T_e-P_{\mathrm{loss}},\,0,\,P_{\mathrm{rated}}\right).
+  \end{equation}
+\end{enumerate}
+
+\chapter{直流母线与两电平网侧变流器底层实现}
+\keypoints{说明直流母线预充电、电容储能、机侧电流注入和两电平逆变桥的物理连接，以及直流控制监测子系统的内部逻辑。}
+\section{\texttt{03 DC Link and Two-Level GSC} 物理主回路}
+\texttt{03 DC Link and Two-Level GSC}包含第 2 层 Simscape 物理直流母线、预充电支路、两电平三相开关桥，以及第 3 层控制监测子系统\texttt{DC Control and Monitoring}。主回路结构如图\ref{fig:dcgsc}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.92\textwidth]{WIND_COURSE_R2_04_DC_GSC.png}
+\caption{\texttt{03 DC Link and Two-Level GSC}第 2 层物理主回路结构}
+\label{fig:dcgsc}
+\end{figure}
+
+物理主回路沿正、负两条水平直流母线自左向右分为四个区域：
+\begin{enumerate}
+  \item \textbf{启动预充电支路（左侧）}：由\(1500\,\mathrm{V}\)直流源\texttt{DC Precharge Source}、理想半导体开关\texttt{Precharge Disconnect Switch}和\(0.15\,\Omega\)限流电阻\texttt{Precharge Resistor}串联而成。阶跃指令\texttt{Precharge Open Command}在\(t<0.10\,\mathrm{s}\)时闭合开关，抑制启动初期的母线电压跌落；\(t\ge0.10\,\mathrm{s}\)后断开预充电支路，直流母线转由电容和网侧变流器闭环独立维持。
+  \item \textbf{直流支撑电容与电压测量（中部）}：\texttt{DC-Link Capacitor}取\(C_{\mathrm{dc}}=0.18\,\mathrm{F}\)（初值\(1500\,\mathrm{V}\)）。并联在母线间的\texttt{Vdc Sensor}实时测量直流电压，经\texttt{Vdc to Simulink}转换为控制信号后送入下方的控制监测子系统。
+  \item \textbf{机侧受控直流电流注入（中右）}：受控电流源\texttt{MSC Current Injection}跨接在正负母线之间，把控制子系统算出的机侧直流电流指令\(I_{\mathrm{msc}}^*\)注入直流链，完成机侧功率向物理直流母线的传递。
+  \item \textbf{两电平三相桥与交流侧测量（右侧）}：\texttt{Two-Level Three-Phase Bridge}由六路门极信号直接驱动，其交流出口经\texttt{Converter AC Measurement}采集变流器端三相电压与电流后接往交流滤波器。
+\end{enumerate}
+
+\section{底层子系统：\texttt{DC Control and Monitoring}}
+直流母线下方的\texttt{DC Control and Monitoring}为第 3 层底层子系统，内部结构如图\ref{fig:dc_sub}所示，包含三条支路：
+
+\begin{figure}[H]
+\centering
+\courseimage[0.85\textwidth]{WIND_COURSE_R2_04A_DC_Ctrl_Mon.png}
+\caption{\texttt{DC Control and Monitoring}最底层模块结构}
+\label{fig:dc_sub}
+\end{figure}
+
+\begin{itemize}
+  \item \textbf{机侧直流注入电流计算（上支路）}：实测直流电压先经过一拍采样延时\texttt{Sampled DC Voltage}（采样周期\(50\,\mathrm{\mu s}\)，初值\(1500\,\mathrm{V}\)）以阻断代数环，再与机侧功率\(P_{\mathrm{msc}}\)一同送入\texttt{P over Vdc}。为避免母线异常跌落时分母过小，电压分母设置\(V_{\mathrm{floor}}=900\,\mathrm{V}\)的下限保护：
+  \begin{equation}
+    I_{\mathrm{msc}}^*=\operatorname{sat}\!\left(\frac{P_{\mathrm{msc}}}{\max(V_{\mathrm{dc,samp}},\,V_{\mathrm{floor}})},\,0,\,I_{\mathrm{dc,\max}}\right),
+  \end{equation}
+  经\texttt{MSC DC Current Limit}（上限\(5\,\mathrm{kA}\)）和极性增益\texttt{Injection Sign}后输出直流电流指令。
+  \item \textbf{母线电压信号分发（中支路）}：通过全局信号标签\texttt{Vdc Measurement to GFL}把实测母线电压送至网侧控制器。
+  \item \textbf{过压卸荷（Chopper）监测（下支路）}：实测母线电压一路送入滞环比较器\texttt{Brake Hysteresis}（动作阈值\(1620\,\mathrm{V}\)，返回阈值\(1545\,\mathrm{V}\)），另一路乘以卸荷电导\texttt{Vdc over Brake R}（\(R_{\mathrm{brake}}=0.45\,\Omega\)），两者在\texttt{Brake Current Estimate}中相乘，用于监测过压时的卸荷电流。
+\end{itemize}
+
+\chapter{跟网型（GFL）控制与 SPWM 最底层实现}
+\keypoints{逐一解析网侧跟网型控制器的六个底层子模块：并网点测量、锁相环、直流电压外环、圆形限流器、解耦电流内环以及\(5\,\mathrm{kHz}\) SPWM 脉冲发生器。}
+\section{\texttt{04 GFL Control and SPWM} 第 2 层总体结构}
+\texttt{04 GFL Control and SPWM}是网侧变流器的闭环控制核心，第 2 层结构如图\ref{fig:control}所示。上半部分包含锁相环（\texttt{02}）、并网点功率与坐标变换测量（\texttt{01}）以及同步相角生成支路；下半部分从左到右依次串联直流电压与功率外环（\texttt{03}）、圆形电流限幅器（\texttt{04}）、\(dq\)轴解耦电流内环（\texttt{05}）和\(5\,\mathrm{kHz}\) SPWM 门极接口（\texttt{06}）。下面按编号顺序介绍六个第 3 层子模块。
+
+\begin{figure}[H]
+\centering
+\courseimage{WIND_COURSE_R2_05_Control.png}
+\caption{\texttt{04 GFL Control and SPWM}第 2 层六模块架构}
+\label{fig:control}
+\end{figure}
+
+\section{\texttt{01 Measurements and dq} 底层解析}
+\texttt{01 Measurements and dq}用于将\(10\,\mathrm{kV}\)并网点三相电压、电流转换到同步旋转坐标系，并计算有功、无功功率，底层结构如图\ref{fig:meas_dq}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.95\textwidth]{WIND_COURSE_R2_05A_Meas_dq.png}
+\caption{\texttt{01 Measurements and dq}最底层模块结构}
+\label{fig:meas_dq}
+\end{figure}
+
+输入的三相电压\texttt{Vabc}和三相电流\texttt{Iabc}连同同步相角\texttt{theta\_pll}分别进入\texttt{Voltage Park Transform}与\texttt{Current Park Transform}，经 Clarke 变换与旋转变换得到\((v_d,v_q)\)和\((i_d,i_q)\)：
+\begin{equation}
+  \begin{bmatrix}x_\alpha\\x_\beta\end{bmatrix}
+  =\sqrt{\frac{2}{3}}
+  \begin{bmatrix}
+    1 & -\frac{1}{2} & -\frac{1}{2}\\[0.3em]
+    0 & \frac{\sqrt{3}}{2} & -\frac{\sqrt{3}}{2}
+  \end{bmatrix}
+  \begin{bmatrix}x_a\\x_b\\x_c\end{bmatrix},\qquad
+  \begin{bmatrix}x_d\\x_q\end{bmatrix}
+  =\begin{bmatrix}
+    \cos\theta & \sin\theta\\
+    -\sin\theta & \cos\theta
+  \end{bmatrix}
+  \begin{bmatrix}x_\alpha\\x_\beta\end{bmatrix}.
+\end{equation}
+右侧的\texttt{Instantaneous Power Calculation}根据\((v_d,v_q)\)和\((i_d,i_q)\)计算并网点有功功率\(P_{\mathrm{PCC}}\)与无功功率\(Q_{\mathrm{PCC}}\)，供状态监测和校核脚本读取。
+
+\section{\texttt{02 Synchronization SRF-PLL} 底层解析}
+\texttt{02 Synchronization SRF-PLL}为同步旋转坐标系锁相环，通过把\(q\)轴电压\(v_q\)调节至零来跟踪电网相位，底层结构如图\ref{fig:srf_pll}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.90\textwidth]{WIND_COURSE_R2_05B_SRF_PLL.png}
+\caption{\texttt{02 Synchronization SRF-PLL}同步旋转坐标系锁相环最底层结构}
+\label{fig:srf_pll}
+\end{figure}
+
+三相并网点电压先在\texttt{PLL Park Transform}中按当前锁相角\(\theta_{\mathrm{pll}}\)变换为\((v_d,v_q)\)，由\texttt{Extract Vq}取出\(v_q\)送入\texttt{PI Controller}（比例增益\(K_{p,\mathrm{pll}}=60\)，积分增益\(K_{i,\mathrm{pll}}=1400\)）。PI 输出的角频率修正量与额定电网角频率\(\omega_n=100\pi\,\mathrm{rad/s}\)（\texttt{Nominal Omega}）在\texttt{Omega Sum}中相加，得到锁相角频率\(\omega_{\mathrm{pll}}\)，再经积分器\texttt{Theta Integrator}积分并反馈回坐标变换端，形成闭环：
+\begin{equation}
+  \omega_{\mathrm{pll}}=\omega_n+\left(K_{p,\mathrm{pll}}+\frac{K_{i,\mathrm{pll}}}{s}\right)v_q,\qquad
+  \theta_{\mathrm{pll}}=\int_0^t\omega_{\mathrm{pll}}(\tau)\,d\tau.
+\end{equation}
+
+\section{\texttt{03 DC Voltage and Current Reference} 底层解析}
+\texttt{03 DC Voltage and Current Reference}是网侧变流器的外环，结合机侧功率前馈与直流母线电压 PI 调节生成内环电流参考\(i_d^*,i_q^*\)，底层结构如图\ref{fig:outer_loop}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.95\textwidth]{WIND_COURSE_R2_05C_Outer_Loop.png}
+\caption{\texttt{03 DC Voltage and Current Reference}外环最底层结构}
+\label{fig:outer_loop}
+\end{figure}
+
+\begin{enumerate}
+  \item \textbf{低压侧电压折算与机侧功率前馈（下部与上部）}：\(10\,\mathrm{kV}\)并网点电压\texttt{Vabc PCC}先经变比增益\texttt{Refer PCC Voltage to 690 V}（系数\(0.69/10=0.069\)）折算到\(690\,\mathrm{V}\)侧，再通过\texttt{Clarke Voltage}和\texttt{Park Voltage}变换为\(d\)轴电压\(v_d\)。机侧功率\(P_{\mathrm{msc}}\)与\(v_d\)送入\texttt{P over Vd Feedforward}，计算有功前馈电流\(i_{d,\mathrm{ff}}^*=P_{\mathrm{msc}}/\max(|v_d|,100)\)，使网侧变流器能迅速响应机侧功率变化。
+  \item \textbf{直流母线电压 PI 调节（中部）}：由于变流器电流以流向电网为正，当实测母线电压\(V_{\mathrm{dc}}\)高于额定参考值\(V_{\mathrm{dc}}^*=1500\,\mathrm{V}\)（\texttt{Vdc Reference}）时，应增大向电网输出的有功电流以泄放电容储能。因此\texttt{Vdc Error}计算\(e_{v\mathrm{dc}}=V_{\mathrm{dc}}-V_{\mathrm{dc}}^*\)，经比例支路\texttt{Vdc Kp}（\(K_{p,v\mathrm{dc}}=4.5\)）和带抗饱和限幅的积分支路\texttt{Vdc Ki}\(\to\)\texttt{Vdc Integral}\(\to\)\texttt{Vdc Integral Limit}（\(K_{i,v\mathrm{dc}}=90\)），与前馈电流在\texttt{Id Raw Sum}中相加得到\(d\)轴电流参考；单位功率因数运行下，\(q\)轴无功电流参考由\texttt{Iq Zero}置零：
+  \begin{equation}
+    i_d^*=\frac{P_{\mathrm{msc}}}{\max(|v_d|,\,100)}+K_{p,v\mathrm{dc}}(V_{\mathrm{dc}}-V_{\mathrm{dc}}^*)+K_{i,v\mathrm{dc}}\int(V_{\mathrm{dc}}-V_{\mathrm{dc}}^*)\,dt,\qquad
+    i_q^*=0.
+  \end{equation}
+\end{enumerate}
+
+\section{\texttt{04 Circular Current Limiter} 底层解析}
+为防止暂态冲击下合成电流超过变流器允许的最大电流\(I_{\max}\)，同时不改变有功与无功电流的比值，\texttt{04 Circular Current Limiter}按矢量模长对\((i_d^*,i_q^*)\)做等比例缩放，底层结构如图\ref{fig:circ_lim}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.95\textwidth]{WIND_COURSE_R2_05D_Circular_Limiter.png}
+\caption{\texttt{04 Circular Current Limiter}圆形电流限幅最底层结构}
+\label{fig:circ_lim}
+\end{figure}
+
+输入的\(i_d^*\)与\(i_q^*\)经平方（\texttt{Id squared}、\texttt{Iq squared}）、求和（\texttt{Magnitude squared}）和开方（\texttt{Magnitude}）得到指令电流模长\(|i^*|=\sqrt{(i_d^*)^2+(i_q^*)^2}\)。\texttt{Scale factor}据此计算比例系数\(\alpha\)，并通过乘法器\texttt{Limit Id}、\texttt{Limit Iq}输出限幅后的内环指令：
+\begin{equation}
+  \alpha=\min\!\left(1,\,\frac{I_{\max}}{\max(|i^*|,\,10^{-6})}\right),\qquad
+  i_{d,\mathrm{lim}}^*=\alpha i_d^*,\qquad
+  i_{q,\mathrm{lim}}^*=\alpha i_q^*.
+\end{equation}
+当\(\alpha<1\)时，右下角的比较器\texttt{Limiter Active}输出高电平标志，指示变流器处于限流状态。
+
+\section{\texttt{05 dq Current Controller} 及其坐标变换子模块}
+在同步旋转坐标系下，网侧滤波电感\(L_f\)与电阻\(R_f\)满足电压方程：
+\begin{equation}
+  v_d=v_{gd}+R_fi_d+L_f\frac{di_d}{dt}-\omega_n L_fi_q,\qquad
+  v_q=v_{gq}+R_fi_q+L_f\frac{di_q}{dt}+\omega_n L_fi_d.
+\end{equation}
+\texttt{05 dq Current Controller}采用双通道 PI 调节加\(\mp\omega_nL_fi_{q/d}\)交叉耦合补偿和电网电压前馈，底层结构如图\ref{fig:current}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage{WIND_COURSE_R2_07_Current_Controller.png}
+\caption{\texttt{05 dq Current Controller}电流内环与调制度归一化结构}
+\label{fig:current}
+\end{figure}
+
+\begin{itemize}
+  \item \textbf{电压电流坐标变换（左侧）}：并网点电压经\texttt{Refer PCC Voltage to 690 V}折算至低压侧后，与变流器端三相电流分别经过等功率 Clarke 矩阵增益（\texttt{Clarke Voltage}、\texttt{Clarke Current}）和旋转变换子模块（\texttt{Park Voltage}、\texttt{Park Current}），分解为电网电压分量\((v_{gd},v_{gq})\)与实测电流分量\((i_d,i_q)\)。其中\texttt{Park Voltage}与\texttt{Park Current}内部直接由\(\cos\theta\)、\(\sin\theta\)三角函数、四个乘法器和两个加减法器搭成。
+  \item \textbf{双轴 PI 调节与解耦前馈（中部）}：误差节点\texttt{Id Error}、\texttt{Iq Error}计算\(e_{id}=i_{d,\mathrm{lim}}^*-i_d\)与\(e_{iq}=i_{q,\mathrm{lim}}^*-i_q\)，经对称的\(d/q\)轴比例积分支路（\texttt{Kp d/q}、\texttt{Ki d/q}、\texttt{Integral d/q}、\texttt{Integral Limit d/q}）在\texttt{PI d}、\texttt{PI q}中合成调节量。实测电流乘以电抗耦合系数\texttt{omega L Id}、\texttt{omega L Iq}（\(\omega_nL_f\)）后，与低压侧电网电压前馈在\texttt{Vd Command}和\texttt{Vq Command}中合成为变流器内电势指令：
+  \begin{equation}
+    v_d^*=v_{gd}+\mathrm{PI}_d(i_{d,\mathrm{lim}}^*-i_d)-\omega_n L_fi_q,\qquad
+    v_q^*=v_{gq}+\mathrm{PI}_q(i_{q,\mathrm{lim}}^*-i_q)+\omega_n L_fi_d.
+  \end{equation}
+  \item \textbf{反变换与直流电压归一化（右侧）}：\((v_d^*,v_q^*)\)送入\texttt{Inverse Park and Clarke}（内部按\(\alpha=d\cos\theta-q\sin\theta\)、\(\beta=d\sin\theta+q\cos\theta\)及逆 Clarke 矩阵还原三相量）得到三相参考相电压\(v_{abc}^*\)。随后经\texttt{Two times Vabc}（乘以\(2\)）和除法器\texttt{Normalize by Vdc}（除以实测\(V_{\mathrm{dc}}\)）归一化为调制比\(m_{abc}=2v_{abc}^*/V_{\mathrm{dc}}\)，并由\texttt{Modulation Limit}限制在\(\pm0.95\)以内，避免过调制。
+\end{itemize}
+
+\section{\texttt{06 SPWM and Physical Gate Interface} 底层解析}
+\texttt{06 SPWM and Physical Gate Interface}将归一化三相调制波\(m_{abc}\)与\(5\,\mathrm{kHz}\)三角载波比较，生成驱动两电平桥臂的六路互补门极物理信号，底层结构如图\ref{fig:pwm}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.95\textwidth]{WIND_COURSE_R2_06_PWM_Gate_Order.png}
+\caption{\texttt{06 SPWM and Physical Gate Interface}最底层调制与互补脉冲生成结构}
+\label{fig:pwm}
+\end{figure}
+
+输入的三相调制波\texttt{Vabc mod}先经数字控制一拍延时\texttt{Digital PWM Delay}（采样周期\(50\,\mathrm{\mu s}\)），再由\texttt{abc References}拆分为\(m_a,m_b,m_c\)三相标量。左下角的\texttt{Triangular Carrier}产生频率为\(5\,\mathrm{kHz}\)（周期\(200\,\mathrm{\mu s}\)）、幅值为\(\pm1\)的对称三角载波\(v_{\mathrm{tri}}(t)\)。A、B、C 三相分别在比较器\texttt{Compare Phase A/B/C}中判断\(m_x\ge v_{\mathrm{tri}}\)以生成上桥臂开通脉冲\(g_{xH}\)，同时经逻辑非门\texttt{A/B/C Low = NOT High}取反得到严格互补的下桥臂脉冲\(g_{xL}=\lnot g_{xH}\)。六路逻辑信号转为双精度数值并经\texttt{Gate 1..6 to Physical Signal}转换为 Simscape 物理信号后，在\texttt{Six-Pulse Gate Multiplexer}中按\([g_{AH},g_{AL},g_{BH},g_{BL},g_{CH},g_{CL}]^T\)顺序汇成物理门极总线输出。
+
+\chapter{交流并网接口与强电网等值底层实现}
+\keypoints{说明变流器交流出口的\(RL\)滤波器、\(0.69/10\,\mathrm{kV}\)升压变压器、并网点传感器以及\(\mathrm{SCR}=20\)强电网戴维南等值支路的元件参数与连接。}
+\section{\texttt{05 Filter Transformer and PCC} 物理元件解析}
+\texttt{05 Filter Transformer and PCC}封装了变流器交流端至\(10\,\mathrm{kV}\)公共耦合点（PCC）的主电路元件，底层结构如图\ref{fig:filter}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage{WIND_COURSE_R2_08_Filter_Transformer_PCC.png}
+\caption{\texttt{05 Filter Transformer and PCC}最底层物理电气元件连接}
+\label{fig:filter}
+\end{figure}
+
+主功率通路由三个三相物理元件沿水平方向串联组成：
+\begin{enumerate}
+  \item \textbf{三相交流滤波器\texttt{AC Filter Rf + Lf}}：以\(690\,\mathrm{V}/6.25\,\mathrm{MVA}\)计算低压侧基准阻抗\(Z_{b,\mathrm{LV}}=V_{\mathrm{LL,LV}}^2/S_b=0.07618\,\Omega\)，取滤波电阻\(R_f=0.008\,\pu=0.609\,\mathrm{m}\Omega\)、滤波电感\(L_f=0.12\,\pu=29.1\,\mathrm{\mu H}\)，用于滤除\(5\,\mathrm{kHz}\)开关谐波。
+  \item \textbf{双绕组升压变压器\texttt{0.69 kV to 10 kV Step-Up Transformer}}：额定容量\(6.25\,\mathrm{MVA}\)，额定频率\(50\,\mathrm{Hz}\)，低压侧\(690\,\mathrm{V}\)、高压侧\(10\,\mathrm{kV}\)，两侧绕组均采用 Y 接并经\texttt{LV Neutral Ground}和\texttt{HV Neutral Ground}直接接地；高、低压绕组电阻各取\(0.004\,\pu\)，漏感各取\(0.03\,\pu\)，激磁电阻与激磁电感均取\(500\,\pu\)。
+  \item \textbf{并网点电压电流测量\texttt{PCC Voltage and Current Sensor}}：串联在变压器\(10\,\mathrm{kV}\)出口与并网端口之间，采集高压侧三相电压与电流并转换为 Simulink 信号送往控制回路。
+\end{enumerate}
+
+\section{\texttt{06 Grid Equivalent and Source} 物理元件解析}
+\texttt{06 Grid Equivalent and Source}用戴维南等值支路模拟短路比\(\mathrm{SCR}=20\)、电抗电阻比\(X/R=10\)的\(10\,\mathrm{kV}\)强电网，底层结构如图\ref{fig:grid_eq}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.85\textwidth]{WIND_COURSE_R2_09_Grid_Equivalent.png}
+\caption{\texttt{06 Grid Equivalent and Source}最底层物理元件结构}
+\label{fig:grid_eq}
+\end{figure}
+
+按高压侧基准阻抗\(Z_{b,\mathrm{HV}}=(10\,\mathrm{kV})^2/(6.25\,\mathrm{MVA})=16\,\Omega\)，可得电网等值阻抗参数：
+\begin{equation}
+  |Z_g|=\frac{Z_{b,\mathrm{HV}}}{\mathrm{SCR}}=0.80\,\Omega,\quad
+  R_g=\frac{|Z_g|}{\sqrt{1+(X/R)^2}}=0.0796\,\Omega,\quad
+  L_g=\frac{(X/R)R_g}{2\pi f}=2.534\,\mathrm{mH}.
+\end{equation}
+图中左侧端口\texttt{PCC Connection}先经三相串联阻抗\texttt{Grid Impedance Rg + Lg}，再接入线电压有效值为\(10\,\mathrm{kV}\)、频率为\(50\,\mathrm{Hz}\)的理想三相电压源\texttt{10 kV Three-Phase Grid Source}（内部阻抗关闭，以免与外部\(R_g+L_g\)重复），中性点由\texttt{Grid Neutral Ground}直接接地，底部连接\texttt{Solver Configuration}求解器配置块。
+
+\chapter{直驱系统参数汇总与仿真校核}
+\keypoints{汇总直驱模型的主电路、风轮气动与控制器设计参数，并给出开关脉冲互补性与\(80\,\mathrm{ms}\)稳态运行点校核结果。}
+\section{系统与控制参数表}
+直驱主模型的电气主回路、风轮机械及控制器参数汇总于表\ref{tab:dd_sys_param}与表\ref{tab:dd_ctrl_param}。
+
+\begin{table}[H]
+\centering
+\caption{直驱系统主回路额定参数}
+\label{tab:dd_sys_param}
+\begin{tabular}{p{5.2cm}p{3.4cm}p{3.8cm}}
+\toprule
+参数 & 数值 & 工程说明\\
+\midrule
+风机额定有功功率\(P_{\mathrm{rated}}\) & \(5\,\mathrm{MW}\) & 机侧额定输出功率\\
+变流器额定视在容量\(S_b\) & \(6.25\,\mathrm{MVA}\) & 留有\(1.25\)倍容量裕度\\
+低压/高压侧额定线电压 & \(690\,\mathrm{V}/10\,\mathrm{kV}\) & 变流器侧 / 并网点侧\\
+额定电网频率\(f_n\) & \(50\,\mathrm{Hz}\) & 额定角频率\(100\pi\,\mathrm{rad/s}\)\\
+直流母线额定电压\(V_{\mathrm{dc}}^*\) & \(1500\,\mathrm{V}\) & 预充电初值同为\(1500\,\mathrm{V}\)\\
+直流母线电容\(C_{\mathrm{dc}}\) & \(0.18\,\mathrm{F}\) & 直流母线储能支撑\\
+网侧滤波电阻\(R_f\) / 电感\(L_f\) & \(0.609\,\mathrm{m}\Omega\) / \(29.1\,\mathrm{\mu H}\) & 对应\(0.008\,\pu\) / \(0.12\,\pu\)\\
+SPWM 三角载波频率\(f_{\mathrm{sw}}\) & \(5\,\mathrm{kHz}\) & 开关周期\(T_{\mathrm{sw}}=200\,\mathrm{\mu s}\)\\
+最大线性调制度\(m_{\max}\) & \(0.95\) & 留有\(5\%\)裕度防过调制\\
+内环电流矢量限幅值\(I_{\max}\) & \(1.20\,\pu\) & 圆形限流器上限\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{风轮气动、控制器与电网关键参数}
+\label{tab:dd_ctrl_param}
+\begin{tabular}{p{5.4cm}p{3.4cm}p{3.6cm}}
+\toprule
+参数 & 数值 & 工程说明\\
+\midrule
+叶轮半径\(R\)与扫风面积\(A\) & \(70\,\mathrm{m}\) / \(15394\,\mathrm{m^2}\) & \(A=\pi R^2\)\\
+空气密度\(\rho\) & \(1.225\,\mathrm{kg/m^3}\) & 标准大气密度\\
+最优叶尖速比\(\lambda_{\mathrm{opt}}\) / \(C_{p,\max}\) & \(8.1\) / \(0.48\) & 桨距角\(\beta=0^\circ\)\\
+初始风速与阶跃扰动 & \(9\,\mathrm{m/s}\)，\(+1\,\mathrm{m/s}\) & \(0.08\,\mathrm{s}\)时刻施加阶跃\\
+风轮等效转动惯量\(J_t\) & \(3.0\times10^7\,\mathrm{kg\,m^2}\) & 单质量块集总惯量\\
+电流内环设计带宽\(f_{ci}\) & \(250\,\mathrm{Hz}\) & 按\(\omega_{ci}L_f\)、\(\omega_{ci}R_f\)整定 PI\\
+直流电压外环\(K_{p,v\mathrm{dc}}/K_{i,v\mathrm{dc}}\) & \(4.5\) / \(90\) & 正极性误差\(V_{\mathrm{dc}}-V_{\mathrm{dc}}^*\)\\
+锁相环\(K_{p,\mathrm{pll}}/K_{i,\mathrm{pll}}\) & \(60\) / \(1400\) & 同步旋转坐标系锁相\\
+电网短路比\(\mathrm{SCR}\)与\(X/R\) & \(20\)，\(10\) & 强电网戴维南等值\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{开关脉冲与稳态运行点校核}
+通过验证与运行点诊断脚本对直驱主模型开展分阶段仿真测试：
+\begin{enumerate}
+  \item \textbf{\(8\,\mathrm{ms}\)开关脉冲与互补逻辑测试}：六路门极驱动信号均为\(\{0,1\}\)二值脉冲，三相上下桥臂互补误差\(\max|g_{xH}+g_{xL}-1|=0\)，\(6\sim8\,\mathrm{ms}\)窗口内直流母线平均电压为\(1502.44\,\mathrm{V}\)。
+  \item \textbf{\(80\,\mathrm{ms}\)稳态运行点统计（\(60\sim80\,\mathrm{ms}\)窗口）}：统计结果见表\ref{tab:op}。机侧输入功率\(3.196\,\mathrm{MW}\)，并网点输出有功\(2.961\,\mathrm{MW}\)，损耗差值处于合理范围；直流母线稳态平均电压为\(1500.18\,\mathrm{V}\)，与额定值仅差\(0.18\,\mathrm{V}\)；并网电流负序与正序幅值之比为\(0.57\%\)，三相电流对称度良好。
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\caption{直驱主模型\(60\sim80\,\mathrm{ms}\)稳态运行点统计结果}
+\label{tab:op}
+\begin{tabular}{p{6.0cm}p{4.0cm}p{2.5cm}}
+\toprule
+指标 & 结果 & 判定\\
+\midrule
+机侧变流器平均功率\(P_{\mathrm{msc}}\) & \(3.196\,\mathrm{MW}\) & ---\\
+PCC 平均有功功率\(P_{\mathrm{PCC}}\) & \(2.961\,\mathrm{MW}\) & 合格\\
+PCC 平均无功功率\(Q_{\mathrm{PCC}}\) & \(0.419\,\mathrm{Mvar}\) & 合格\\
+直流母线平均电压\(V_{\mathrm{dc}}\) & \(1500.18\,\mathrm{V}\) & 合格\\
+并网电流负序/正序幅值比 & \(0.57\%\) & 合格\\
+并网功率传输综合校核 & 通过 & 合格\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\part{双馈 DFIG 扩展模型}
+\chapter{双馈 DFIG 扩展模型：自顶向下至最底层实现}
+\keypoints{说明双馈模型对直驱功率链的复用与替换范围，逐层解析\texttt{02 DFIG and Average RSC}的五个二级模块与八个三级子系统，并给出亚同步工况下的仿真结果。}
+\section{第 1 层顶层复用架构与三级模块树}
+双馈扩展模型\dfigmodelname 在既有并网功率链的基础上搭建：保留第 1 层的风轮气动（\texttt{01}）、直流母线与网侧平均值变流器（\texttt{03}）、网侧跟网型控制（\texttt{04}）、滤波器与升压变压器（\texttt{05}）以及强电网等值（\texttt{06}），仅将第 2 个一级子系统替换为分层构建的\texttt{02 DFIG and Average RSC}，并在\texttt{05}内部的\(690\,\mathrm{V}\)低压母线处增加定子三相电流并网支路。第 1 层结构见图\ref{fig:dfigtop}。
+
+\begin{figure}[H]
+\centering
+\courseimage{WIND_DFIG_R2_01_Top.png}
+\caption{基于既有功率链复用的 DFIG 扩展模型第 1 层顶层结构（\dfigmodelname）}
+\label{fig:dfigtop}
+\end{figure}
+
+早期版本把电机方程和转子侧控制的所有基本运算块平铺在同一张画布上，阅读和修改都很不便。为此，\texttt{02 DFIG and Average RSC}参考 MathWorks 开源项目 \textit{Renewable Energy Integration Design with Simscape}\cite{simscape_re}中机侧变流器的分层方法，划分为 5 个第 2 层子系统，并在电机本体（\texttt{02}）和转子侧控制器（\texttt{03}）内部进一步拆分为 8 个第 3 层子系统。各子系统在构建脚本中对应独立函数，后续若需加入低电压穿越、转子撬棒（Crowbar）或无功支撑逻辑，只需修改对应函数并局部刷新该模块。三级结构汇总于表\ref{tab:dfig_tree}。
+
+\begin{table}[H]
+\centering
+\caption{双馈模型\texttt{02 DFIG and Average RSC}的三级子系统拆解树}
+\label{tab:dfig_tree}
+\begin{tabular}{p{4.3cm}p{4.6cm}p{4.2cm}}
+\toprule
+第 2 层子系统（共 5 个） & 第 3 层子系统 & 第 3 层（底层）主要运算内容\\
+\midrule
+\texttt{01 Gearbox and MPPT Torque} & 直接由底层运算块构成 & 齿轮箱增速比\(N_{\mathrm{gear}}\)、最优转矩给定、电磁转矩折算\\
+\texttt{02 Wound-Rotor DFIG dq Plant} & \texttt{01 Stator Voltage Equations} & 定子电阻压降\(R_si_{ds/qs}\)、同步旋转反电势\(\pm\omega_s\psi_{qs/ds}\)\\
+ & \texttt{02 Rotor Voltage Equations} & 转差角频率\(\omega_{\mathrm{slip}}\)、转子电阻压降、转差反电势\(\pm\omega_{\mathrm{slip}}\psi_{qr/dr}\)\\
+ & \texttt{03 Flux Integrator and Inductance Matrix} & 四阶磁链状态积分\(\int\dot{\boldsymbol{\psi}}\,dt\)、电感逆矩阵\(\mathbf{L}^{-1}\boldsymbol{\psi}\)求电流\\
+ & \texttt{04 Electromagnetic Torque} & 定子磁链与电流叉乘\(\frac{3}{2}p(\psi_{ds}i_{qs}-\psi_{qs}i_{ds})\)\\
+\texttt{03 Rotor-Side Average Converter Control} & \texttt{01 Stator-Flux Current Reference} & 定子磁链定向下的励磁电流参考\(i_{dr,0}^*\)与转矩电流参考\(i_{qr,0}^*\)\\
+ & \texttt{02 Circular Rotor Current Limiter} & 转子电流矢量模长计算与等比例缩放限幅\\
+ & \texttt{03 Slip and EMF Pre-Control} & 转子电阻压降与转差耦合电势\(R_ri_{drq}\mp\omega_{\mathrm{slip}}\psi_{qdr}\)前馈\\
+ & \texttt{04 Dual-Axis PI and Bridge Limiter} & 双轴电流 PI 调节、前馈电压叠加与\(\pm V_{r,\max}\)输出限幅\\
+\texttt{04 dq to abc Stator Injection} & 直接由底层运算块构成 & 电网旋转相角生成、三相逆变换及发电电流极性折算\\
+\texttt{05 Average RSC Slip Power} & 直接由底层运算块构成 & 转子有功内积\(-\frac{3}{2}(v_{dr}^*i_{dr}+v_{qr}^*i_{qr})\)计算滑差功率\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{\texttt{02 DFIG and Average RSC} 第 2 层五模块总览}
+如图\ref{fig:dfigrsc}所示，\texttt{02 DFIG and Average RSC}第 2 层由五个功能模块按左、中、右三列排布：
+\begin{itemize}
+  \item 左列\texttt{01 Gearbox and MPPT Torque}负责风轮低速轴与发电机高速轴之间的转速换算、最优转矩给定以及电磁制动转矩回馈；
+  \item 中列上方\texttt{02 Wound-Rotor DFIG dq Plant}解算绕线式感应电机的四阶磁链状态方程和气隙电磁转矩，其输出的电磁转矩直接回馈至左侧齿轮箱模块；
+  \item 中列下方\texttt{03 Rotor-Side Average Converter Control}实现定子磁链定向下的转子电流闭环控制，通过中间三条正交信号线与上方电机本体交互转子电压指令\(v_{rdq}^*\)、转子电流\(i_{rdq}\)和转子磁链\(\psi_{rdq}\)；
+  \item 右列上方\texttt{04 dq to abc Stator Injection}将定子\(dq\)轴电流还原为注入\(690\,\mathrm{V}\)母线的三相正弦电流；右列下方\texttt{05 Average RSC Slip Power}计算转子侧变流器馈入直流母线的滑差有功功率\(P_{r\to\mathrm{dc}}\)。
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\courseimage[0.95\textwidth]{WIND_DFIG_R2_02_DFIG_RSC.png}
+\caption{\texttt{02 DFIG and Average RSC}第 2 层五模块结构}
+\label{fig:dfigrsc}
+\end{figure}
+
+\section{\texttt{01 Gearbox and MPPT Torque} 底层解析}
+\texttt{01 Gearbox and MPPT Torque}直接由基本运算块构成，内部结构如图\ref{fig:dfig_gb}所示，包含三条平行支路：
+
+\begin{figure}[H]
+\centering
+\courseimage[0.78\textwidth]{WIND_DFIG_R2_02C_Gearbox_MPPT.png}
+\caption{\texttt{01 Gearbox and MPPT Torque}最底层模块结构}
+\label{fig:dfig_gb}
+\end{figure}
+
+\begin{enumerate}
+  \item \textbf{齿轮箱增速支路（上部）}：风轮机械角速度\(\omega_t\)乘以齿轮箱变比\texttt{Gearbox Speed Ratio}（\(N_{\mathrm{gear}}\approx147.56\)），得到发电机高速轴机械角速度\(\omega_m=N_{\mathrm{gear}}\omega_t\)。
+  \item \textbf{高速轴最优转矩参考支路（中部）}：风轮转速经\texttt{Turbine Speed Squared}平方后，乘以折算到高速轴的最优转矩系数\texttt{Optimal MPPT Torque Gain}（计入齿轮箱效率\(\eta_{\mathrm{gear}}=98.5\%\)），输出发电机侧机械转矩参考：
+  \begin{equation}
+    T_m^*=\frac{K_{\mathrm{opt}}\omega_t^2}{N_{\mathrm{gear}}\eta_{\mathrm{gear}}}.
+  \end{equation}
+  \item \textbf{电磁转矩折算支路（下部）}：电机本体输出的气隙电磁转矩\(T_{e,\mathrm{gen}}\)经\texttt{Torque Referred to Turbine}乘以\(N_{\mathrm{gear}}\eta_{\mathrm{gear}}\)，折算为风轮低速轴的电磁制动转矩\(T_{e,\mathrm{turb}}=N_{\mathrm{gear}}\eta_{\mathrm{gear}}T_{e,\mathrm{gen}}\)，送回第 1 层风轮气动模块。
+\end{enumerate}
+
+\section{\texttt{02 Wound-Rotor DFIG dq Plant} 及其四个子模块}
+在以同步角速度\(\omega_s=100\pi\,\mathrm{rad/s}\)旋转的\(dq\)坐标系下，绕线式双馈感应电机的定子电压方程、转子电压方程、磁链-电流矩阵关系和电磁转矩方程分别封装为四个第 3 层子系统。第 2 层连接如图\ref{fig:dfigplant}所示，上、下两侧分别设置定子侧与转子侧的状态反馈通道。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.95\textwidth]{WIND_DFIG_R2_02A_DFIG_Plant.png}
+\caption{\texttt{02 Wound-Rotor DFIG dq Plant}第 2 层四模块结构}
+\label{fig:dfigplant}
+\end{figure}
+
+四个第 3 层子系统的内部连接如图\ref{fig:dfig_plant_subs}所示，各自对应的电磁方程如下：
+
+\begin{figure}[H]
+\centering
+\courseimage[0.48\textwidth]{WIND_DFIG_R2_02A1_Stator_Eqs.png}\hfill
+\courseimage[0.48\textwidth]{WIND_DFIG_R2_02A2_Rotor_Eqs.png}\\[0.8em]
+\courseimage[0.48\textwidth]{WIND_DFIG_R2_02A3_Flux_Matrix.png}\hfill
+\courseimage[0.48\textwidth]{WIND_DFIG_R2_02A4_Torque.png}
+\caption{DFIG 电机本体四个最底层子系统：（左上）\texttt{01 Stator Voltage Equations}；（右上）\texttt{02 Rotor Voltage Equations}；（左下）\texttt{03 Flux Integrator and Inductance Matrix}；（右下）\texttt{04 Electromagnetic Torque}}
+\label{fig:dfig_plant_subs}
+\end{figure}
+
+\begin{enumerate}
+  \item \textbf{\texttt{01 Stator Voltage Equations}（图\ref{fig:dfig_plant_subs}左上）}：定子绕组直接并入\(690\,\mathrm{V}\)电网，按定子磁链定向基准（定子磁链沿\(d\)轴、电网电动势沿\(q\)轴），定子端电压\texttt{Stator Grid Voltage dq}取\(v_{ds}=0\)、\(v_{qs}=V_{\phi,\mathrm{pk}}=563.38\,\mathrm{V}\)。扣除定子电阻压降\(R_si_{ds}\)、\(R_si_{qs}\)（\(R_s=0.007\,\pu\)，对应图中\texttt{Rs ids}、\texttt{Rs iqs}）并计及同步旋转耦合电势\(\pm\omega_s\psi_{qs/ds}\)（\texttt{ws psiqs}、\texttt{ws psids}），在求和节点\texttt{d\_psids\_sum}与\texttt{d\_psiqs\_sum}中得到定子磁链导数：
+  \begin{equation}
+    \frac{d\psi_{ds}}{dt}=v_{ds}-R_si_{ds}+\omega_s\psi_{qs},\qquad
+    \frac{d\psi_{qs}}{dt}=v_{qs}-R_si_{qs}-\omega_s\psi_{ds}.
+  \end{equation}
+  \item \textbf{\texttt{02 Rotor Voltage Equations}（图\ref{fig:dfig_plant_subs}右上）}：高速轴机械角速度\(\omega_m\)乘以极对数\texttt{Pole Pairs}（\(p=2\)）得到转子电角速度\(\omega_r=p\omega_m\)，在\texttt{Slip Speed}中与同步角速度\(\omega_s\)相减得到转差角频率\(\omega_{\mathrm{slip}}=\omega_s-p\omega_m\)。随后由乘法器\texttt{wSlip psiqr}、\texttt{wSlip psidr}计算转差旋转电势\(\omega_{\mathrm{slip}}\psi_{qr}\)、\(\omega_{\mathrm{slip}}\psi_{dr}\)，结合转子电阻压降\(R_ri_{dr}\)、\(R_ri_{qr}\)（\(R_r=0.005\,\pu\)）和输入的转子电压\(v_{dr},v_{qr}\)，在\texttt{d\_psidr\_sum}与\texttt{d\_psiqr\_sum}中合成转子磁链导数：
+  \begin{equation}
+    \frac{d\psi_{dr}}{dt}=v_{dr}-R_ri_{dr}+\omega_{\mathrm{slip}}\psi_{qr},\qquad
+    \frac{d\psi_{qr}}{dt}=v_{qr}-R_ri_{qr}-\omega_{\mathrm{slip}}\psi_{dr}.
+  \end{equation}
+  \item \textbf{\texttt{03 Flux Integrator and Inductance Matrix}（图\ref{fig:dfig_plant_subs}左下）}：定、转子磁链导数合并为四维状态导数向量\(\dot{\boldsymbol{\psi}}=[\dot{\psi}_{ds},\dot{\psi}_{qs},\dot{\psi}_{dr},\dot{\psi}_{qr}]^T\)后，由向量积分器\texttt{Flux State Integrator}积分得到实时磁链\(\boldsymbol{\psi}\)（积分初值按稳态运行点解析设定，以消除启动暂态冲击）。由于定、转子磁链与电流满足线性电感关系\(\psi_{ds}=L_si_{ds}+L_mi_{dr}\)、\(\psi_{dr}=L_mi_{ds}+L_ri_{dr}\)（\(q\)轴形式相同），矩阵增益模块\texttt{Flux to Current Matrix}直接左乘\(4\times4\)电感逆矩阵\(\mathbf{L}^{-1}\)解算出四维电流向量：
+  \begin{equation}
+    \begin{bmatrix}i_{ds}\\i_{qs}\\i_{dr}\\i_{qr}\end{bmatrix}
+    =\frac{1}{L_sL_r-L_m^2}
+    \begin{bmatrix}
+      L_r & 0 & -L_m & 0\\
+      0 & L_r & 0 & -L_m\\
+      -L_m & 0 & L_s & 0\\
+      0 & -L_m & 0 & L_s
+    \end{bmatrix}
+    \begin{bmatrix}\psi_{ds}\\\psi_{qs}\\\psi_{dr}\\\psi_{qr}\end{bmatrix},
+  \end{equation}
+  再由\texttt{Split Stator Rotor Current}与\texttt{Split Stator Rotor Flux}拆分为定子侧和转子侧向量输出。
+  \item \textbf{\texttt{04 Electromagnetic Torque}（图\ref{fig:dfig_plant_subs}右下）}：根据定子磁链\(\psi_{ds},\psi_{qs}\)与定子电流\(i_{ds},i_{qs}\)，由乘法器\texttt{psids iqs}、\texttt{psiqs ids}、减法器\texttt{Air-Gap Flux Cross Product}及转矩常数增益\texttt{Torque Constant 1.5p}计算气隙电磁转矩：
+  \begin{equation}
+    T_{e,\mathrm{gen}}=\frac{3}{2}p(\psi_{ds}i_{qs}-\psi_{qs}i_{ds}).
+  \end{equation}
+\end{enumerate}
+
+\section{\texttt{03 Rotor-Side Average Converter Control} 及其四个子模块}
+转子侧变流器（RSC）采用定子磁链定向矢量控制。借鉴 \textit{Renewable Energy Integration Design with Simscape} 开源项目\cite{simscape_re}中机侧变流器控制的“电流参考生成\(\to\)圆形限流\(\to\)转差解耦前馈\(\to\)双轴 PI 与桥臂限幅”四步结构，\texttt{03 Rotor-Side Average Converter Control}在第 2 层划分为四个子系统，如图\ref{fig:dfigrscctrl}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.95\textwidth]{WIND_DFIG_R2_02B_RSC_Control.png}
+\caption{\texttt{03 Rotor-Side Average Converter Control}第 2 层四模块结构}
+\label{fig:dfigrscctrl}
+\end{figure}
+
+四个第 3 层子系统的内部连接如图\ref{fig:dfig_rsc_subs}所示，分述如下：
+
+\begin{figure}[H]
+\centering
+\courseimage[0.48\textwidth]{WIND_DFIG_R2_02B1_RSC_Ref.png}\hfill
+\courseimage[0.48\textwidth]{WIND_DFIG_R2_02B2_RSC_Limiter.png}\\[0.8em]
+\courseimage[0.48\textwidth]{WIND_DFIG_R2_02B3_RSC_PreControl.png}\hfill
+\courseimage[0.48\textwidth]{WIND_DFIG_R2_02B4_RSC_PI.png}
+\caption{RSC 控制器四个最底层子系统：（左上）\texttt{01 Stator-Flux Current Reference}；（右上）\texttt{02 Circular Rotor Current Limiter}；（左下）\texttt{03 Slip and EMF Pre-Control}；（右下）\texttt{04 Dual-Axis PI and Bridge Limiter}}
+\label{fig:dfig_rsc_subs}
+\end{figure}
+
+\begin{enumerate}
+  \item \textbf{\texttt{01 Stator-Flux Current Reference}（图\ref{fig:dfig_rsc_subs}左上）}：在定子磁链定向（\(\psi_{ds}\approx\psi_{ds0}=V_{\phi,\mathrm{pk}}/\omega_s\)，\(\psi_{qs}\approx0\)）下，\(d\)轴转子电流用于提供定子励磁，由常值块\texttt{Idr Magnetizing Reference}设为\(i_{dr,0}^*=\psi_{ds0}/L_m\)；\(q\)轴转子电流控制电磁转矩，输入的机械转矩参考\(T_m^*\)乘以转矩-电流折算系数\texttt{Torque to Iqr Gain}即可得到\(q\)轴转子电流参考：
+  \begin{equation}
+    i_{dr,0}^*=\frac{\psi_{ds0}}{L_m},\qquad
+    i_{qr,0}^*=\frac{L_s}{\frac{3}{2}p\psi_{ds0}L_m}T_m^*.
+  \end{equation}
+  \item \textbf{\texttt{02 Circular Rotor Current Limiter}（图\ref{fig:dfig_rsc_subs}右上）}：与网侧圆形限流器原理相同，先求转子电流参考模长\(|i_{r,0}^*|=\sqrt{(i_{dr,0}^*)^2+(i_{qr,0}^*)^2}\)（\texttt{Reference Magnitude}），再与转子变流器最大允许电流\(I_{r,\max}\)（\texttt{Rotor Current Limit}，取额定工作点电流的\(1.25\)倍）比较，通过\texttt{Circular Limit Scale}按\(\min(1,\,I_{r,\max}/\max(|i_{r,0}^*|,\,1))\)对\(d\)、\(q\)轴电流参考做等比例限幅。
+  \item \textbf{\texttt{03 Slip and EMF Pre-Control}（图\ref{fig:dfig_rsc_subs}左下）}：由转子电压方程可知，转子回路存在电阻压降\(R_ri_{dr/qr}\)和转差耦合电势\(\mp\omega_{\mathrm{slip}}\psi_{qr/dr}\)。该模块先由同步角速度\(\omega_s\)与转子电角速度\(p\omega_m\)算出转差角频率\(\omega_{\mathrm{slip}}\)（\texttt{Slip Speed}），再通过增益\texttt{Rr idr}、\texttt{Rr iqr}与乘法器\texttt{wSlip psiqr}、\texttt{wSlip psidr}在\texttt{Vdr Pre-Control Sum}和\texttt{Vqr Pre-Control Sum}中合成转子解耦前馈电压：
+  \begin{equation}
+    v_{dr,\mathrm{ff}}=R_ri_{dr}-\omega_{\mathrm{slip}}\psi_{qr},\qquad
+    v_{qr,\mathrm{ff}}=R_ri_{qr}+\omega_{\mathrm{slip}}\psi_{dr}.
+  \end{equation}
+  \item \textbf{\texttt{04 Dual-Axis PI and Bridge Limiter}（图\ref{fig:dfig_rsc_subs}右下）}：上下对称布置\(d\)、\(q\)两条电流控制通道。电流跟踪误差\(e_{idr}=i_{dr,\mathrm{lim}}^*-i_{dr}\)、\(e_{iqr}=i_{qr,\mathrm{lim}}^*-i_{qr}\)分别经过比例增益\texttt{Idr/Iqr Kp}（\(K_{p,r}=2\pi f_{\mathrm{bw}}L_\sigma\)，其中转子暂态漏感\(L_\sigma=L_r-L_m^2/L_s\)，控制带宽\(f_{\mathrm{bw}}=80\,\mathrm{Hz}\)）和积分支路\texttt{Idr/Iqr Ki}\(\to\)\texttt{Idr/Iqr Integrator}（\(K_{i,r}=2\pi f_{\mathrm{bw}}R_r\)），在\texttt{Vdr Command Sum}与\texttt{Vqr Command Sum}中与前馈电压\(v_{dr,\mathrm{ff}},v_{qr,\mathrm{ff}}\)叠加，最后经转子桥臂最大输出电压限幅\texttt{Vdr/Vqr Bridge Limit}（\(\pm V_{r,\max}=\pm400\,\mathrm{V}\)）得到转子控制电压：
+  \begin{align}
+    v_{dr}^*&=\operatorname{sat}\!\left(K_{p,r}e_{idr}+K_{i,r}\int e_{idr}\,dt+R_ri_{dr}-\omega_{\mathrm{slip}}\psi_{qr},\,-V_{r,\max},\,V_{r,\max}\right),\\
+    v_{qr}^*&=\operatorname{sat}\!\left(K_{p,r}e_{iqr}+K_{i,r}\int e_{iqr}\,dt+R_ri_{qr}+\omega_{\mathrm{slip}}\psi_{dr},\,-V_{r,\max},\,V_{r,\max}\right).
+  \end{align}
+\end{enumerate}
+
+\section{\texttt{04 dq to abc Stator Injection}与\texttt{05 Average RSC Slip Power}底层解析}
+\texttt{02 DFIG and Average RSC}右列的两个功率接口子系统同样由基础运算块直接构成，底层结构如图\ref{fig:dfig_iface_subs}所示。
+
+\begin{figure}[H]
+\centering
+\courseimage[0.54\textwidth]{WIND_DFIG_R2_02D_Stator_dq2abc.png}\hfill
+\courseimage[0.43\textwidth]{WIND_DFIG_R2_02E_Slip_Power.png}
+\caption{DFIG 功率接口最底层子系统：（左）\texttt{04 dq to abc Stator Injection}；（右）\texttt{05 Average RSC Slip Power}}
+\label{fig:dfig_iface_subs}
+\end{figure}
+
+\begin{itemize}
+  \item \textbf{\texttt{04 dq to abc Stator Injection}（图\ref{fig:dfig_iface_subs}左）}：电机本体采用\(q\)轴对齐电网电动势（\(v_{ds}=0,v_{qs}=V_{\phi,\mathrm{pk}}\)）的电动机惯例，对应的旋转坐标角为\(\theta_g(t)=-\omega_st\)（由仿真时钟\texttt{Grid Time}乘以\(-\omega_s\)生成）。A、B、C 三相支路分别加上\(0\)、\(+2\pi/3\)、\(-2\pi/3\)相位偏置（\texttt{A/B/C Angle}）形成三相相角\(\theta_k\)，经余弦、正弦函数及乘法器计算出电动机惯例下的定子相电流\(i_{s,k}^{\mathrm{mot}}=i_{ds}\cos\theta_k-i_{qs}\sin\theta_k\)（\texttt{Machine Current}）。由于电动机惯例下发电电流为负，最后经极性反相块\texttt{Injection Sign}（增益\(-1\)）转为向\(690\,\mathrm{V}\)母线注入的正序发电电流\(i_{abc,\mathrm{inj}}=-i_{abc}^{\mathrm{mot}}\)。
+  \item \textbf{\texttt{05 Average RSC Slip Power}（图\ref{fig:dfig_iface_subs}右）}：转子电压\(v_{rdq}^*\)与转子电流\(i_{rdq}\)拆分为标量后，由乘法器\texttt{Rotor vd id}、\texttt{Rotor vq iq}和加法器\texttt{Rotor Power Sum}求得内积\(v_{dr}^*i_{dr}+v_{qr}^*i_{qr}\)，再乘以功率系数\texttt{Rotor Power into DC}（\(-1.5\)），得到从转子侧馈入直流母线的有功功率：
+  \begin{equation}
+    P_{r\to\mathrm{dc}}=-\frac{3}{2}(v_{dr}^*i_{dr}+v_{qr}^*i_{qr}).
+  \end{equation}
+  在亚同步运行区（\(\omega_m<\omega_{m,s}\)，转差率\(s>0\)），转子需从直流母线吸收滑差功率以维持气隙磁场同步旋转，故\(v_{dr}^*i_{dr}+v_{qr}^*i_{qr}>0\)，输出\(P_{r\to\mathrm{dc}}<0\)；超同步运行区（\(s<0\)）则有\(P_{r\to\mathrm{dc}}>0\)。
+\end{itemize}
+
+\section{复用直流/平均 GSC 与 690 V 定子汇流底层接口}
+在\dfigmodelname 的并网主回路中，有两处与机侧模块直接相连：
+\begin{enumerate}
+  \item \textbf{复用的直流母线与平均值网侧变流器（\texttt{03 DC Link and Average GSC}）}：如图\ref{fig:dfig_dcgsc}所示，该模块保留了\(1500\,\mathrm{V}\)直流电容、预充电支路和过压卸荷监测，仅将受控直流电流源的输入功率由直驱机型的机侧全功率\(P_{\mathrm{msc}}\)改为有符号的转子滑差功率\(P_{r\to\mathrm{dc}}\)；网侧三相桥采用平均值开关桥（\texttt{Averaged-Switch Three-Phase Bridge}），由占空比发生器\texttt{Duty Generator}按\(d_{abc}=\operatorname{sat}(0.5+v_{abc}^*/V_{\mathrm{dc}},\,0,\,1)\)生成的连续占空比驱动。
+  \item \textbf{\(690\,\mathrm{V}\)母线定子电流源汇流支路（\texttt{05 Filter Transformer and PCC}）}：如图\ref{fig:dfigpcc}所示，在保留“网侧变流器\(\to RL\)滤波器\(\to 0.69/10\,\mathrm{kV}\)升压变压器\(\to\)并网点传感器”水平主干的基础上，定子三相注入电流\texttt{DFIG Stator Current Injection abc}经信号转换后驱动三相受控电流源\texttt{DFIG Stator Average Current Source}，在滤波器出口与变压器低压绕组之间汇入\(690\,\mathrm{V}\)母线，与网侧变流器输出电流共同经升压变压器送入\(10\,\mathrm{kV}\)电网。
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\courseimage[0.92\textwidth]{WIND_DFIG_R2_04_Reused_DC_GSC.png}
+\caption{DFIG 扩展模型中复用的\texttt{03 DC Link and Average GSC}底层结构}
+\label{fig:dfig_dcgsc}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\courseimage[0.92\textwidth]{WIND_DFIG_R2_03_Reused_PCC.png}
+\caption{\texttt{05 Filter Transformer and PCC}中 DFIG 定子电流源在\(690\,\mathrm{V}\)母线的物理汇流}
+\label{fig:dfigpcc}
+\end{figure}
+
+\section{DFIG 仿真结果分析}
+在\(10\,\mathrm{m/s}\)风速下对双馈扩展模型进行\(0.20\,\mathrm{s}\)时域仿真，取\(0.16\sim0.20\,\mathrm{s}\)稳态窗口统计运行指标，结果见表\ref{tab:dfigop}。
+
+\begin{table}[H]
+\centering
+\caption{DFIG 扩展模型稳态运行点统计结果（\(0.16\sim0.20\,\mathrm{s}\)）}
+\label{tab:dfigop}
+\begin{tabular}{p{6.2cm}p{3.5cm}p{2.4cm}}
+\toprule
+指标 & 结果 & 判定\\
+\midrule
+PCC \(dq\)坐标系有功功率 & \(3.791031\,\mathrm{MW}\) & 合格\\
+PCC 三相瞬时有功功率平均值 & \(3.794429\,\mathrm{MW}\) & 合格\\
+PCC 无功功率 & \(0.123192\,\mathrm{Mvar}\) & 合格\\
+直流母线平均电压 & \(1515.373\,\mathrm{V}\) & 合格\\
+转子馈入直流母线功率\(P_{r\rightarrow dc}\) & \(-26.697\,\mathrm{kW}\) & 亚同步功率流向正确\\
+风轮机械角速度 & \(1.082637\,\mathrm{rad/s}\) & 合格\\
+定子注入电流负序/正序幅值比 & \(8.3238\times10^{-4}\) & 合格\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+仿真结果表明，并网点按\(dq\)分量计算的有功功率（\(3.7910\,\mathrm{MW}\)）与三相瞬时功率平均值（\(3.7944\,\mathrm{MW}\)）仅相差\(0.09\%\)，验证了定子电流坐标反变换相序、锁相环基准角与变压器低压侧汇流接口的一致性。该工况下风轮转速为\(1.0826\,\mathrm{rad/s}\)，电机运行于亚同步状态，转子经变流器从直流母线吸收\(26.697\,\mathrm{kW}\)滑差功率，直流母线电压稳定在\(1515.37\,\mathrm{V}\)，定子注入电流的负序与正序幅值比仅为\(8.32\times10^{-4}\)。
+
+\part{对比与结论}
+\chapter{直驱与双馈模型对比}
+\keypoints{在相同的风轮、直流母线、GFL 控制与并网接口前提下，对比两套模型的结构复杂度、变流器功率路径与仿真运行点。}
+
+\section{结构与功率路径对比}
+\begin{table}[H]
+\centering
+\caption{两套模型的结构对比}
+\begin{tabular}{p{3.4cm}p{4.9cm}p{4.9cm}}
+\toprule
+项目 & 直驱 PMSG（\modelname） & 双馈 DFIG（\dfigmodelname）\\
+\midrule
+机侧子系统 & \texttt{02 PMSG and MSC Average Model}，直接由底层积木构成 & \texttt{02 DFIG and Average RSC}，5 个二级与 8 个三级子系统\\
+进入直流链的功率 & 机侧全部功率\(P_{msc}\) & 有符号转子滑差功率\(P_{r\to dc}\)\\
+变流器模型 & 网侧两电平桥，显式\(5\,\mathrm{kHz}\) SPWM & 网侧平均值开关桥，机侧 RSC 为平均值电压限幅\\
+定子/机侧并网 & 全部经 GSC 并网 & 定子电流源直接汇入\(690\,\mathrm{V}\)母线\\
+直流母线电压 & \(1500\,\mathrm{V}\) & \(1500\,\mathrm{V}\)（运行点约\(1515\,\mathrm{V}\)）\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{稳态运行点对比}
+\begin{table}[H]
+\centering
+\caption{两套模型稳态运行点对比}
+\begin{tabular}{p{4.6cm}p{3.9cm}p{4.0cm}}
+\toprule
+指标 & 直驱（\(9\,\mathrm{m/s}\)） & 双馈（\(10\,\mathrm{m/s}\)）\\
+\midrule
+PCC 平均有功功率 & \(2.961\,\mathrm{MW}\) & \(3.791\,\mathrm{MW}\)\\
+PCC 平均无功功率 & \(0.419\,\mathrm{Mvar}\) & \(0.123\,\mathrm{Mvar}\)\\
+直流母线电压 & \(1500.18\,\mathrm{V}\) & \(1515.37\,\mathrm{V}\)\\
+经直流链功率 & \(P_{msc}=3.196\,\mathrm{MW}\) & \(P_{r\to dc}=-26.7\,\mathrm{kW}\)\\
+电流负序/正序比 & \(0.57\%\) & \(0.083\%\)（定子注入）\\
+\bottomrule
+\end{tabular}
+\end{table}
+两个算例的风速不同，表中数据只用来说明各自的功率路径，不能直接当作同工况下的优劣比较。双馈机型的直流链只处理转差功率，约为直驱机型直流链功率的\(0.8\%\)，这是部分功率变流的容量优势；直驱机型用全功率变流换来发电机与电网的完全解耦，开关级行为也更直观。
+
+\chapter{结论}
+本文围绕电力电子技术课程设计要求，完成了\(5\,\mathrm{MW}\)直驱永磁风力发电系统（主模型\modelname）与双馈感应风力发电系统（扩展模型\dfigmodelname）的三级模块化建模、底层参数设计与仿真校核，主要工作总结如下：
+\begin{enumerate}
+  \item 建立了直驱 PMSG 全功率变流并网模型，从顶层、功能子系统到底层积木和 Simscape 物理元件逐层说明了连接关系，包括风轮气动\(C_p(\lambda)\)、单质量块转子惯量、MPPT 转矩动态、\(1500\,\mathrm{V}\)直流母线与预充电/卸荷保护、两电平三相开关桥、\(5\,\mathrm{kHz}\)显式 SPWM、\(dq\)解耦电流内环、\(0.69/10\,\mathrm{kV}\)升压变压器和强电网戴维南等值电路。
+  \item 在风轮、直流母线、网侧控制和升压并网主回路不变的前提下，搭建了三级分层的绕线式 DFIG 扩展模型。机侧被拆成齿轮箱/MPPT、四模块的 DFIG 状态方程、四模块的定子磁链定向 RSC 控制器、定子反变换注入和转子滑差功率接口，并在\(10\,\mathrm{m/s}\)亚同步工况下验证了滑差功率的流向和三相正序电流注入。
+  \item 参考 \textit{Renewable Energy Integration Design with Simscape} 的分层控制思路，并采用全脚本生成模型的方式：参数初始化、模型构建和自动验证脚本把两套模型都写成可重复构建的纯文本，便于阅读、局部修改和由编码智能体（AI Agent）继续迭代。
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\bibitem{burton} T. Burton, N. Jenkins, D. Sharpe, and E. Bossanyi. \textit{Wind Energy Handbook}. Wiley.
+\bibitem{yazdani} A. Yazdani and R. Iravani. \textit{Voltage-Sourced Converters in Power Systems}. IEEE/Wiley.
+\bibitem{mohan} N. Mohan, T. Undeland, and W. Robbins. \textit{Power Electronics: Converters, Applications, and Design}. Wiley.
+\bibitem{mathworks} MathWorks. \textit{Simulink and Simscape Electrical Documentation}, MATLAB R2026a.
+\bibitem{simscape_re} MathWorks Simscape Team. \textit{Renewable Energy Integration Design with Simscape} (\texttt{WindGFLMpp} / \texttt{WindGFMMpp} Open-Source Reference Project). GitHub / MATLAB File Exchange.
+\end{thebibliography}
+
+\appendix
+\chapter{模型文件与脚本说明}
+本课程设计配套工程包含以下模型、参数与验证脚本文件：
+\begin{table}[H]
+\centering
+\caption{配套模型与脚本文件清单}
+\begin{tabular}{p{3.9cm}p{9.1cm}}
+\toprule
+类别 & 文件路径\\
+\midrule
+直驱 PMSG 主模型 & \texttt{build/Wind\_DirectDrive\_SPWM\_R2.slx}\\
+双馈 DFIG 扩展模型 & \texttt{build/Wind\_DFIG\_Reused\_R2.slx}\\
+模型自动构建脚本 & \texttt{scripts/build\_wind\_course\_spwm\_r2.m}\\
+ & \texttt{scripts/build\_wind\_dfig\_reused\_r2.m}\\
+参数初始化脚本 & \texttt{parameters/init\_wind\_course\_spwm\_r2.m}\\
+ & \texttt{parameters/init\_wind\_course\_average.m}\\
+ & \texttt{parameters/init\_wind\_dfig\_reused\_r2.m}\\
+验证与运行点分析脚本 & \texttt{scripts/run\_all\_checks.m}\\
+ & \texttt{scripts/validate\_wind\_course\_spwm\_r2.m}\\
+ & \texttt{scripts/diagnose\_wind\_course\_operating\_point\_r2.m}\\
+ & \texttt{scripts/validate\_wind\_dfig\_reused\_r2.m}\\
+ & \texttt{scripts/diagnose\_wind\_dfig\_reused\_r2.m}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

@@ -51,7 +51,7 @@ set_param([windCmd '/Enable On'], 'Time', '11', 'After', '0');
 % Initially OPEN (Trip = 1), closes at 0.65s (Trip = 0) to connect the +1.0 MW load
 set_param([loadSys '/Adjusted_Island_Load'], 'active_power', '5.0e6', 'reactive_power', '1.5e6');
 set_param([loadSys '/One_MW_Step_Load'], 'active_power', '1.0e6', 'reactive_power', '0.3e6');
-set_param([loadSys '/Load_Step_Command'], 'Time', '0.65', 'InitialValue', '1', 'FinalValue', '0');
+set_param([loadSys '/Load_Step_Command'], 'Time', '0.65', 'Before', '1', 'After', '0');
 
 % 4. Simulation StopTime: 2.50 s
 set_param(model, 'StopTime', '2.50');

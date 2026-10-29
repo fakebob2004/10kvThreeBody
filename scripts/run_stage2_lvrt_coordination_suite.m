@@ -48,7 +48,7 @@ if plotOnly && isfile(fullfile(artifactDir, 'stage2_lvrt_coordination_results.ma
 end
 
 model = 'BESS_PV_WIND_STAGE2_R2_API';
-modelFile = fullfile(root, 'build', [model '.slx']);
+modelFile = get_stage2_model_path(model);
 assert(isfile(modelFile), 'Missing model file: %s', modelFile);
 
 if bdIsLoaded(model)
@@ -68,7 +68,7 @@ end
 apiSub = [model '/07 Resource API Layer'];
 set_param([apiSub '/PV_ProfileCommand'], 'SampleTime', '0.005');
 set_param([apiSub '/Wind_ProfileCommand'], 'SampleTime', '0.005');
-set_param([apiSub '/MATLAB Function Coordinator'], 'SystemSampleTime', '0.005');
+set_coordinator_sample_time(model, 0.005);
 
 % Insert asymmetric 10 kV feeder impedances: Z = [0.02, 0.08, 0.20] pu
 insert_feeder_impedances(model);

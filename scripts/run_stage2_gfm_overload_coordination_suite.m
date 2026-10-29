@@ -35,7 +35,9 @@ set_param(0, 'ErrorIfLoadNewModel', 'off');
 
 model = 'BESS_PV_WIND_STAGE2_R2_API';
 if bdIsLoaded(model), close_system(model, 0); end
-load_system(fullfile(root, 'build', [model '.slx']));
+modelPath = get_stage2_model_path(model);
+fprintf('Loading model: %s (MATLAB %s)\n', modelPath, version('-release'));
+load_system(modelPath);
 c = onCleanup(@() close_system(model, 0));
 
 artifactsDir = fullfile(root, 'artifacts');
@@ -76,7 +78,7 @@ apiSub = [model '/07 Resource API Layer'];
 set_param([apiSub '/Resource Modes'], 'Value', '[0 1 1]');
 set_param([apiSub '/PV_ProfileCommand'], 'SampleTime', '0.005');
 set_param([apiSub '/Wind_ProfileCommand'], 'SampleTime', '0.005');
-set_param([apiSub '/MATLAB Function Coordinator'], 'SystemSampleTime', '0.005');
+set_coordinator_sample_time(model, 0.005);
 
 S2_API = evalin('base', 'S2_API');
 cfg = S2_API.coordinator_config;

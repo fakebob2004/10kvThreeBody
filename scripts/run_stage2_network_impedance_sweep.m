@@ -30,7 +30,7 @@ addpath(fullfile(root, 'tests'));
 set_param(0, 'ErrorIfLoadNewModel', 'off');
 
 model = 'BESS_PV_WIND_STAGE2_R2_API';
-modelFile = fullfile(root, 'build', [model '.slx']);
+modelFile = get_stage2_model_path(model);
 assert(isfile(modelFile), 'Missing model file: %s', modelFile);
 
 if bdIsLoaded(model)
@@ -125,6 +125,7 @@ for c = 1:size(cases, 1)
     if size(api, 2) ~= 48, api = api.'; end
 
     t = raw(:, 1);
+    api = sync_api_to_continuous_time(api, t);
     tail = t > 0.20;
 
     res = struct();
