@@ -11,6 +11,13 @@ Current v2 status:
 - BESS-GFM: generated from source and accepted (`BESS_RESOURCE_V2_ACCEPTANCE_PASS=1`).
 - The three-resource assembly remains the subsequent phase.
 
+The `integration/grid-supported-pv-wind` work adds the physical PV branch
+and transient PMSG Wind R3 to a common 10 kV network with a permanently
+connected synchronous machine. This is a **grid-supported commissioning**
+harness, not an accepted islanded replacement. Cold-start and post-settling
+dynamic results are deliberately separate. See
+[integration scope and reproduction](docs/GRID_SUPPORTED_INTEGRATION.md).
+
 An additional 5 MW direct-drive Wind-GFL course model is maintained at
 `models/resources/Wind_DirectDrive_Average.slx`. It preserves the physical
 1500 V DC link and 0.69/10 kV grid interface while using an averaged-switch

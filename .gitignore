@@ -18,3 +18,6 @@ logs/
 
 # External reference projects retain their own history and are not vendored.
 references/
+
+# Unaccepted grid-supported commissioning models are rebuilt from source.
+/models/integration/

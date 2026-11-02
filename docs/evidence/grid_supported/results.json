@@ -1,0 +1,308 @@
+{
+  "scope": "Conditional post-settling grid-supported dynamics, not cold start or island acceptance",
+  "islanding_tested": false,
+  "cold_start_accepted": false,
+  "direct_cold_start": {
+    "source_model": "GRID_SUPPORTED_PV_WIND_R1",
+    "assessment_method": "Raw-startup gate reassessed on the retained direct-connected full trace; no new simulation",
+    "pass": false,
+    "raw_bus_peak_V": 25796.233970912577,
+    "raw_bus_gate_V": 15000,
+    "PV_initial_Vdc_V": 750.00002099805954,
+    "Wind_initial_Vdc_V": 902.21998997515982
+  },
+  "components": {
+    "island_operation": false,
+    "matlab_version": "26.1.0.3312084 (R2026a) Update 4",
+    "pv_commit": "ca7a100",
+    "stages": {
+      "pv_dispatch": {
+        "pass": true,
+        "elapsed_s": 44.63795275,
+        "metrics": {
+          "P_before_W": 2.0218251048166836E+6,
+          "P_after_W": 2.9921529303893447E+6,
+          "Q_after_var": 2341.9919309606362,
+          "Vdc_after_V": 1499.9971187491153,
+          "Ipeak_A": 4542.6434912081368,
+          "Vdc_max_V": 1636.7910916577432,
+          "charge_residual_C": 0.84610174917993375
+        }
+      },
+      "pv_mppt": {
+        "pass": true,
+        "elapsed_s": 12.185467875,
+        "metrics": {
+          "available_W": 4.0853129534491557E+6,
+          "array_W": 4.0852830235006739E+6,
+          "pcc_W": 3.972397070430134E+6,
+          "capture": 0.99999267376849144,
+          "Vdc_V": 1500.0097048287744
+        }
+      },
+      "pv_limit": {
+        "pass": true,
+        "elapsed_s": 11.29933175,
+        "metrics": {
+          "factor": 0.8920629737319663,
+          "Iref_max": 8135.3825998233606,
+          "Iactual_max": 8156.6917884582363,
+          "Vdc_max": 1662.6555885661803
+        }
+      },
+      "wind_operating_point": {
+        "pass": true,
+        "elapsed_s": 34.834848791666666,
+        "metrics": {}
+      },
+      "wind_step": {
+        "pass": true,
+        "elapsed_s": 51.051833416666668,
+        "metrics": {}
+      }
+    }
+  },
+  "source_audit": {
+    "island_operation": false,
+    "structural_isolation_pass": true,
+    "local_pll_control_pass": true,
+    "wind_originals_unchanged": true,
+    "source_files": {
+      "input_1": {
+        "path": "build/Wind_PMSG_Transient_R3.slx",
+        "sha256": "5f681e18b513c1ca7ed7fb3e360228e8f5c123ae1d0b6698b06408a0d1343278"
+      },
+      "input_2": {
+        "path": "parameters/init_wind_pmsg_transient_r3.m",
+        "sha256": "26a8c43dca0112f81858878bb820103e529b1716a7f488c5a4729693138fe414"
+      },
+      "input_3": {
+        "path": "scripts/build_wind_pmsg_transient_r3.m",
+        "sha256": "07d1c9ed504906951f7a42aab9395fe11038673a364162bf5d8556803dab995c"
+      }
+    }
+  },
+  "dynamics": {
+    "cold_start_accepted": false,
+    "islanding_tested": false,
+    "dynamic_evaluation_starts_s": 0.5,
+    "disturbance_time_s": 0.7,
+    "cases": {
+      "steady": {
+        "pass": true,
+        "elapsed_s": 199.28697333333332,
+        "metrics": {
+          "P_pv_W": 2.0215784903978307E+6,
+          "Q_pv_var": -1720.55152557299,
+          "P_wind_W": 2.7097607647635038E+6,
+          "Q_wind_var": -0.57164771980194728,
+          "P_machine_W": 268957.48024481389,
+          "Q_machine_var": 1.5014310241672872E+6,
+          "Vpcc_V": 9952.4069403624144,
+          "Vmax_V": 9952.52746837421,
+          "Vmin_V": 9952.305237843655,
+          "pv_Vdc_V": 1500.0000039668143,
+          "wind_Vdc_V": 1500.4876732458033,
+          "pv_f_Hz": 49.996262353400354,
+          "wind_f_Hz": 49.999996447075723,
+          "balance_residual_W": 296.73540614824742,
+          "cold_start_bus_raw_peak_V": 25796.233970912577,
+          "cold_start_accepted": false,
+          "bus_frequency_Hz": 49.999998870797505,
+          "pv_DC_charge_residual_C": 0.18610844203730523,
+          "pv_pll_frequency_range_Hz": [
+            49.995437378092333,
+            49.996768876373025
+          ],
+          "wind_pll_frequency_range_Hz": [
+            49.999929826680685,
+            50.000074097773663
+          ],
+          "pv_Vdc_range_V": [
+            1499.9786718343253,
+            1500.0024421738183
+          ],
+          "wind_Vdc_range_V": [
+            1498.9085681454733,
+            1502.1563132608692
+          ],
+          "pv_actual_current_peak_A": 2434.25011899669
+        }
+      },
+      "pv_dispatch": {
+        "pass": true,
+        "elapsed_s": 184.49722354166667,
+        "metrics": {
+          "P_pv_W": 2.9920517431458486E+6,
+          "Q_pv_var": -1032.4326625523563,
+          "P_wind_W": 2.7097619913860667E+6,
+          "Q_wind_var": -0.61789593421199018,
+          "P_machine_W": -701516.93505199242,
+          "Q_machine_var": 1.5007429598815306E+6,
+          "Vpcc_V": 9953.3865395692537,
+          "Vmax_V": 9957.6484728542255,
+          "Vmin_V": 9952.31895309442,
+          "pv_Vdc_V": 1500.0001603754772,
+          "wind_Vdc_V": 1500.4865024660089,
+          "pv_f_Hz": 49.996262515904327,
+          "wind_f_Hz": 49.999996223891038,
+          "balance_residual_W": 296.79947992227972,
+          "cold_start_bus_raw_peak_V": 25796.233970912577,
+          "cold_start_accepted": false,
+          "delta_P_pv_W": 970442.48772109556,
+          "delta_P_wind_W": -13268.387503246777,
+          "delta_P_machine_W": -957102.66642469179,
+          "bus_frequency_Hz": 49.999998863855296,
+          "pv_DC_charge_residual_C": 0.1376552682229808,
+          "pv_pll_frequency_range_Hz": [
+            49.993533559652221,
+            50.016888116008587
+          ],
+          "wind_pll_frequency_range_Hz": [
+            49.99729489636875,
+            50.014684301871988
+          ],
+          "pv_Vdc_range_V": [
+            1497.8236258845404,
+            1500.3267012562255
+          ],
+          "wind_Vdc_range_V": [
+            1498.9144753675205,
+            1502.1563132608692
+          ],
+          "pv_actual_current_peak_A": 3700.4865107520136
+        }
+      },
+      "wind_step": {
+        "pass": true,
+        "elapsed_s": 184.33449491666667,
+        "metrics": {
+          "P_pv_W": 2.0215796580041035E+6,
+          "Q_pv_var": -1710.4098633400795,
+          "P_wind_W": 2.8612484168611178E+6,
+          "Q_wind_var": -5.1164446136826918,
+          "P_machine_W": 117014.78552904901,
+          "Q_machine_var": 1.5014896204109418E+6,
+          "Vpcc_V": 9952.5930504102816,
+          "Vmax_V": 9952.6998708441952,
+          "Vmin_V": 9952.3190227492887,
+          "pv_Vdc_V": 1500.0000143619909,
+          "wind_Vdc_V": 1499.9429329886173,
+          "pv_f_Hz": 49.996397324871694,
+          "wind_f_Hz": 50.000135823365575,
+          "balance_residual_W": -157.1396057298407,
+          "cold_start_bus_raw_peak_V": 25796.233970912577,
+          "cold_start_accepted": false,
+          "aero_before_W": 3.2992130327301119E+6,
+          "aero_after_W": 4.6273835437211478E+6,
+          "bus_frequency_Hz": 50.000136451107352,
+          "pv_DC_charge_residual_C": 0.18610928907133303,
+          "pv_pll_frequency_range_Hz": [
+            49.995455181826827,
+            49.9969608023841
+          ],
+          "wind_pll_frequency_range_Hz": [
+            49.999947379675341,
+            50.000262151453406
+          ],
+          "pv_Vdc_range_V": [
+            1499.9786718343253,
+            1500.0024648435399
+          ],
+          "wind_Vdc_range_V": [
+            1498.9152821047273,
+            1502.1563132608692
+          ],
+          "pv_actual_current_peak_A": 2434.25011899669
+        }
+      },
+      "pv_q_step": {
+        "pass": true,
+        "elapsed_s": 187.15399079166667,
+        "metrics": {
+          "P_pv_W": 2.0190513856500257E+6,
+          "Q_pv_var": 1.0017581959498062E+6,
+          "P_wind_W": 2.70998991948876E+6,
+          "Q_wind_var": -0.589676538003355,
+          "P_machine_W": 271258.11356565333,
+          "Q_machine_var": 497951.82956197532,
+          "Vpcc_V": 9984.1301935799129,
+          "Vmax_V": 10009.836562172741,
+          "Vmin_V": 9944.6832375346912,
+          "pv_Vdc_V": 1499.9999921887231,
+          "wind_Vdc_V": 1500.446869360195,
+          "pv_f_Hz": 49.996261463224407,
+          "wind_f_Hz": 49.999995722277085,
+          "balance_residual_W": 299.41870443895459,
+          "cold_start_bus_raw_peak_V": 25796.233970912577,
+          "cold_start_accepted": false,
+          "bus_frequency_Hz": 49.999998195159513,
+          "pv_DC_charge_residual_C": 0.39316263731640655,
+          "pv_pll_frequency_range_Hz": [
+            49.012921550567683,
+            50.25788452964359
+          ],
+          "wind_pll_frequency_range_Hz": [
+            49.902638296921474,
+            50.001977626838517
+          ],
+          "pv_Vdc_range_V": [
+            1499.8775767376271,
+            1500.0173432373151
+          ],
+          "wind_Vdc_range_V": [
+            1498.9849073359119,
+            1502.1563132608692
+          ],
+          "pv_actual_current_peak_A": 2541.0815710428319
+        }
+      },
+      "frequency_step": {
+        "pass": true,
+        "elapsed_s": 183.29105545833335,
+        "metrics": {
+          "P_pv_W": 2.0215474457308461E+6,
+          "Q_pv_var": -604.17032318538554,
+          "P_wind_W": 2.7097355686058709E+6,
+          "Q_wind_var": 2548.9180703412262,
+          "P_machine_W": 250173.28735404272,
+          "Q_machine_var": 1.5605984415693716E+6,
+          "Vpcc_V": 9950.3518904118446,
+          "Vmax_V": 9952.599244153058,
+          "Vmin_V": 9950.2325050554864,
+          "pv_Vdc_V": 1500.0000076741185,
+          "wind_Vdc_V": 1500.4627302831702,
+          "pv_f_Hz": 50.196246665165781,
+          "wind_f_Hz": 50.199995845491848,
+          "balance_residual_W": -18543.698309240863,
+          "cold_start_bus_raw_peak_V": 25796.233970912577,
+          "cold_start_accepted": false,
+          "bus_frequency_Hz": 50.199998452426478,
+          "pv_DC_charge_residual_C": 0.18592453540434986,
+          "pv_pll_frequency_range_Hz": [
+            49.995459958214305,
+            50.21338423254835
+          ],
+          "wind_pll_frequency_range_Hz": [
+            49.999954808540139,
+            50.236604655213242
+          ],
+          "pv_Vdc_range_V": [
+            1499.8995015168905,
+            1500.0492335541978
+          ],
+          "wind_Vdc_range_V": [
+            1498.9318761375732,
+            1502.1563132608692
+          ],
+          "pv_actual_current_peak_A": 2435.3934140847846
+        }
+      }
+    },
+    "requested_cases_pass": true,
+    "BESS_integrated": false,
+    "coordinator_enabled": false,
+    "result_scope": "Conditional post-settling grid-supported dynamics, not cold start or island acceptance",
+    "runtime_version": "26.1.0.3312084 (R2026a) Update 4"
+  }
+}
