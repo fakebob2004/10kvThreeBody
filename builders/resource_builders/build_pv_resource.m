@@ -1,5 +1,9 @@
 function path=build_pv_resource(parent,name,cfg,pos)
 %BUILD_PV_RESOURCE Generate an independent three-module PV resource.
+cfgData=evalin('base',cfg);
+if isfield(cfgData,'dynamic')&&cfgData.dynamic.enabled
+    path=build_pv_dynamic_resource(parent,name,cfg,pos);return;
+end
 path=[parent '/' name];add_block('built-in/Subsystem',path,'Position',pos, ...
     'BackgroundColor','[0.84,0.94,0.82]','ContentPreviewEnabled','off', ...
     'AttributesFormatString','PV Source/DC -> GFL PCS -> independent AC Interface');
