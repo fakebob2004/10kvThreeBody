@@ -1,5 +1,53 @@
 # Physical PV + transient Wind: grid-supported integration
 
+## Current Wind R4 frequency-step regression
+
+The current builder imports Wind R4 with its native PCC PLL driving both
+grid-side dq transforms. At 0.7 s the imposed grid frequency changes from
+50 to 50.2 Hz. Over 1.15–1.25 s the independent bus-voltage measurement
+gave 50.1999994 Hz, the Wind PLL gave 50.1999971 Hz and the slope of the
+actual control angle gave 50.1999994 Hz. In the current controller frame,
+the PCC voltage angle averaged 0.0471 degrees. Wind DC voltage averaged
+1500.71 V. Run `validate_grid_supported_postsettling_dynamics({'frequency_step'})`
+to reproduce this strong-grid case. Joint cold-start acceptance remains open.
+R4 uses an assumed 2% rated copper loss. Available power estimates MSC output
+at the current shaft speed, before grid-side losses.
+
+## Current Wind dispatch and standby
+
+Run `validate_wind_dispatch_cycle('GRID_SUPPORTED_PV_WIND_R1')` on the
+generated joint plant. The voltage-aligned q-current request passes through
+the same circular current limiter as the active request. A 20 ms filter
+smooths reactive dispatch. Enable controls generation and reactive dispatch
+while the grid-side converter maintains the DC link and synchronization.
+
+| Joint test window | PCC P (MW) | PCC Q (Mvar) |
+|---|---:|---:|
+| +1 Mvar | 3.102 | +0.9996 |
+| -1 Mvar | 3.099 | -0.9989 |
+| Generation disabled | -0.0066 | -0.0007 |
+| Generation resumed | 2.973 | -0.9995 |
+
+From 0.25 through 1.50 s the Wind DC link spanned 1477.0–1524.7 V and
+its PLL spanned 49.921–50.091 Hz. Available power and incremental headroom
+use the MSC DC boundary. Standby reports zero dispatchable headroom.
+PCC reserve under simultaneous converter current limitation needs separate
+qualification before enabling a capability coordinator.
+
+On the switching model, `validate_wind_step_energy` gave a 0.00123%
+integrated energy residual from wind input to MSC over 0.11–0.22 s.
+After accounting for DC capacitor energy, the DC-to-PCC gap was 2.20%.
+
+Run `diagnose_wind_start_targets` to compare the first 3 ms of the joint
+model. The baseline starts Wind/PV near 903/750 V. Targeting Wind's
+internal capacitor state yields 1503/1500 V but the bus peak reaches
+787 kV. Including the specified transformer leakage in that case raises
+the peak to 1.64 MV. Releasing the Wind filter-current target gives the
+same peaks. These variants are diagnostic only. Cold-start acceptance
+requires the raw AC peak and both initial DC voltages to pass together.
+
+## Historical R3 commissioning record
+
 This work is on `integration/grid-supported-pv-wind`. It merges PV commit
 `ca7a100` from `origin/feat/pv-physical-dc-r2024b` and consumes the locally
 supplied Wind R3 functional modules. The original R3 source files and model

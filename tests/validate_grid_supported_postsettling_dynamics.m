@@ -82,6 +82,16 @@ if strcmp(name,'frequency_step'),targetF=50.2;end
 R.bus_frequency_Hz=bus_frequency(out.integration_bus_vabc,[1.15 1.25]);
 assert(abs(R.bus_frequency_Hz-targetF)<0.03,'Machine frequency does not match imposed event');
 assert(abs(P(4)-R.bus_frequency_Hz)<0.05&&abs(W(4)-R.bus_frequency_Hz)<0.05,'Local PLL tracking failed');
+if strcmp(name,'frequency_step')
+ angle=getlog(out.logsout,'wind_control_angle');
+ tail=angle.Time>=1.15;
+ slope=polyfit(angle.Time(tail),unwrap(double(angle.Data(tail))),1);
+ R.wind_control_angle_Hz=slope(1)/(2*pi);
+ assert(abs(R.wind_control_angle_Hz-R.bus_frequency_Hz)<0.03,'Active dq control angle failed frequency tracking');
+ vd=getlog(out.logsout,'Vd_pcc_lv');vq=getlog(out.logsout,'Vq_pcc_lv');
+ R.wind_dq_phase_error_deg=atan2d(mean_window(vq,[1.15 1.25]),mean_window(vd,[1.15 1.25]));
+ assert(abs(R.wind_dq_phase_error_deg)<5,'Wind current-loop frame is misaligned with PCC voltage');
+end
 fprintf('GRID_SUPPORTED_WARM_METRICS=%s\n',jsonencode(R));
 end
 function a=matrix(x)

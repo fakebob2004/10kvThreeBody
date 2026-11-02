@@ -12,8 +12,8 @@ previous=fullfile(evidence,'component_checks.mat');
 if ~isempty(selection)&&isfile(previous),old=load(previous,'report');report=old.report;end
 names={'pv_dispatch','pv_mppt','pv_limit','wind_operating_point','wind_step'};
 actions={@validate_pv_dynamic_physical,@validate_pv_dynamic_mppt, ...
- @validate_pv_dynamic_limit,@()evalin('base',sprintf('run(''%s'')',fullfile(root,'scripts','validate_wind_pmsg_transient_r3.m'))), ...
- @()evalin('base',sprintf('run(''%s'')',fullfile(root,'scripts','validate_wind_pmsg_transient_r3_step.m')))};
+ @validate_pv_dynamic_limit,@()evalin('base',sprintf('run(''%s'')',fullfile(root,'scripts','validate_wind_pmsg_transient_r4.m'))), ...
+ @()evalin('base',sprintf('run(''%s'')',fullfile(root,'scripts','validate_wind_pmsg_transient_r4_step.m')))};
 for k=1:numel(names)
  if ~isempty(selection)&&~ismember(names{k},selection),continue,end
  name=names{k};fprintf('\nINTEGRATION_COMPONENT_START=%s\n',name);started=tic;

@@ -12,12 +12,12 @@ assert(strcmp(get_param([wind '/03 DC Link and Two-Level GSC/Two-Level Three-Pha
 align=get_param([ctl '/PLL Angle Alignment'],'PortHandles');
 ln=get_param(align.Inport(1),'Line');src=get_param(ln,'SrcBlockHandle');
 assert(strcmp(getfullname(src),[ctl '/PLL Angle for Control']),'Wind control uses a nonlocal angle');
-assert(strcmp(get_param(src,'GotoTag'),'WIND_R3__THETA_PLL_DIAG'));
+assert(strcmp(get_param(src,'GotoTag'),'WIND_R4__THETA_PLL_DIAG'));
 gotos=find_system(wind,'LookUnderMasks','all','FollowLinks','on','BlockType','Goto');
 froms=find_system(wind,'LookUnderMasks','all','FollowLinks','on','BlockType','From');
 for blocks={gotos,froms}
  items=blocks{1};
- for k=1:numel(items),assert(startsWith(get_param(items{k},'GotoTag'),'WIND_R3__'));end
+ for k=1:numel(items),assert(startsWith(get_param(items{k},'GotoTag'),'WIND_R4__'));end
 end
 for k=1:numel(gotos),assert(~strcmp(get_param(gotos{k},'TagVisibility'),'global'));end
 assert(getSimulinkBlockHandle([m '/PV Resource/02 PCS/01 Local PLL'])>0);
@@ -27,7 +27,8 @@ expected={'5f681e18b513c1ca7ed7fb3e360228e8f5c123ae1d0b6698b06408a0d1343278', ..
  '26a8c43dca0112f81858878bb820103e529b1716a7f488c5a4729693138fe414', ...
  '07d1c9ed504906951f7a42aab9395fe11038673a364162bf5d8556803dab995c'};
 report=struct('island_operation',false,'structural_isolation_pass',true, ...
- 'local_pll_control_pass',true,'wind_originals_unchanged',true,'source_files',struct());
+ 'local_pll_control_pass',true,'wind_originals_unchanged',true, ...
+ 'active_wind_version','R4','source_files',struct());
 for k=1:numel(inputs)
  p=fullfile(root,inputs{k});fid=fopen(p,'r');bytes=fread(fid,inf,'*uint8');fclose(fid);
  md=java.security.MessageDigest.getInstance('SHA-256');md.update(bytes);

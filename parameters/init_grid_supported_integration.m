@@ -1,7 +1,7 @@
 function C=init_grid_supported_integration()
-%INIT_GRID_SUPPORTED_INTEGRATION Independent PV parameters and Wind R3 namespace.
+%INIT_GRID_SUPPORTED_INTEGRATION Independent PV parameters and corrected Wind R4.
 root=fileparts(fileparts(mfilename('fullpath')));addpath(root);setup_v2_paths;
-run(fullfile(root,'parameters','init_wind_pmsg_transient_r3.m'));
+run(fullfile(root,'parameters','init_wind_pmsg_transient_r4.m'));
 % Same local PLL alignment already commissioned by the average Wind R2 path.
 Control.PLL.ControlAngleBias=-pi+atan(Base.f/Control.PLL.VoltagePrefilterHz);
 assignin('base','Control',Control);

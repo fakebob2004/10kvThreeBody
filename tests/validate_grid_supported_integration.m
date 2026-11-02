@@ -65,9 +65,12 @@ R=struct('P_wind_W',W(1),'Q_wind_var',W(2),'P_machine_W',S(1), ...
  'Q_machine_var',S(2),'Vpcc_V',S(3),'wind_Vdc_V',W(9), ...
  'wind_f_Hz',W(4),'wind_limit_factor',W(7));
 R.wind_Vdc_min_V=min(wind.Data(:,9));R.wind_Vdc_max_V=max(wind.Data(:,9));
+R.wind_initial_Vdc_V=wind.Data(1,9);
 R.raw_bus_Vmax_V=max(sm.Data(:,3));R.raw_machine_abs_Pmax_W=max(abs(sm.Data(:,1)));
 R.machine_present=true;R.machine_disconnected=false;
 assert(R.raw_bus_Vmax_V<15000,'Unacceptable raw startup bus-voltage spike');
+assert(abs(R.wind_initial_Vdc_V-1500)<75, ...
+ 'Wind cold-start initial Vdc %.2f V outside 1500 V +/-5%%',R.wind_initial_Vdc_V);
 assert(S(3)>8500&&S(3)<11500,'PCC voltage is outside commissioning range');
 assert(W(9)>1350&&W(9)<1650,'Wind steady DC voltage is outside commissioning range');
 assert(W(1)>0.5e6,'Wind is not generating');
@@ -77,6 +80,7 @@ if ~onlyWind
  pv=out.integration_pv;assert(all(isfinite(pv.Data(:))),'Nonfinite PV telemetry');P=window_mean(pv,tail);
  R.P_pv_W=P(1);R.Q_pv_var=P(2);R.pv_Vdc_V=P(9);R.pv_f_Hz=P(4);R.pv_limit_factor=P(7);
  R.pv_Vdc_min_V=min(pv.Data(:,9));R.pv_Vdc_max_V=max(pv.Data(:,9));
+ assert(abs(pv.Data(1,9)-1500)<75,'PV cold-start initial Vdc outside 1500 V +/-5%%');
  R.power_balance_residual_W=R.power_balance_residual_W+P(1);
  if stop>0.5
   assert(abs(P(9)-1500)<75,'PV DC regulation failed');
