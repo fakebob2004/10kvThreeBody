@@ -1,9 +1,10 @@
-function p3_multi_island(k,d)
+function p3_multi_island(k,d,smokeOnly)
+if nargin<3,smokeOnly=false;end
 % Identical physical weather & load. k only enables the outer dispatch increment.
 assert(ismember(k,[0 1])&&isfolder(d));r=setup_v2_paths;m='PV_WIND_BESS_ISLAND_R1';tag={'local','coordinated'};tag=tag{k+1};assert(~isfile(fullfile(d,[tag '.json'])));R=struct('stage',tag,'state','building','pid',feature('getpid'),'scope','warm island; mild physical inputs');record;
 try
  tmp=fullfile(d,['cache_' tag]);Simulink.fileGenControl('set','CacheFolder',fullfile(tmp,'sim'),'CodeGenFolder',fullfile(tmp,'code'),'createDir',true);
- load_system(fullfile(r,'models','integration',[m '.slx']));cl=onCleanup(@()close_system(m,0));s=[m '/BESS Synchronism and Dispatch'];trip=2.8;stop=4.4;
+ load_system(p3_release_model_path(r,m));cl=onCleanup(@()close_system(m,0));s=[m '/BESS Synchronism and Dispatch'];trip=2.8;stop=4.4;
  set_param([m '/Island at 1.8 s'],'Time',num2str(trip));set_param([m '/PV Command/Q Reference'],'Time','1.3','After','2e6*tan(acos(.9))');set_param([m '/Close permit'],'Value','1');
  set_param([m '/BESS P request'],'VariableName','[0 0;1.25 1.10e6;6 1.10e6]');set_param([m '/BESS Q request'],'VariableName','[0 0;1.40 0.55e6;6 0.55e6]');
  if true
@@ -43,6 +44,9 @@ try
  wire(m,'Last residual sample/1','Residual dispatch/1');wire(m,'Arm after transfer/1','Residual dispatch/2');add_block('simulink/Math Operations/Gain',[m '/Upper layer enable'],'Gain',num2str(k));wire(m,'Residual dispatch/1','Upper layer enable/1');logv(m,'Upper layer enable/1','multi_coord_W');
  add_block('simulink/Math Operations/Sum',[m '/Island P reference'],'Inputs','++');wire(m,'BESS P request/1','Island P reference/1');wire(m,'Upper layer enable/1','Island P reference/2');wire(m,'Island P reference/1','BESS Synchronism and Dispatch/3');
  seed=load(fullfile(r,'parameters','initial_states','bw_wind_grid_seed.mat'),'op');in=Simulink.SimulationInput(m);in=in.setVariable('multiSunProfile',[0 1000;3.7 1000;3.75 950;8.5 950;8.55 1000;11 1000]).setVariable('islandSeed',seed.op).setModelParameter('SimscapeUseOperatingPoints','on','SimscapeOperatingPoint','islandSeed','StopTime',num2str(stop),'ReturnWorkspaceOutputs','on','CaptureErrors','on');
+ if smokeOnly
+  o=sim(in.setModelParameter('StopTime','.003'));assert(isempty(o.ErrorMessage),'%s',o.ErrorMessage);assert(o.integration_sm.Time(end)>=.003-1e-9);R.state='smoke_only';record;return
+ end
  R.state='simulating';record;o=sim(in);save(fullfile(d,[tag '.mat']),'o','-v7.3');if ~isempty(o.ErrorMessage),error('%s',o.ErrorMessage);end
  R.metrics=p3_island_multi_metrics(o);R.schedule_verified=all(abs(o.multi_pv_schedule_W.Data(:)-2e6)<1)&&all(abs(o.multi_wind_schedule_W.Data(:)-2e6)<1);
  R.pass=R.schedule_verified&&R.metrics.pass;R.state='completed';record;

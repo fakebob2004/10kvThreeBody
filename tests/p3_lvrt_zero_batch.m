@@ -1,10 +1,11 @@
-function p3_lvrt_zero_batch(outdir)
+function p3_lvrt_zero_batch(outdir,smokeOnly)
+if nargin<2,smokeOnly=false;end
 r=setup_v2_paths;m='PV_WIND_BESS_SM_FIXED_R1';assert(isfolder(outdir));d=outdir;[~,runid]=fileparts(d);
 cache=tempname;mkdir(cache);Simulink.fileGenControl('set','CacheFolder',fullfile(cache,'cache'),'CodeGenFolder',fullfile(cache,'code'),'createDir',true);
 for k=0:1
  modes={'local','coordinated'};tag=modes{k+1};R=struct('stage',tag,'state','running','fault_R_ohm',.40,'on_s',2.65,'off_s',2.8,'run_id',runid);record;
  try
- assert(~bdIsLoaded(m));load_system(fullfile(r,'models','integration',[m '.slx']));cl=onCleanup(@()close_system(m,0));
+ assert(~bdIsLoaded(m));load_system(p3_release_model_path(r,m));cl=onCleanup(@()close_system(m,0));
  % Same pre-fault VAR policies, inertia, AVR, resource feeders in both cases.
  p3_var_case(m,'var_local_feeders');p=[m '/PV Command'];w=[m '/Wind Command'];
  set_param([m '/1 Mvar bank'],'component_structure','ee.enum.rlc.structure.R','R','.40');add_block('simulink/Sources/Step',[m '/Clear shunt'],'Time','2.8','Before','0','After','1');add_block('simulink/Math Operations/Sum',[m '/Fault breaker gate'],'Inputs','++');delete_line(m,'Apply VAR load/1','Bank control PS/1');wire(m,'Apply VAR load/1','Fault breaker gate/1');wire(m,'Clear shunt/1','Fault breaker gate/2');wire(m,'Fault breaker gate/1','Bank control PS/1');
@@ -36,6 +37,9 @@ for k=0:1
   ph=get_param([s '/Command'],'PortHandles');set_param(get_param(ph.Inport(1),'Line'),'Name','P_ref_W');set_param(get_param(ph.Inport(2),'Line'),'Name','Q_ref_var');
  end
  seed=load(fullfile(r,'parameters','initial_states','bw_wind_grid_seed.mat'),'op');in=Simulink.SimulationInput(m);in=in.setVariable('faultSeed',seed.op).setBlockParameter([m '/Close permit'],'Value','1').setModelParameter('SimscapeUseOperatingPoints','on','SimscapeOperatingPoint','faultSeed','StopTime','3.6','ReturnWorkspaceOutputs','on','CaptureErrors','on');
+ if smokeOnly
+  o=sim(in.setModelParameter('StopTime','.003'));assert(isempty(o.ErrorMessage),'%s',o.ErrorMessage);assert(o.integration_sm.Time(end)>=.003-1e-9);R.state='smoke_only';record;clear cl o;continue
+ end
  o=sim(in);save(fullfile(d,[tag '.mat']),'o','-v7.3');if ~isempty(o.ErrorMessage),error('%s',o.ErrorMessage);end
  R.zero=measureZero(o);R.metrics=p3_lvrt_metrics_new(o);R.metrics.clearance_reference='LVRT comparability uses original trip command; post-extinction extrema also reported separately.';
  R.state='completed';R.pass=R.metrics.pass && R.zero.evidence_pass;record;
