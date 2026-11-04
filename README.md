@@ -1,5 +1,11 @@
 # 10 kV three-resource AC system
 
+## 分支与发布约定
+
+禁止在本仓库新建远端分支。发布已验证的成果时，须将 `main` 和所有现有远端分支一起快进到同一提交，并核对远端提交号；只更新集成分支不算发布完成。若历史已分叉，停止发布并与维护者确认，不得强推或覆盖队友提交。
+
+最新三源模型的 R2023b 成品在 [models/r2023b](models/r2023b/)，运行方法见[压力测试交接说明](docs/P3_STRESS_HANDOFF.md)。`build/r2023b/` 是旧 Stage 2，不是这次适配的入口。
+
 This repository contains the validated baselines and the maintainable v2
 generation path for a 10 kV islanded system with BESS-GFM, PV-GFL and
 Wind-GFL resources.
